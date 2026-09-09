@@ -29,6 +29,49 @@
     button{cursor:pointer}
     button:disabled{cursor:wait;opacity:.65}
 
+
+    /* ===== 시작 화면 ===== */
+    .landing{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px 18px;
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.98),transparent 27%),
+        radial-gradient(circle at 84% 82%,rgba(186,153,179,.20),transparent 25%),
+        linear-gradient(145deg,#f8f2f7 0%,#eee5ee 52%,#e4dce6 100%);
+    }
+    .landing-card{
+      width:min(92vw,560px);
+      text-align:center;
+      padding:44px 30px 34px;
+      border-radius:32px;
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:0 28px 80px rgba(44,29,47,.16);
+      backdrop-filter:blur(18px);
+    }
+    .landing-icon{font-size:58px;display:block;margin-bottom:10px}
+    .landing h1{margin:0;font-size:clamp(34px,7vw,55px);letter-spacing:-.055em}
+    .landing-copy{margin:14px auto 22px;color:var(--muted);line-height:1.85;font-size:15px;max-width:430px}
+    .landing-btn{
+      border:0;border-radius:999px;padding:15px 26px;
+      background:linear-gradient(135deg,#674875,#a06c86);
+      color:#fff;font-weight:900;font-size:16px;
+      box-shadow:0 12px 30px rgba(103,72,117,.25)
+    }
+    .privacy-box{
+      margin-top:22px;padding:14px 15px;border-radius:17px;
+      background:rgba(113,81,127,.055);
+      border:1px solid rgba(113,81,127,.10);
+      color:#665a69;font-size:12px;line-height:1.7
+    }
+    .landing-note{margin-top:14px;color:#897e8b;font-size:11px;line-height:1.6}
+    .back-home{
+      margin:0 0 12px;border:1px solid var(--line);background:rgba(255,255,255,.72);
+      color:#5b5060;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:750
+    }
+
     .app-shell{
       min-height:100vh;
       padding:22px;
@@ -146,12 +189,34 @@
   </style>
 </head>
 <body>
-  <main class="app-shell" id="editorScreen">
+  <section class="landing" id="landingScreen">
+    <div class="landing-card">
+      <span class="landing-icon">💌</span>
+      <h1>감성편지</h1>
+      <div class="landing-copy">
+        마음을 천천히 전해보세요.<br>
+        배경과 음악을 고르고 당신만의 편지를 만들어<br>
+        소중한 사람에게 보내세요.
+      </div>
+      <button class="landing-btn" id="startWritingBtn">✍️ 새 편지 만들기</button>
+      <div class="privacy-box">
+        🔒 <b>작성한 편지는 서버나 데이터베이스에 저장하지 않습니다.</b><br>
+        현재 기기에서 편지 링크를 만들어 전달합니다.
+      </div>
+      <div class="landing-note">
+        이 화면은 감성편지를 만드는 곳입니다.<br>
+        누군가에게 받은 편지는 보내온 전용 링크를 통해 열어주세요.
+      </div>
+    </div>
+  </section>
+
+  <main class="app-shell" id="editorScreen" style="display:none;">
     <section class="editor">
       <div class="hero">
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.4</div>
+        <button class="back-home" id="backHomeBtn">← 처음 화면</button>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.5</div>
         <h1>마음을, 천천히 전하세요.</h1>
-        <p>편지를 쓰고 배경화면과 배경음악을 고른 뒤 짧은 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열어보기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
+        <p>받는 사람, 제목, 내용을 직접 입력한 뒤 배경화면과 배경음악을 골라 카카오톡으로 보내세요.<br>작성 전에는 예시 문구를 표시하지 않아 실제 편지로 오해하지 않도록 했습니다.</p>
       </div>
 
       <div class="grid">
@@ -159,32 +224,20 @@
           <h2>✍️ 편지 쓰기</h2>
           <div class="field">
             <label for="to">받는 사람</label>
-            <input id="to" value="소중한 당신에게" maxlength="40" placeholder="예: 경숙에게">
+            <input id="to" maxlength="40" placeholder="받는 분의 이름을 입력하세요">
           </div>
           <div class="field">
             <label for="title">편지 제목</label>
-            <input id="title" value="당신과 함께한 시간" maxlength="60" placeholder="예: 고마운 마음을 전합니다">
+            <input id="title" maxlength="60" placeholder="편지 제목을 입력하세요">
           </div>
           <div class="field">
             <label for="message">편지 내용</label>
-            <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요.">가끔은 평범했던 날들이
-가장 소중한 기억이었다는 것을
-시간이 지나고 나서야 알게 됩니다.
-
-함께 웃었던 시간,
-함께 걸었던 길,
-별것 아닌 이야기에 한참을 웃었던 순간들.
-
-그 모든 시간이
-참 고맙습니다.
-
-오늘도 당신의 하루가
-따뜻하기를 바랍니다.</textarea>
+            <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요."></textarea>
             <div class="tiny">줄바꿈을 살려 보여줍니다. 편지가 길어지면 재생 시간도 자동으로 길어집니다.</div>
           </div>
           <div class="field">
             <label for="from">보내는 사람</label>
-            <input id="from" value="마음을 담아" maxlength="40" placeholder="예: 종민 드림">
+            <input id="from" maxlength="40" placeholder="이름 또는 ‘마음을 담아’">
           </div>
         </section>
 
@@ -280,7 +333,7 @@
         </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.4 · 6종 수채화 배경 선택 · Suno 음악 4종 선택 · GitHub Pages + TinyURL</div>
+    <div class="footer">감성편지 1.5 · 소개형 시작 화면 · 6종 수채화 배경 · Suno 음악 4종 · GitHub Pages + TinyURL</div>
   </main>
 
   <section class="viewer" id="viewer" aria-hidden="true">
@@ -328,6 +381,7 @@
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
 
+    const landingScreen = $('#landingScreen');
     const editorScreen = $('#editorScreen');
     const viewer = $('#viewer');
     const viewerBg = $('#viewerBg');
@@ -383,6 +437,26 @@
 
     let latestLongUrl = '';
     let latestShortUrl = '';
+
+
+    function showLanding(){
+      stopMusic();
+      landingScreen.style.display = 'grid';
+      editorScreen.style.display = 'none';
+      viewer.classList.remove('active','playing','paused','preview');
+      viewer.setAttribute('aria-hidden','true');
+      try{ history.replaceState(null, '', location.pathname); }catch(e){}
+    }
+
+    function showEditor(){
+      landingScreen.style.display = 'none';
+      editorScreen.style.display = 'block';
+      window.scrollTo({top:0, behavior:'smooth'});
+      setTimeout(() => $('#to').focus(), 120);
+    }
+
+    $('#startWritingBtn').addEventListener('click', showEditor);
+    $('#backHomeBtn').addEventListener('click', showLanding);
 
     function setTheme(next){
       theme = themes.includes(next) ? next : 'night';
@@ -917,6 +991,7 @@
       if(!match) return false;
       const data = decodeData(match[1]);
       if(!data || !data.message) return false;
+      landingScreen.style.display = 'none';
       editorScreen.style.display = 'none';
       if(!themes.includes(data.theme)) data.theme = 'night';
       if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
@@ -932,7 +1007,10 @@
 
     setTheme('night');
     setMusic('night');
-    loadFromHash();
+    if(!loadFromHash()){
+      landingScreen.style.display = 'grid';
+      editorScreen.style.display = 'none';
+    }
   })();
   </script>
 </body>
