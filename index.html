@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 카카오톡/메신저 링크 미리보기: GitHub Pages에 og-preview.png도 함께 올리세요. -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="감성편지">
   <meta property="og:title" content="마음을 담은 편지가 도착했습니다 💌">
@@ -30,7 +29,6 @@
     button{cursor:pointer}
     button:disabled{cursor:wait;opacity:.65}
 
-    /* ===== 작성 화면 ===== */
     .app-shell{
       min-height:100vh;
       padding:22px;
@@ -38,12 +36,12 @@
         radial-gradient(circle at 12% 8%,rgba(255,255,255,.97),transparent 28%),
         linear-gradient(145deg,#f7f1f6 0%,#eee6ee 48%,#e5dfe7 100%);
     }
-    .editor{max-width:1080px;margin:0 auto}
+    .editor{max-width:1120px;margin:0 auto}
     .hero{padding:26px 6px 18px}
     .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.75);border-radius:999px;font-size:13px;margin-bottom:14px}
     .hero h1{margin:0;font-size:clamp(31px,5vw,54px);letter-spacing:-.05em}
     .hero p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.75}
-    .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}
+    .grid{display:grid;grid-template-columns:1.06fr .94fr;gap:20px}
     .card{background:var(--paper);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);border-radius:var(--radius);padding:24px}
     .card h2{margin:0 0 18px;font-size:20px;letter-spacing:-.03em}
     .field{margin:0 0 16px}
@@ -55,21 +53,33 @@
     .notice{padding:12px 14px;border-radius:14px;background:rgba(113,81,127,.06);border:1px solid rgba(113,81,127,.10);font-size:12px;color:#655a68;line-height:1.65;margin-top:12px}
 
     .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .theme-btn{border:1px solid rgba(255,255,255,.7);height:92px;border-radius:18px;overflow:hidden;position:relative;color:#fff;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.32);box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
-    .theme-btn span{position:absolute;left:11px;bottom:9px;font-size:12px}
-    .theme-btn.active{outline:3px solid rgba(113,81,127,.28);outline-offset:2px}
-    .theme-night{background:radial-gradient(circle at 18% 22%,#fff 0 1px,transparent 2px),radial-gradient(circle at 73% 18%,#fff 0 1px,transparent 2px),radial-gradient(circle at 58% 63%,#d9d2ff 0 1px,transparent 2px),linear-gradient(#0d1430,#291a42 58%,#57344d)}
-    .theme-sunset{background:radial-gradient(circle at 68% 24%,rgba(255,246,206,.95) 0 12%,transparent 13%),linear-gradient(#f09b7a 0%,#c86783 48%,#5b3b68 100%)}
-    .theme-sea{background:linear-gradient(180deg,#bde4e9 0 43%,#72b8c5 44% 67%,#315e73 68% 100%)}
-    .theme-forest{background:radial-gradient(circle at 80% 12%,rgba(248,226,155,.75),transparent 22%),linear-gradient(135deg,#8fa583,#4f6f5d 46%,#233f35)}
-    .theme-flower{background:radial-gradient(circle at 25% 30%,#ffd8e8 0 5%,transparent 6%),radial-gradient(circle at 72% 56%,#fff0f6 0 7%,transparent 8%),linear-gradient(145deg,#f6dfe8,#d8c5df 58%,#b9c5df)}
-    .theme-winter{background:radial-gradient(circle at 12% 18%,white 0 2px,transparent 3px),radial-gradient(circle at 72% 36%,white 0 2px,transparent 3px),linear-gradient(#c9d8eb,#8299b8 55%,#42566e)}
-    .theme-photo{background:linear-gradient(rgba(41,29,45,.1),rgba(41,29,45,.35)),url('bg.jpg') center/cover no-repeat,linear-gradient(135deg,#caa79e,#64556a)}
+    .theme-btn,.music-btn{border:1px solid rgba(255,255,255,.7);border-radius:18px;overflow:hidden;position:relative;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);background:#fff}
+    .theme-btn{height:92px;color:#fff;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.32)}
+    .theme-btn span{position:absolute;left:11px;bottom:9px;font-size:12px;z-index:1}
+    .theme-btn.active,.music-btn.active{outline:3px solid rgba(113,81,127,.28);outline-offset:2px}
+    .theme-night{background:url('bg-night.jpg') center/cover no-repeat}
+    .theme-sunset{background:url('bg-sunset.jpg') center/cover no-repeat}
+    .theme-sea{background:url('bg-sea.jpg') center/cover no-repeat}
+    .theme-forest{background:url('bg-forest.jpg') center/cover no-repeat}
+    .theme-flower{background:url('bg-flower.jpg') center/cover no-repeat}
+    .theme-winter{background:url('bg-winter.jpg') center/cover no-repeat}
+    .theme-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.32));pointer-events:none}
+
+    .music-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .music-btn{padding:14px 12px 12px;text-align:left;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;color:#433949}
+    .music-icon{font-size:22px;line-height:1;margin-bottom:10px}
+    .music-name{font-size:14px;font-weight:900;letter-spacing:-.02em}
+    .music-desc{font-size:11px;color:#7b6f7f;line-height:1.45;margin-top:5px}
+    .music-actions{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .chip{border:1px solid var(--line);background:#fff;color:#5c4f63;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700}
+    .chip.active{background:rgba(113,81,127,.08);border-color:rgba(113,81,127,.22)}
 
     .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
     .btn{border:0;border-radius:15px;padding:13px 16px;font-weight:850;letter-spacing:-.02em}
     .btn-primary{background:linear-gradient(135deg,#674875,#a06c86);color:#fff;box-shadow:0 10px 28px rgba(103,72,117,.25)}
     .btn-soft{background:#fff;color:#514758;border:1px solid var(--line)}
+    .btn-reset{background:rgba(158,73,82,.07);color:#8d4650;border:1px solid rgba(158,73,82,.18)}
+    .btn-reset:hover{background:rgba(158,73,82,.12)}
     .btn-wide{flex:1 1 180px}
 
     .sharebox{display:none;margin-top:16px;padding:17px;border:1px solid rgba(113,81,127,.16);background:rgba(255,255,255,.72);border-radius:18px}
@@ -82,19 +92,19 @@
     .status{font-size:12px;margin-top:8px;color:#6a5c6d;min-height:19px}
     .footer{max-width:1080px;margin:18px auto 0;text-align:center;font-size:12px;color:#817684;line-height:1.7;padding:0 10px 25px}
 
-    /* ===== 받는 사람 화면 ===== */
     .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:#fff;overflow:hidden}
     .viewer.active{display:block}
     .bg{position:absolute;inset:-3%;transform:scale(1.02);transition:transform 16s ease;z-index:0;background:#17121f}
     .viewer.playing .bg{transform:scale(1.10)}
     .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.10) 35%,rgba(0,0,0,.38) 100%)}
-    .bg-night{background:radial-gradient(circle at 15% 22%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 65% 16%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 80% 36%,rgba(218,210,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 42% 72%,rgba(255,255,255,.85) 0 1px,transparent 2px),linear-gradient(180deg,#091020 0%,#201534 52%,#5b3349 100%)}
-    .bg-sunset{background:radial-gradient(circle at 70% 23%,rgba(255,244,195,.92) 0 9%,rgba(255,207,137,.38) 10%,transparent 22%),linear-gradient(180deg,#f1a17b 0%,#cb6d83 45%,#6b4267 72%,#2f2945 100%)}
-    .bg-sea{background:linear-gradient(180deg,#9ed9e4 0 43%,#6ab8c9 44% 58%,#477f91 59% 74%,#213f50 75% 100%)}
-    .bg-forest{background:radial-gradient(circle at 78% 12%,rgba(250,223,155,.65),transparent 24%),linear-gradient(145deg,#9aac85 0%,#54735e 46%,#1e3b31 100%)}
-    .bg-flower{background:radial-gradient(circle at 22% 28%,rgba(255,223,237,.92) 0 8%,transparent 9%),radial-gradient(circle at 76% 58%,rgba(255,242,247,.95) 0 9%,transparent 10%),radial-gradient(circle at 52% 18%,rgba(242,206,232,.7) 0 7%,transparent 8%),linear-gradient(145deg,#eecedb 0%,#cbb9d4 52%,#93a2c4 100%)}
-    .bg-winter{background:radial-gradient(circle at 16% 12%,white 0 2px,transparent 3px),radial-gradient(circle at 66% 24%,white 0 2px,transparent 3px),radial-gradient(circle at 84% 62%,white 0 2px,transparent 3px),linear-gradient(#cbd9eb,#8399b8 56%,#3f5269)}
-    .bg-photo{background:linear-gradient(rgba(10,8,13,.18),rgba(10,8,13,.38)),url('bg.jpg') center/cover no-repeat,linear-gradient(135deg,#caa79e,#64556a)}
+    .bg-night{background:url('bg-night.jpg') center/cover no-repeat}
+    .bg-sunset{background:url('bg-sunset.jpg') center/cover no-repeat}
+    .bg-sea{background:url('bg-sea.jpg') center/cover no-repeat}
+    .bg-forest{background:url('bg-forest.jpg') center/cover no-repeat}
+    .bg-flower{background:url('bg-flower.jpg') center/cover no-repeat}
+    .bg-winter{background:url('bg-winter.jpg') center/cover no-repeat}
+    .bg-night::after{background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(0,0,0,.06) 38%,rgba(0,0,0,.32) 100%)}
+    .bg-sunset::after,.bg-sea::after,.bg-forest::after,.bg-flower::after,.bg-winter::after{background:linear-gradient(180deg,rgba(28,23,31,.30),rgba(28,23,31,.22) 42%,rgba(28,23,31,.40) 100%)}
 
     .open-screen{position:absolute;inset:0;display:grid;place-items:center;padding:28px;z-index:7;background:rgba(12,10,17,.22);backdrop-filter:blur(2px);transition:opacity .9s ease,visibility .9s ease}
     .open-screen.hidden{opacity:0;visibility:hidden}
@@ -129,7 +139,7 @@
       .app-shell{padding:14px}
       .grid{grid-template-columns:1fr}
       .card{padding:19px;border-radius:22px}
-      .themes{grid-template-columns:repeat(2,1fr)}
+      .themes,.music-grid{grid-template-columns:repeat(2,1fr)}
       textarea{min-height:230px}
       .hero{padding-top:18px}
     }
@@ -139,9 +149,9 @@
   <main class="app-shell" id="editorScreen">
     <section class="editor">
       <div class="hero">
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.1</div>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.4</div>
         <h1>마음을, 천천히 전하세요.</h1>
-        <p>편지를 쓰고 분위기를 고른 뒤 짧은 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열어보기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
+        <p>편지를 쓰고 배경화면과 배경음악을 고른 뒤 짧은 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열어보기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
       </div>
 
       <div class="grid">
@@ -183,27 +193,55 @@
           <div class="field">
             <label>배경화면</label>
             <div class="themes" id="themeList">
-              <button class="theme-btn theme-night active" data-theme="night"><span>별이 빛나는 밤</span></button>
-              <button class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
-              <button class="theme-btn theme-sea" data-theme="sea"><span>바다</span></button>
-              <button class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
-              <button class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
-              <button class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
-              <button class="theme-btn theme-photo" data-theme="photo"><span>내 사진 · bg.jpg</span></button>
+              <button type="button" class="theme-btn theme-night active" data-theme="night" aria-label="별이 빛나는 밤 배경 선택"><span>별이 빛나는 밤</span></button>
+              <button type="button" class="theme-btn theme-sunset" data-theme="sunset" aria-label="노을 배경 선택"><span>노을</span></button>
+              <button type="button" class="theme-btn theme-sea" data-theme="sea" aria-label="바다 배경 선택"><span>바다</span></button>
+              <button type="button" class="theme-btn theme-forest" data-theme="forest" aria-label="숲 배경 선택"><span>숲</span></button>
+              <button type="button" class="theme-btn theme-flower" data-theme="flower" aria-label="꽃길 배경 선택"><span>꽃길</span></button>
+              <button type="button" class="theme-btn theme-winter" data-theme="winter" aria-label="겨울 배경 선택"><span>겨울</span></button>
             </div>
-            <div class="tiny">직접 사진을 쓰려면 GitHub의 같은 폴더에 <b>bg.jpg</b>를 올리고 ‘내 사진’을 선택하세요.</div>
+            <div class="tiny">GitHub에 <b>index.html과 같은 폴더</b>에 아래 6개 배경 이미지를 함께 올리면 자동으로 표시됩니다.</div>
           </div>
 
           <div class="field">
-            <label for="music">배경음악</label>
-            <select id="music">
-              <option value="bgm">bgm.mp3 사용 (있으면 가장 좋음)</option>
-              <option value="piano" selected>잔잔한 피아노 느낌</option>
-              <option value="musicbox">오르골 느낌</option>
-              <option value="strings">따뜻한 스트링 느낌</option>
-              <option value="none">음악 없음</option>
-            </select>
-            <div class="tiny"><b>bgm.mp3</b>를 같은 폴더에 올리면 실제 음악이 재생됩니다. 파일이 없으면 자동으로 피아노 느낌으로 대체됩니다.</div>
+            <label>배경음악</label>
+            <div class="music-grid" id="musicList">
+              <button type="button" class="music-btn active" data-music="night">
+                <div>
+                  <div class="music-icon">🌌</div>
+                  <div class="music-name">별빛 편지</div>
+                  <div class="music-desc">잔잔한 밤하늘 느낌의 피아노 · 파일명 <b>bgm-night.mp3</b></div>
+                </div>
+              </button>
+              <button type="button" class="music-btn" data-music="sunset">
+                <div>
+                  <div class="music-icon">🌅</div>
+                  <div class="music-name">따뜻한 오후의 편지</div>
+                  <div class="music-desc">노을·꽃길에 어울리는 기타+피아노 · 파일명 <b>bgm-sunset.mp3</b></div>
+                </div>
+              </button>
+              <button type="button" class="music-btn" data-music="sea">
+                <div>
+                  <div class="music-icon">🌊</div>
+                  <div class="music-name">파도처럼 머무는 마음</div>
+                  <div class="music-desc">바다에 어울리는 고요한 감성 · 파일명 <b>bgm-sea.mp3</b></div>
+                </div>
+              </button>
+              <button type="button" class="music-btn" data-music="calm">
+                <div>
+                  <div class="music-icon">🌲</div>
+                  <div class="music-name">고요한 마음</div>
+                  <div class="music-desc">숲·겨울에 어울리는 미니멀 피아노 · 파일명 <b>bgm-calm.mp3</b></div>
+                </div>
+              </button>
+            </div>
+            <div class="music-actions">
+              <button type="button" class="chip" id="recommendMusicBtn">✨ 배경에 맞는 음악 추천 선택</button>
+              <button type="button" class="chip" id="previewMusicBtn">▶ 음악 미리듣기</button>
+              <button type="button" class="chip" id="stopMusicPreviewBtn">■ 미리듣기 멈춤</button>
+              <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이 보내기</button>
+            </div>
+            <div class="tiny">Suno에서 만든 MP3 파일을 아래 파일명으로 GitHub에 올리면 됩니다. 파일이 없으면 앱이 비슷한 분위기의 간단한 내장음으로 자동 대체합니다.</div>
           </div>
 
           <div class="field">
@@ -218,7 +256,9 @@
           <div class="actions">
             <button class="btn btn-soft btn-wide" id="previewBtn">▶ 미리보기</button>
             <button class="btn btn-primary btn-wide" id="makeLinkBtn">🔗 짧은 링크 만들기</button>
+            <button class="btn btn-reset btn-wide" id="resetBtn">🧹 편지 내용 초기화</button>
           </div>
+          <div class="tiny">초기화하면 현재 화면의 받는 사람·제목·편지·보내는 사람과 생성된 링크 표시가 지워집니다.</div>
 
           <div class="sharebox" id="shareBox">
             <div class="share-label">카카오톡에 보낼 주소</div>
@@ -235,12 +275,12 @@
           </div>
 
           <div class="notice">
-            짧은 주소는 TinyURL 서비스를 이용합니다. 편지 내용은 여전히 원본 URL 안에 들어가므로 Base64는 암호화가 아닙니다. 아주 민감한 내용은 다음 단계의 저장형(ID 방식)이 더 적합합니다.
+            이 버전은 <b>배경 6종 + 실제 Suno MP3 4종</b>을 지원합니다. 편지 내용은 URL의 <b>#letter</b> 뒤에 담겨 전달되므로 서버에 저장되지 않지만, Base64는 암호화가 아닙니다. 민감한 내용은 주의해 주세요.
           </div>
         </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.1 · GitHub Pages + TinyURL · 별도 서버 없이 바로 테스트할 수 있는 버전</div>
+    <div class="footer">감성편지 1.4 · 6종 수채화 배경 선택 · Suno 음악 4종 선택 · GitHub Pages + TinyURL</div>
   </main>
 
   <section class="viewer" id="viewer" aria-hidden="true">
@@ -281,8 +321,7 @@
     </div>
   </section>
 
-  <!-- 실제 bgm.mp3가 같은 폴더에 있으면 이것을 사용하고, 없으면 Web Audio 피아노로 자동 대체 -->
-  <audio id="fileBgm" loop preload="auto" src="bgm.mp3"></audio>
+  <audio id="musicPlayer" loop preload="none"></audio>
 
   <script>
   (() => {
@@ -295,14 +334,37 @@
     const scrollWrap = $('#scrollWrap');
     const openScreen = $('#openScreen');
     const endCard = $('#endCard');
-    const fileBgm = $('#fileBgm');
+    const musicPlayer = $('#musicPlayer');
 
-    const themes = ['night','sunset','sea','forest','flower','winter','photo'];
+    const themes = ['night','sunset','sea','forest','flower','winter'];
+    const musicKinds = ['night','sunset','sea','calm','none'];
+    const musicFiles = {
+      night:'bgm-night.mp3',
+      sunset:'bgm-sunset.mp3',
+      sea:'bgm-sea.mp3',
+      calm:'bgm-calm.mp3'
+    };
+    const musicMeta = {
+      night:{name:'별빛 편지', fallback:'piano'},
+      sunset:{name:'따뜻한 오후의 편지', fallback:'sunset'},
+      sea:{name:'파도처럼 머무는 마음', fallback:'sea'},
+      calm:{name:'고요한 마음', fallback:'calm'},
+      none:{name:'음악 없음', fallback:'none'}
+    };
+    const themeRecommendedMusic = {
+      night:'night',
+      sunset:'sunset',
+      sea:'sea',
+      forest:'calm',
+      flower:'sunset',
+      winter:'calm'
+    };
+
     let theme = 'night';
+    let selectedMusic = 'night';
     let currentData = null;
     let currentPreview = false;
 
-    // 스크롤 상태
     let rafId = null;
     let startTime = 0;
     let elapsedBeforePause = 0;
@@ -311,35 +373,55 @@
     let startY = 0;
     let endY = 0;
 
-    // 음악 상태
     let audioCtx = null;
     let masterGain = null;
     let musicTimer = null;
     let muted = false;
     let usingFileBgm = false;
     let currentSynthKind = null;
+    let previewingMusic = false;
 
-    // 링크 상태
     let latestLongUrl = '';
     let latestShortUrl = '';
 
+    function setTheme(next){
+      theme = themes.includes(next) ? next : 'night';
+      $$('#themeList .theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+    }
+
+    function setMusic(next){
+      selectedMusic = musicKinds.includes(next) ? next : 'night';
+      $$('#musicList .music-btn').forEach(b => b.classList.toggle('active', b.dataset.music === selectedMusic));
+      $('#noMusicBtn').classList.toggle('active', selectedMusic === 'none');
+    }
+
     $$('#themeList .theme-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('#themeList .theme-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        theme = btn.dataset.theme;
-      });
+      btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+
+    $$('#musicList .music-btn').forEach(btn => {
+      btn.addEventListener('click', () => setMusic(btn.dataset.music));
+    });
+
+    $('#recommendMusicBtn').addEventListener('click', () => {
+      setMusic(themeRecommendedMusic[theme] || 'night');
+      $('#recommendMusicBtn').classList.add('active');
+      setTimeout(() => $('#recommendMusicBtn').classList.remove('active'), 1000);
+    });
+
+    $('#noMusicBtn').addEventListener('click', () => {
+      setMusic('none');
     });
 
     function collectData(){
       return {
-        v: 2,
+        v: 4,
         to: $('#to').value.trim() || '소중한 당신에게',
         title: $('#title').value.trim() || '마음을 전합니다',
         message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
         from: $('#from').value.trim() || '마음을 담아',
         theme,
-        music: $('#music').value,
+        music: selectedMusic,
         speed: $('#speed').value
       };
     }
@@ -461,8 +543,7 @@
       if(!startTime) startTime = now;
       const elapsed = elapsedBeforePause + (now - startTime);
       const p = Math.min(1, elapsed / durationMs);
-      const eased = p; // 일정한 속도로 읽기 편하게 이동
-      const y = startY + (endY - startY) * eased;
+      const y = startY + (endY - startY) * p;
       scrollWrap.style.transform = `translate3d(-50%, ${y}px, 0)`;
       updateLineFades();
 
@@ -551,7 +632,6 @@
       resetScrollPosition();
     }
 
-    /* ===== 음악 ===== */
     function ensureAudio(){
       if(audioCtx) return;
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -574,9 +654,9 @@
     }
 
     const F = {
-      C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196,A3:220,
-      C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,B4:493.88,
-      C5:523.25,D5:587.33,E5:659.25,G5:783.99
+      C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196,A3:220,B3:246.94,
+      C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392,A4:440,B4:493.88,
+      C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880
     };
 
     function schedulePhrase(kind){
@@ -585,49 +665,62 @@
       if(kind === 'piano'){
         const seq = [[F.C4,0],[F.E4,.8],[F.G4,1.6],[F.E4,2.4],[F.A3,3.2],[F.C4,4],[F.E4,4.8],[F.C4,5.6],[F.F3,6.4],[F.A3,7.2],[F.C4,8],[F.A3,8.8],[F.G3,9.6],[F.B4,10.4],[F.D5,11.2],[F.B4,12]];
         seq.forEach(([f,o]) => note(f,t+o,1.4,'sine',.18));
-      }else if(kind === 'musicbox'){
-        const seq = [F.C5,F.E5,F.G5,F.E5,F.D5,F.G5,F.E5,F.C5,F.A4,F.C5,F.E5,F.C5];
-        seq.forEach((f,i) => note(f,t+i*.72,.75,'triangle',.11));
-      }else if(kind === 'strings'){
-        [[F.C3,F.G3,F.E4],[F.A3,F.E4,F.C5],[F.F3,F.C4,F.A4],[F.G3,F.D4,F.B4]].forEach((ch,i) => {
-          ch.forEach(f => note(f,t+i*3.2,3.35,'sine',.085));
+      }else if(kind === 'sunset'){
+        const melody = [[F.C4,0],[F.E4,.8],[F.G4,1.6],[F.A4,2.4],[F.G4,3.2],[F.E4,4],[F.D4,4.8],[F.C4,5.6],[F.G3,6.4],[F.C4,7.2],[F.E4,8],[F.G4,8.8]];
+        melody.forEach(([f,o]) => note(f,t+o,1.2,'triangle',.12));
+        [[F.C3,F.G3,F.E4],[F.F3,F.A3,F.C4],[F.G3,F.D4,F.B4],[F.C3,F.G3,F.E4]].forEach((ch,i)=>{
+          ch.forEach(f=>note(f,t+i*3.2,3.2,'sine',.06));
+        });
+      }else if(kind === 'sea'){
+        [[F.C3,F.G3],[F.A3,F.E4],[F.F3,F.C4],[F.G3,F.D4]].forEach((ch,i)=>{
+          ch.forEach((f,j)=>note(f,t+i*3.6+j*.3,3.4,'sine',.055));
+        });
+        [F.E4,F.G4,F.A4,F.G4,F.E4,F.D4].forEach((f,i)=>note(f,t+i*1.2,1.7,'triangle',.075));
+      }else if(kind === 'calm'){
+        [[F.C3,F.G3,F.C4],[F.A3,F.E4,F.A4],[F.F3,F.C4,F.F4],[F.G3,F.D4,F.G4]].forEach((ch,i)=>{
+          ch.forEach(f=>note(f,t+i*4.0,3.9,'sine',.055));
         });
       }
     }
 
     function startSynth(kind){
+      if(kind === 'none') return;
       ensureAudio();
       currentSynthKind = kind;
       audioCtx.resume();
       masterGain.gain.value = muted ? 0 : .11;
       schedulePhrase(kind);
-      const gap = kind === 'musicbox' ? 9 : 13;
+      const gap = kind === 'calm' ? 16 : kind === 'sea' ? 12 : 13;
       musicTimer = setInterval(() => schedulePhrase(kind), gap * 1000);
+    }
+
+    function fallbackForMusic(kind){
+      return (musicMeta[kind] && musicMeta[kind].fallback) || 'piano';
+    }
+
+    async function playFileMusic(kind){
+      const src = musicFiles[kind];
+      if(!src) throw new Error('음악 파일이 없습니다.');
+      musicPlayer.src = src;
+      musicPlayer.currentTime = 0;
+      musicPlayer.muted = muted;
+      await musicPlayer.play();
+      usingFileBgm = true;
     }
 
     async function startMusic(kind){
       if(kind === 'none') return;
       usingFileBgm = false;
-
-      if(kind === 'bgm'){
-        try{
-          fileBgm.currentTime = 0;
-          fileBgm.muted = muted;
-          await fileBgm.play();
-          usingFileBgm = true;
-          return;
-        }catch(e){
-          // bgm.mp3가 없거나 재생 실패하면 피아노로 대체
-          startSynth('piano');
-          return;
-        }
+      try{
+        await playFileMusic(kind);
+      }catch(e){
+        startSynth(fallbackForMusic(kind));
       }
-      startSynth(kind);
     }
 
     function pauseMusic(){
       if(usingFileBgm){
-        fileBgm.pause();
+        musicPlayer.pause();
       }else if(audioCtx && audioCtx.state === 'running'){
         if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
         audioCtx.suspend();
@@ -636,25 +729,27 @@
 
     function resumeMusic(){
       if(usingFileBgm){
-        fileBgm.play().catch(()=>{});
+        musicPlayer.play().catch(()=>{});
       }else if(audioCtx && audioCtx.state === 'suspended'){
         audioCtx.resume();
         if(currentSynthKind){
           schedulePhrase(currentSynthKind);
-          const gap = currentSynthKind === 'musicbox' ? 9 : 13;
+          const gap = currentSynthKind === 'calm' ? 16 : currentSynthKind === 'sea' ? 12 : 13;
           musicTimer = setInterval(() => schedulePhrase(currentSynthKind), gap * 1000);
         }
       }
     }
 
     function stopMusic(){
+      previewingMusic = false;
+      $('#previewMusicBtn').classList.remove('active');
       if(musicTimer){
         clearInterval(musicTimer);
         musicTimer = null;
       }
       if(usingFileBgm){
-        fileBgm.pause();
-        fileBgm.currentTime = 0;
+        musicPlayer.pause();
+        musicPlayer.currentTime = 0;
       }
       usingFileBgm = false;
       currentSynthKind = null;
@@ -664,13 +759,22 @@
     function toggleMute(){
       muted = !muted;
       $('#muteBtn').textContent = muted ? '🔇' : '🔊';
-      fileBgm.muted = muted;
+      musicPlayer.muted = muted;
       if(masterGain && audioCtx){
         masterGain.gain.setTargetAtTime(muted ? 0 : .11, audioCtx.currentTime, .05);
       }
     }
 
-    /* ===== TinyURL ===== */
+    async function previewMusicSelection(){
+      stopMusic();
+      previewingMusic = true;
+      $('#previewMusicBtn').classList.add('active');
+      await startMusic(selectedMusic);
+    }
+
+    $('#previewMusicBtn').addEventListener('click', previewMusicSelection);
+    $('#stopMusicPreviewBtn').addEventListener('click', stopMusic);
+
     async function shortenWithTinyUrl(longUrl){
       if(!/^https?:$/i.test(location.protocol)){
         throw new Error('GitHub Pages에 올린 뒤 짧은 링크를 만들 수 있습니다.');
@@ -690,7 +794,12 @@
     }
 
     function shareMessage(data, url){
-      return `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.\n\n조용한 곳에서 천천히 열어보세요. 🍂\n${url}`;
+      const musicName = musicMeta[data.music]?.name || '감성 배경음악';
+      return `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.\n\n배경: ${themeLabel(data.theme)} · 음악: ${musicName}\n조용한 곳에서 천천히 열어보세요. 🍂\n${url}`;
+    }
+
+    function themeLabel(t){
+      return ({night:'별이 빛나는 밤',sunset:'노을',sea:'바다',forest:'숲',flower:'꽃길',winter:'겨울'})[t] || '감성 배경';
     }
 
     async function copyText(text){
@@ -702,8 +811,37 @@
       }
     }
 
-    /* ===== 이벤트 ===== */
     $('#previewBtn').addEventListener('click', () => applyViewer(collectData(), true));
+
+    $('#resetBtn').addEventListener('click', () => {
+      const ok = confirm(
+        '현재 작성 중인 편지를 초기화할까요?\n\n' +
+        '받는 사람, 제목, 편지 내용, 보내는 사람과 현재 생성된 링크 표시가 지워집니다.\n' +
+        '이미 카카오톡으로 보낸 링크는 취소되지 않습니다.'
+      );
+      if(!ok) return;
+
+      $('#to').value = '';
+      $('#title').value = '';
+      $('#message').value = '';
+      $('#from').value = '';
+      setTheme('night');
+      setMusic('night');
+      $('#speed').value = 'normal';
+
+      latestLongUrl = '';
+      latestShortUrl = '';
+      $('#shortUrl').textContent = '-';
+      $('#longUrl').textContent = '';
+      $('#shareStatus').textContent = '';
+      $('#shareBox').classList.remove('show');
+      $('#makeLinkBtn').textContent = '🔗 짧은 링크 만들기';
+
+      closeViewer();
+      try{ history.replaceState(null, '', location.pathname); }catch(e){}
+      $('#to').focus();
+    });
+
     $('#closePreview').addEventListener('click', closeViewer);
     $('#openBtn').addEventListener('click', startLetter);
     $('#pauseBtn').addEventListener('click', pauseResume);
@@ -780,6 +918,8 @@
       const data = decodeData(match[1]);
       if(!data || !data.message) return false;
       editorScreen.style.display = 'none';
+      if(!themes.includes(data.theme)) data.theme = 'night';
+      if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
       applyViewer(data, false);
       return true;
     }
@@ -790,6 +930,8 @@
       }
     });
 
+    setTheme('night');
+    setMusic('night');
     loadFromHash();
   })();
   </script>
