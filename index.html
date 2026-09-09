@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#17121f" />
+  <title>감성편지</title>
+  <style>
+    :root{
+      --ink:#251d2b;
+      --muted:#756b7a;
+      --paper:rgba(255,255,255,.86);
+      --line:rgba(62,40,72,.12);
+      --accent:#7b5b8e;
+      --accent2:#b48a9b;
+      --shadow:0 24px 60px rgba(33,20,39,.18);
+      --radius:28px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:var(--ink);background:#f4f0f5}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app-shell{min-height:100vh;background:
+      radial-gradient(circle at 12% 8%,rgba(255,255,255,.95),transparent 28%),
+      linear-gradient(145deg,#f6eff5 0%,#efe7ee 45%,#e7e0e8 100%);padding:22px}
+    .editor{max-width:1060px;margin:0 auto}
+    .hero{padding:24px 6px 18px}
+    .hero h1{margin:0;font-size:clamp(30px,5vw,54px);letter-spacing:-.04em}
+    .hero p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.7}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid var(--line);font-size:13px;margin-bottom:14px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+    .card{background:var(--paper);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);border-radius:var(--radius);padding:24px}
+    .card h2{margin:0 0 18px;font-size:20px;letter-spacing:-.03em}
+    .field{margin:0 0 16px}
+    .field label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#554b5a}
+    .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.86);border-radius:16px;padding:14px 15px;outline:none;transition:.2s}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(123,91,142,.48);box-shadow:0 0 0 4px rgba(123,91,142,.08)}
+    textarea{min-height:260px;resize:vertical;line-height:1.85}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
+    .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .theme-btn{border:1px solid rgba(255,255,255,.7);height:94px;border-radius:20px;overflow:hidden;position:relative;color:white;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.25);box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+    .theme-btn span{position:absolute;left:12px;bottom:10px;font-size:12px}
+    .theme-btn.active{outline:3px solid rgba(123,91,142,.3);outline-offset:2px}
+    .theme-night{background:radial-gradient(circle at 18% 22%,#fff 0 1px,transparent 2px),radial-gradient(circle at 73% 18%,#fff 0 1px,transparent 2px),radial-gradient(circle at 58% 63%,#d9d2ff 0 1px,transparent 2px),linear-gradient(#0d1430,#291a42 58%,#57344d)}
+    .theme-sunset{background:radial-gradient(circle at 68% 24%,rgba(255,246,206,.95) 0 12%,transparent 13%),linear-gradient(#f09b7a 0%,#c86783 48%,#5b3b68 100%)}
+    .theme-sea{background:linear-gradient(180deg,#bde4e9 0 43%,#72b8c5 44% 67%,#315e73 68% 100%)}
+    .theme-forest{background:radial-gradient(circle at 80% 12%,rgba(248,226,155,.75),transparent 22%),linear-gradient(135deg,#8fa583,#4f6f5d 46%,#233f35)}
+    .theme-flower{background:radial-gradient(circle at 25% 30%,#ffd8e8 0 5%,transparent 6%),radial-gradient(circle at 72% 56%,#fff0f6 0 7%,transparent 8%),linear-gradient(145deg,#f6dfe8,#d8c5df 58%,#b9c5df)}
+    .theme-winter{background:radial-gradient(circle at 12% 18%,white 0 2px,transparent 3px),radial-gradient(circle at 72% 36%,white 0 2px,transparent 3px),linear-gradient(#c9d8eb,#8299b8 55%,#42566e)}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .btn{border:0;border-radius:16px;padding:13px 17px;font-weight:800;letter-spacing:-.02em}
+    .btn-primary{background:linear-gradient(135deg,#6e4f80,#a2718d);color:white;box-shadow:0 10px 28px rgba(110,79,128,.28)}
+    .btn-soft{background:white;color:#514758;border:1px solid var(--line)}
+    .sharebox{display:none;margin-top:16px;padding:14px;border:1px dashed rgba(123,91,142,.35);background:rgba(255,255,255,.58);border-radius:18px}
+    .sharebox.show{display:block}
+    .share-url{font-size:12px;word-break:break-all;color:#6b5d71;margin:8px 0 12px}
+    .footer{max-width:1060px;margin:18px auto 0;color:#807583;font-size:12px;text-align:center;line-height:1.7;padding-bottom:24px}
+
+    /* viewer */
+    .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:white;overflow:hidden}
+    .viewer.active{display:block}
+    .bg{position:absolute;inset:-2%;transform:scale(1.03);transition:opacity 1.4s ease,transform 14s ease;background:#17121f}
+    .viewer.playing .bg{transform:scale(1.10)}
+    .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.12) 35%,rgba(0,0,0,.36) 100%)}
+    .bg-night{background:radial-gradient(circle at 15% 22%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 65% 16%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 80% 36%,rgba(218,210,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 42% 72%,rgba(255,255,255,.85) 0 1px,transparent 2px),linear-gradient(180deg,#091020 0%,#201534 52%,#5b3349 100%)}
+    .bg-sunset{background:radial-gradient(circle at 70% 23%,rgba(255,244,195,.92) 0 9%,rgba(255,207,137,.38) 10%,transparent 22%),linear-gradient(180deg,#f1a17b 0%,#cb6d83 45%,#6b4267 72%,#2f2945 100%)}
+    .bg-sea{background:linear-gradient(180deg,#9ed9e4 0 43%,#6ab8c9 44% 58%,#477f91 59% 74%,#213f50 75% 100%)}
+    .bg-forest{background:radial-gradient(circle at 78% 12%,rgba(250,223,155,.65),transparent 24%),linear-gradient(145deg,#9aac85 0%,#54735e 46%,#1e3b31 100%)}
+    .bg-flower{background:radial-gradient(circle at 22% 28%,rgba(255,223,237,.92) 0 8%,transparent 9%),radial-gradient(circle at 76% 58%,rgba(255,242,247,.95) 0 9%,transparent 10%),radial-gradient(circle at 52% 18%,rgba(242,206,232,.7) 0 7%,transparent 8%),linear-gradient(145deg,#eecedb 0%,#cbb9d4 52%,#93a2c4 100%)}
+    .bg-winter{background:radial-gradient(circle at 16% 12%,white 0 2px,transparent 3px),radial-gradient(circle at 66% 24%,white 0 2px,transparent 3px),radial-gradient(circle at 84% 62%,white 0 2px,transparent 3px),linear-gradient(#cbd9eb,#8399b8 56%,#3f5269)}
+    .open-screen{position:absolute;inset:0;display:grid;place-items:center;padding:28px;z-index:5;background:rgba(12,10,17,.23);backdrop-filter:blur(2px);transition:opacity .9s ease,visibility .9s ease}
+    .open-screen.hidden{opacity:0;visibility:hidden}
+    .open-card{width:min(92vw,440px);text-align:center;padding:30px 24px 26px;border:1px solid rgba(255,255,255,.22);background:rgba(20,16,25,.30);backdrop-filter:blur(14px);border-radius:30px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+    .envelope{font-size:52px;display:block;margin-bottom:6px;filter:drop-shadow(0 7px 18px rgba(0,0,0,.2))}
+    .open-card h2{font-size:26px;margin:6px 0 10px;letter-spacing:-.04em}
+    .open-card p{margin:0 0 20px;color:rgba(255,255,255,.78);font-size:14px;line-height:1.7}
+    .open-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.92);color:#34263b;border-radius:999px;padding:14px 24px;font-weight:900;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+    .letter-viewport{position:absolute;inset:0;overflow:hidden;z-index:3;padding:0 20px;mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 78%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 78%,transparent 100%)}
+    .scroll-wrap{position:absolute;left:50%;width:min(88vw,680px);transform:translateX(-50%);top:100vh;text-align:center;animation:none;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.42)}
+    .viewer.playing .scroll-wrap{animation:floatLetter var(--duration,45s) linear forwards}
+    .receiver{font-size:clamp(17px,4.2vw,23px);font-weight:800;opacity:.92;margin-bottom:20px;letter-spacing:-.03em}
+    .letter-title{font-size:clamp(30px,8vw,56px);font-weight:900;line-height:1.2;margin:0 0 42px;letter-spacing:-.05em}
+    .letter-text{white-space:pre-wrap;font-size:clamp(18px,4.8vw,25px);line-height:2.05;font-weight:550;letter-spacing:-.02em}
+    .from{margin-top:44px;font-size:clamp(16px,4vw,21px);font-weight:800;opacity:.92}
+    .heart{font-size:26px;margin-top:18px}
+    @keyframes floatLetter{from{top:100vh}to{top:var(--end-top,-1400px)}}
+    .controls{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;display:flex;gap:8px;opacity:0;transition:.4s}
+    .viewer.playing .controls,.viewer.paused .controls{opacity:1}
+    .control-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.24);background:rgba(15,12,20,.34);backdrop-filter:blur(12px);color:white;font-size:17px}
+    .close-preview{display:none;position:absolute;right:16px;top:max(16px,env(safe-area-inset-top));z-index:8;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.25);color:white;border-radius:999px;padding:9px 13px;font-size:12px}
+    .viewer.preview .close-preview{display:block}
+    .end-card{position:absolute;inset:0;z-index:4;display:grid;place-items:center;padding:28px;opacity:0;visibility:hidden;transition:1.2s ease;background:rgba(12,10,17,.20);backdrop-filter:blur(2px)}
+    .end-card.show{opacity:1;visibility:visible}
+    .end-inner{text-align:center;text-shadow:0 2px 20px rgba(0,0,0,.42)}
+    .end-inner .small{font-size:14px;opacity:.8;margin-bottom:10px}
+    .end-inner .big{font-size:clamp(26px,7vw,46px);font-weight:900;line-height:1.35;letter-spacing:-.05em}
+
+    @media (max-width:760px){
+      .app-shell{padding:14px}
+      .grid{grid-template-columns:1fr}
+      .card{padding:19px;border-radius:22px}
+      .themes{grid-template-columns:repeat(2,1fr)}
+      textarea{min-height:220px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell" id="editorScreen">
+    <section class="editor">
+      <div class="hero">
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.0</div>
+        <h1>마음을, 천천히 전하세요.</h1>
+        <p>편지를 쓰고 배경과 음악을 고른 뒤 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>✍️ 편지 쓰기</h2>
+          <div class="field">
+            <label for="to">받는 사람</label>
+            <input id="to" value="소중한 당신에게" maxlength="40" placeholder="예: 경숙에게" />
+          </div>
+          <div class="field">
+            <label for="title">편지 제목</label>
+            <input id="title" value="당신과 함께한 시간" maxlength="60" placeholder="예: 고마운 마음을 전합니다" />
+          </div>
+          <div class="field">
+            <label for="message">편지 내용</label>
+            <textarea id="message" maxlength="4000" placeholder="마음을 적어보세요.">가끔은 평범했던 날들이
+가장 소중한 기억이었다는 것을
+시간이 지나고 나서야 알게 됩니다.
+
+함께 웃었던 시간,
+함께 걸었던 길,
+별것 아닌 이야기에 한참을 웃었던 순간들.
+
+그 모든 시간이
+참 고맙습니다.
+
+오늘도 당신의 하루가
+따뜻하기를 바랍니다.</textarea>
+            <div class="tiny">줄바꿈도 그대로 표현됩니다. 너무 긴 편지는 자동으로 조금 더 천천히 올라갑니다.</div>
+          </div>
+          <div class="field">
+            <label for="from">보내는 사람</label>
+            <input id="from" value="마음을 담아" maxlength="40" placeholder="예: 종민 드림" />
+          </div>
+        </section>
+
+        <aside class="card">
+          <h2>🎨 분위기 고르기</h2>
+          <div class="field">
+            <label>배경</label>
+            <div class="themes" id="themeList">
+              <button class="theme-btn theme-night active" data-theme="night"><span>별이 빛나는 밤</span></button>
+              <button class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
+              <button class="theme-btn theme-sea" data-theme="sea"><span>바다</span></button>
+              <button class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
+              <button class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
+              <button class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="music">배경음악</label>
+            <select id="music">
+              <option value="piano">잔잔한 피아노 느낌</option>
+              <option value="musicbox">오르골 느낌</option>
+              <option value="strings">따뜻한 스트링 느낌</option>
+              <option value="none">음악 없음</option>
+            </select>
+            <div class="tiny">별도 MP3 없이 브라우저가 직접 간단한 음악을 연주하므로 GitHub Pages만으로 공유됩니다.</div>
+          </div>
+
+          <div class="field">
+            <label for="speed">글 흐르는 속도</label>
+            <select id="speed">
+              <option value="slow">천천히</option>
+              <option value="normal" selected>보통</option>
+              <option value="fast">조금 빠르게</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-soft" id="previewBtn">▶ 미리보기</button>
+            <button class="btn btn-primary" id="makeLinkBtn">🔗 공유 링크 만들기</button>
+          </div>
+
+          <div class="sharebox" id="shareBox">
+            <strong>편지 링크가 만들어졌습니다.</strong>
+            <div class="share-url" id="shareUrl"></div>
+            <div class="actions" style="margin-top:0">
+              <button class="btn btn-primary" id="shareBtn">💬 카카오톡으로 공유</button>
+              <button class="btn btn-soft" id="copyBtn">📋 링크 복사</button>
+            </div>
+            <div class="tiny">스마트폰의 ‘공유’ 메뉴에서 카카오톡을 선택하면 됩니다.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <div class="footer">감성편지 1.0 · 편지 내용은 URL에 담기며 별도 서버에 저장되지 않습니다.</div>
+  </main>
+
+  <section class="viewer" id="viewer" aria-hidden="true">
+    <div class="bg bg-night" id="viewerBg"></div>
+
+    <button class="close-preview" id="closePreview">편집으로 돌아가기 ✕</button>
+
+    <div class="open-screen" id="openScreen">
+      <div class="open-card">
+        <span class="envelope">💌</span>
+        <h2 id="openTitle">당신에게 편지가 도착했습니다</h2>
+        <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 편지가 시작됩니다.</p>
+        <button class="open-btn" id="openBtn">편지 열어보기</button>
+      </div>
+    </div>
+
+    <div class="letter-viewport">
+      <article class="scroll-wrap" id="scrollWrap">
+        <div class="receiver" id="vTo"></div>
+        <h1 class="letter-title" id="vTitle"></h1>
+        <div class="letter-text" id="vMessage"></div>
+        <div class="from" id="vFrom"></div>
+        <div class="heart">♡</div>
+      </article>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" id="pauseBtn" title="일시정지">Ⅱ</button>
+      <button class="control-btn" id="muteBtn" title="음악 켜기/끄기">🔊</button>
+      <button class="control-btn" id="replayBtn" title="처음부터">↻</button>
+    </div>
+
+    <div class="end-card" id="endCard">
+      <div class="end-inner">
+        <div class="small" id="endSmall"></div>
+        <div class="big">함께한 모든 시간이<br>참 고맙습니다.</div>
+        <div class="heart">♡</div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (() => {
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const editorScreen = $('#editorScreen');
+    const viewer = $('#viewer');
+    const scrollWrap = $('#scrollWrap');
+    const openScreen = $('#openScreen');
+    const endCard = $('#endCard');
+    let theme = 'night';
+    let audioCtx = null;
+    let masterGain = null;
+    let musicTimer = null;
+    let muted = false;
+    let currentData = null;
+    let endTimer = null;
+
+    const themes = ['night','sunset','sea','forest','flower','winter'];
+
+    $$('#themeList .theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('#themeList .theme-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        theme = btn.dataset.theme;
+      });
+    });
+
+    function collectData(){
+      return {
+        v:1,
+        to:$('#to').value.trim() || '소중한 당신에게',
+        title:$('#title').value.trim() || '마음을 전합니다',
+        message:$('#message').value.trim() || '당신의 오늘을 응원합니다.',
+        from:$('#from').value.trim() || '마음을 담아',
+        theme,
+        music:$('#music').value,
+        speed:$('#speed').value
+      };
+    }
+
+    function encodeData(obj){
+      const bytes = new TextEncoder().encode(JSON.stringify(obj));
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    }
+
+    function decodeData(str){
+      try{
+        str = str.replace(/-/g,'+').replace(/_/g,'/');
+        while(str.length % 4) str += '=';
+        const binary = atob(str);
+        const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+        return JSON.parse(new TextDecoder().decode(bytes));
+      }catch(e){ return null; }
+    }
+
+    function makeShareUrl(data){
+      const base = location.href.split('#')[0];
+      return `${base}#letter=${encodeData(data)}`;
+    }
+
+    function durationFor(data){
+      const chars = data.message.length;
+      let sec = Math.max(30, Math.min(105, 30 + chars * 0.075));
+      if(data.speed === 'slow') sec *= 1.22;
+      if(data.speed === 'fast') sec *= .82;
+      return Math.round(sec);
+    }
+
+    function applyViewer(data, preview=false){
+      currentData = data;
+      $('#vTo').textContent = data.to;
+      $('#vTitle').textContent = data.title;
+      $('#vMessage').textContent = data.message;
+      $('#vFrom').textContent = data.from;
+      $('#openTitle').textContent = `${data.to} · 편지가 도착했습니다`;
+      $('#endSmall').textContent = data.from;
+      themes.forEach(t => $('#viewerBg').classList.remove(`bg-${t}`));
+      $('#viewerBg').classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+      viewer.classList.toggle('preview', preview);
+      viewer.classList.add('active');
+      viewer.classList.remove('playing','paused');
+      viewer.setAttribute('aria-hidden','false');
+      openScreen.classList.remove('hidden');
+      endCard.classList.remove('show');
+      clearTimeout(endTimer);
+      stopMusic();
+      scrollWrap.style.animation = 'none';
+      scrollWrap.offsetHeight;
+      const duration = durationFor(data);
+      const travel = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
+      scrollWrap.style.setProperty('--duration', duration + 's');
+      scrollWrap.style.setProperty('--end-top', (-travel) + 'px');
+      $('#pauseBtn').textContent = 'Ⅱ';
+      muted = false;
+      $('#muteBtn').textContent = '🔊';
+      requestAnimationFrame(() => {
+        const tr = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
+        scrollWrap.style.setProperty('--end-top', (-tr) + 'px');
+      });
+    }
+
+    function closeViewer(){
+      viewer.classList.remove('active','playing','paused','preview');
+      viewer.setAttribute('aria-hidden','true');
+      stopMusic();
+      clearTimeout(endTimer);
+    }
+
+    function startLetter(){
+      if(!currentData) return;
+      openScreen.classList.add('hidden');
+      endCard.classList.remove('show');
+      viewer.classList.remove('paused');
+      scrollWrap.style.animation = 'none';
+      scrollWrap.offsetHeight;
+      viewer.classList.add('playing');
+      scrollWrap.style.animationPlayState = 'running';
+      scrollWrap.style.animation = '';
+      startMusic(currentData.music);
+
+    }
+
+    function pauseResume(){
+      if(!viewer.classList.contains('playing')) return;
+      const paused = viewer.classList.toggle('paused');
+      scrollWrap.style.animationPlayState = paused ? 'paused' : 'running';
+      $('#pauseBtn').textContent = paused ? '▶' : 'Ⅱ';
+      if(audioCtx){ paused ? audioCtx.suspend() : audioCtx.resume(); }
+    }
+
+    function replay(){
+      stopMusic();
+      clearTimeout(endTimer);
+      viewer.classList.remove('playing','paused');
+      openScreen.classList.remove('hidden');
+      endCard.classList.remove('show');
+      scrollWrap.style.animation = 'none';
+      scrollWrap.offsetHeight;
+      $('#pauseBtn').textContent = 'Ⅱ';
+    }
+
+    function ensureAudio(){
+      if(audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = .12;
+      masterGain.connect(audioCtx.destination);
+    }
+
+    function note(freq, start, dur, type='sine', vol=.18){
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(vol, start + .06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      osc.connect(gain).connect(masterGain);
+      osc.start(start);
+      osc.stop(start + dur + .05);
+    }
+
+    const F = {
+      C4:261.63,D4:293.66,E4:329.63,G4:392.00,A4:440.00,B4:493.88,
+      C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880.00,
+      G3:196.00,A3:220.00,C3:130.81,E3:164.81,D3:146.83,F3:174.61
+    };
+
+    function schedulePhrase(kind){
+      if(!audioCtx || !masterGain) return;
+      const t = audioCtx.currentTime + .08;
+      if(kind === 'piano'){
+        const seq = [[F.C4,0],[F.E4,.8],[F.G4,1.6],[F.E4,2.4],[F.A3,3.2],[F.C4,4],[F.E4,4.8],[F.C4,5.6],[F.F3,6.4],[F.A3,7.2],[F.C4,8],[F.A3,8.8],[F.G3,9.6],[F.B4,10.4],[F.D5,11.2],[F.B4,12]];
+        seq.forEach(([f,o]) => note(f,t+o,1.4,'sine',.20));
+      }else if(kind === 'musicbox'){
+        const seq = [F.C5,F.E5,F.G5,F.E5,F.D5,F.G5,F.E5,F.C5,F.A4,F.C5,F.E5,F.C5];
+        seq.forEach((f,i) => note(f,t+i*.72,.75,'triangle',.12));
+      }else if(kind === 'strings'){
+        [[F.C3,F.G3,F.E4],[F.A3,F.E4,F.C5],[F.F3,F.C4,F.A4],[F.G3,F.D4,F.B4]].forEach((ch,i)=>{
+          ch.forEach(f=>note(f,t+i*3.2,3.35,'sine',.095));
+        });
+      }
+    }
+
+    function startMusic(kind){
+      if(kind === 'none') return;
+      ensureAudio();
+      audioCtx.resume();
+      masterGain.gain.value = muted ? 0 : .12;
+      schedulePhrase(kind);
+      const gap = kind === 'musicbox' ? 9 : 13;
+      musicTimer = setInterval(() => schedulePhrase(kind), gap*1000);
+    }
+
+    function stopMusic(){
+      if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
+      if(audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+    }
+
+    function toggleMute(){
+      muted = !muted;
+      $('#muteBtn').textContent = muted ? '🔇' : '🔊';
+      if(masterGain) masterGain.gain.setTargetAtTime(muted ? 0 : .12, audioCtx.currentTime, .05);
+    }
+
+    $('#previewBtn').addEventListener('click', () => applyViewer(collectData(), true));
+    $('#closePreview').addEventListener('click', closeViewer);
+    $('#openBtn').addEventListener('click', startLetter);
+    $('#pauseBtn').addEventListener('click', pauseResume);
+    $('#muteBtn').addEventListener('click', toggleMute);
+    $('#replayBtn').addEventListener('click', replay);
+
+    $('#makeLinkBtn').addEventListener('click', () => {
+      const data = collectData();
+      const url = makeShareUrl(data);
+      $('#shareUrl').textContent = url;
+      $('#shareBox').classList.add('show');
+    });
+
+    $('#copyBtn').addEventListener('click', async () => {
+      const url = $('#shareUrl').textContent || makeShareUrl(collectData());
+      try{
+        await navigator.clipboard.writeText(url);
+        $('#copyBtn').textContent = '✅ 복사됨';
+        setTimeout(()=>$('#copyBtn').textContent='📋 링크 복사',1600);
+      }catch(e){
+        prompt('아래 링크를 복사하세요.', url);
+      }
+    });
+
+    $('#shareBtn').addEventListener('click', async () => {
+      const data = collectData();
+      const url = $('#shareUrl').textContent || makeShareUrl(data);
+      if(navigator.share){
+        try{
+          await navigator.share({title:`${data.to} 감성편지`, text:'당신에게 마음을 담은 편지가 도착했습니다. 💌', url});
+        }catch(e){}
+      }else{
+        try{ await navigator.clipboard.writeText(url); alert('링크를 복사했습니다. 카카오톡 채팅방에 붙여넣어 보내세요.'); }
+        catch(e){ prompt('아래 링크를 복사해 카카오톡으로 보내세요.', url); }
+      }
+    });
+
+    function loadFromHash(){
+      const m = location.hash.match(/^#letter=(.+)$/);
+      if(!m) return false;
+      const data = decodeData(m[1]);
+      if(!data || !data.message) return false;
+      editorScreen.style.display = 'none';
+      applyViewer(data,false);
+      return true;
+    }
+
+    scrollWrap.addEventListener('animationend', (e) => {
+      if(e.animationName !== 'floatLetter') return;
+      endCard.classList.add('show');
+      viewer.classList.remove('paused');
+      $('#pauseBtn').textContent = 'Ⅱ';
+      stopMusic();
+    });
+
+    window.addEventListener('resize', () => {
+      if(currentData && viewer.classList.contains('active')){
+        const travel = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
+        scrollWrap.style.setProperty('--end-top', (-travel) + 'px');
+      }
+    });
+
+    loadFromHash();
+  })();
+  </script>
+</body>
+</html>
