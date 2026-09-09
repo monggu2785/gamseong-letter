@@ -1,106 +1,137 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#17121f" />
-  <title>감성편지</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2d2331">
+  <title>감성편지 · 마음을 천천히 전하세요</title>
+
+  <!-- 카카오톡/메신저 링크 미리보기: GitHub Pages에 og-preview.png도 함께 올리세요. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="감성편지">
+  <meta property="og:title" content="마음을 담은 편지가 도착했습니다 💌">
+  <meta property="og:description" content="조용한 곳에서 천천히 편지를 열어보세요.">
+  <meta property="og:image" content="https://monggu2785.github.io/gamseong-letter/og-preview.png">
+
   <style>
     :root{
-      --ink:#251d2b;
-      --muted:#756b7a;
-      --paper:rgba(255,255,255,.86);
-      --line:rgba(62,40,72,.12);
-      --accent:#7b5b8e;
-      --accent2:#b48a9b;
-      --shadow:0 24px 60px rgba(33,20,39,.18);
-      --radius:28px;
+      --ink:#2d2530;
+      --muted:#776e79;
+      --paper:rgba(255,255,255,.88);
+      --line:rgba(73,51,75,.13);
+      --accent:#71517f;
+      --accent2:#a66f87;
+      --shadow:0 24px 70px rgba(44,29,47,.16);
+      --radius:26px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:var(--ink);background:#f4f0f5}
+    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:var(--ink);background:#f2edf2}
     button,input,textarea,select{font:inherit}
     button{cursor:pointer}
-    .app-shell{min-height:100vh;background:
-      radial-gradient(circle at 12% 8%,rgba(255,255,255,.95),transparent 28%),
-      linear-gradient(145deg,#f6eff5 0%,#efe7ee 45%,#e7e0e8 100%);padding:22px}
-    .editor{max-width:1060px;margin:0 auto}
-    .hero{padding:24px 6px 18px}
-    .hero h1{margin:0;font-size:clamp(30px,5vw,54px);letter-spacing:-.04em}
-    .hero p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.7}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.72);border:1px solid var(--line);font-size:13px;margin-bottom:14px}
-    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+    button:disabled{cursor:wait;opacity:.65}
+
+    /* ===== 작성 화면 ===== */
+    .app-shell{
+      min-height:100vh;
+      padding:22px;
+      background:
+        radial-gradient(circle at 12% 8%,rgba(255,255,255,.97),transparent 28%),
+        linear-gradient(145deg,#f7f1f6 0%,#eee6ee 48%,#e5dfe7 100%);
+    }
+    .editor{max-width:1080px;margin:0 auto}
+    .hero{padding:26px 6px 18px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);background:rgba(255,255,255,.75);border-radius:999px;font-size:13px;margin-bottom:14px}
+    .hero h1{margin:0;font-size:clamp(31px,5vw,54px);letter-spacing:-.05em}
+    .hero p{margin:10px 0 0;color:var(--muted);font-size:15px;line-height:1.75}
+    .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}
     .card{background:var(--paper);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);border-radius:var(--radius);padding:24px}
     .card h2{margin:0 0 18px;font-size:20px;letter-spacing:-.03em}
     .field{margin:0 0 16px}
-    .field label{display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#554b5a}
-    .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.86);border-radius:16px;padding:14px 15px;outline:none;transition:.2s}
-    .field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(123,91,142,.48);box-shadow:0 0 0 4px rgba(123,91,142,.08)}
-    textarea{min-height:260px;resize:vertical;line-height:1.85}
-    .tiny{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
+    .field label{display:block;margin-bottom:8px;font-size:13px;font-weight:800;color:#554b59}
+    .field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.9);border-radius:15px;padding:14px 15px;outline:none;transition:.2s}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(113,81,127,.5);box-shadow:0 0 0 4px rgba(113,81,127,.08)}
+    textarea{min-height:270px;resize:vertical;line-height:1.85}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.6;margin-top:7px}
+    .notice{padding:12px 14px;border-radius:14px;background:rgba(113,81,127,.06);border:1px solid rgba(113,81,127,.10);font-size:12px;color:#655a68;line-height:1.65;margin-top:12px}
+
     .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .theme-btn{border:1px solid rgba(255,255,255,.7);height:94px;border-radius:20px;overflow:hidden;position:relative;color:white;font-weight:800;text-shadow:0 2px 10px rgba(0,0,0,.25);box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
-    .theme-btn span{position:absolute;left:12px;bottom:10px;font-size:12px}
-    .theme-btn.active{outline:3px solid rgba(123,91,142,.3);outline-offset:2px}
+    .theme-btn{border:1px solid rgba(255,255,255,.7);height:92px;border-radius:18px;overflow:hidden;position:relative;color:#fff;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.32);box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
+    .theme-btn span{position:absolute;left:11px;bottom:9px;font-size:12px}
+    .theme-btn.active{outline:3px solid rgba(113,81,127,.28);outline-offset:2px}
     .theme-night{background:radial-gradient(circle at 18% 22%,#fff 0 1px,transparent 2px),radial-gradient(circle at 73% 18%,#fff 0 1px,transparent 2px),radial-gradient(circle at 58% 63%,#d9d2ff 0 1px,transparent 2px),linear-gradient(#0d1430,#291a42 58%,#57344d)}
     .theme-sunset{background:radial-gradient(circle at 68% 24%,rgba(255,246,206,.95) 0 12%,transparent 13%),linear-gradient(#f09b7a 0%,#c86783 48%,#5b3b68 100%)}
     .theme-sea{background:linear-gradient(180deg,#bde4e9 0 43%,#72b8c5 44% 67%,#315e73 68% 100%)}
     .theme-forest{background:radial-gradient(circle at 80% 12%,rgba(248,226,155,.75),transparent 22%),linear-gradient(135deg,#8fa583,#4f6f5d 46%,#233f35)}
     .theme-flower{background:radial-gradient(circle at 25% 30%,#ffd8e8 0 5%,transparent 6%),radial-gradient(circle at 72% 56%,#fff0f6 0 7%,transparent 8%),linear-gradient(145deg,#f6dfe8,#d8c5df 58%,#b9c5df)}
     .theme-winter{background:radial-gradient(circle at 12% 18%,white 0 2px,transparent 3px),radial-gradient(circle at 72% 36%,white 0 2px,transparent 3px),linear-gradient(#c9d8eb,#8299b8 55%,#42566e)}
-    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-    .btn{border:0;border-radius:16px;padding:13px 17px;font-weight:800;letter-spacing:-.02em}
-    .btn-primary{background:linear-gradient(135deg,#6e4f80,#a2718d);color:white;box-shadow:0 10px 28px rgba(110,79,128,.28)}
-    .btn-soft{background:white;color:#514758;border:1px solid var(--line)}
-    .sharebox{display:none;margin-top:16px;padding:14px;border:1px dashed rgba(123,91,142,.35);background:rgba(255,255,255,.58);border-radius:18px}
-    .sharebox.show{display:block}
-    .share-url{font-size:12px;word-break:break-all;color:#6b5d71;margin:8px 0 12px}
-    .footer{max-width:1060px;margin:18px auto 0;color:#807583;font-size:12px;text-align:center;line-height:1.7;padding-bottom:24px}
+    .theme-photo{background:linear-gradient(rgba(41,29,45,.1),rgba(41,29,45,.35)),url('bg.jpg') center/cover no-repeat,linear-gradient(135deg,#caa79e,#64556a)}
 
-    /* viewer */
-    .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:white;overflow:hidden}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+    .btn{border:0;border-radius:15px;padding:13px 16px;font-weight:850;letter-spacing:-.02em}
+    .btn-primary{background:linear-gradient(135deg,#674875,#a06c86);color:#fff;box-shadow:0 10px 28px rgba(103,72,117,.25)}
+    .btn-soft{background:#fff;color:#514758;border:1px solid var(--line)}
+    .btn-wide{flex:1 1 180px}
+
+    .sharebox{display:none;margin-top:16px;padding:17px;border:1px solid rgba(113,81,127,.16);background:rgba(255,255,255,.72);border-radius:18px}
+    .sharebox.show{display:block}
+    .share-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .short-url{font-size:17px;font-weight:900;word-break:break-all;color:#5d4169;padding:10px 0}
+    details{margin-top:8px}
+    details summary{font-size:12px;color:var(--muted);cursor:pointer}
+    .long-url{font-size:11px;word-break:break-all;color:#857988;margin-top:8px;line-height:1.5}
+    .status{font-size:12px;margin-top:8px;color:#6a5c6d;min-height:19px}
+    .footer{max-width:1080px;margin:18px auto 0;text-align:center;font-size:12px;color:#817684;line-height:1.7;padding:0 10px 25px}
+
+    /* ===== 받는 사람 화면 ===== */
+    .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:#fff;overflow:hidden}
     .viewer.active{display:block}
-    .bg{position:absolute;inset:-2%;transform:scale(1.03);transition:opacity 1.4s ease,transform 14s ease;background:#17121f}
+    .bg{position:absolute;inset:-3%;transform:scale(1.02);transition:transform 16s ease;z-index:0;background:#17121f}
     .viewer.playing .bg{transform:scale(1.10)}
-    .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.12) 35%,rgba(0,0,0,.36) 100%)}
+    .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.10) 35%,rgba(0,0,0,.38) 100%)}
     .bg-night{background:radial-gradient(circle at 15% 22%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 65% 16%,rgba(255,255,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 80% 36%,rgba(218,210,255,.9) 0 1px,transparent 2px),radial-gradient(circle at 42% 72%,rgba(255,255,255,.85) 0 1px,transparent 2px),linear-gradient(180deg,#091020 0%,#201534 52%,#5b3349 100%)}
     .bg-sunset{background:radial-gradient(circle at 70% 23%,rgba(255,244,195,.92) 0 9%,rgba(255,207,137,.38) 10%,transparent 22%),linear-gradient(180deg,#f1a17b 0%,#cb6d83 45%,#6b4267 72%,#2f2945 100%)}
     .bg-sea{background:linear-gradient(180deg,#9ed9e4 0 43%,#6ab8c9 44% 58%,#477f91 59% 74%,#213f50 75% 100%)}
     .bg-forest{background:radial-gradient(circle at 78% 12%,rgba(250,223,155,.65),transparent 24%),linear-gradient(145deg,#9aac85 0%,#54735e 46%,#1e3b31 100%)}
     .bg-flower{background:radial-gradient(circle at 22% 28%,rgba(255,223,237,.92) 0 8%,transparent 9%),radial-gradient(circle at 76% 58%,rgba(255,242,247,.95) 0 9%,transparent 10%),radial-gradient(circle at 52% 18%,rgba(242,206,232,.7) 0 7%,transparent 8%),linear-gradient(145deg,#eecedb 0%,#cbb9d4 52%,#93a2c4 100%)}
     .bg-winter{background:radial-gradient(circle at 16% 12%,white 0 2px,transparent 3px),radial-gradient(circle at 66% 24%,white 0 2px,transparent 3px),radial-gradient(circle at 84% 62%,white 0 2px,transparent 3px),linear-gradient(#cbd9eb,#8399b8 56%,#3f5269)}
-    .open-screen{position:absolute;inset:0;display:grid;place-items:center;padding:28px;z-index:5;background:rgba(12,10,17,.23);backdrop-filter:blur(2px);transition:opacity .9s ease,visibility .9s ease}
+    .bg-photo{background:linear-gradient(rgba(10,8,13,.18),rgba(10,8,13,.38)),url('bg.jpg') center/cover no-repeat,linear-gradient(135deg,#caa79e,#64556a)}
+
+    .open-screen{position:absolute;inset:0;display:grid;place-items:center;padding:28px;z-index:7;background:rgba(12,10,17,.22);backdrop-filter:blur(2px);transition:opacity .9s ease,visibility .9s ease}
     .open-screen.hidden{opacity:0;visibility:hidden}
-    .open-card{width:min(92vw,440px);text-align:center;padding:30px 24px 26px;border:1px solid rgba(255,255,255,.22);background:rgba(20,16,25,.30);backdrop-filter:blur(14px);border-radius:30px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
-    .envelope{font-size:52px;display:block;margin-bottom:6px;filter:drop-shadow(0 7px 18px rgba(0,0,0,.2))}
-    .open-card h2{font-size:26px;margin:6px 0 10px;letter-spacing:-.04em}
-    .open-card p{margin:0 0 20px;color:rgba(255,255,255,.78);font-size:14px;line-height:1.7}
-    .open-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.92);color:#34263b;border-radius:999px;padding:14px 24px;font-weight:900;min-width:180px;box-shadow:0 10px 30px rgba(0,0,0,.16)}
-    .letter-viewport{position:absolute;inset:0;overflow:hidden;z-index:3;padding:0 20px;mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 78%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 18%,black 78%,transparent 100%)}
-    .scroll-wrap{position:absolute;left:50%;width:min(88vw,680px);transform:translateX(-50%);top:100vh;text-align:center;animation:none;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.42)}
-    .viewer.playing .scroll-wrap{animation:floatLetter var(--duration,45s) linear forwards}
-    .receiver{font-size:clamp(17px,4.2vw,23px);font-weight:800;opacity:.92;margin-bottom:20px;letter-spacing:-.03em}
-    .letter-title{font-size:clamp(30px,8vw,56px);font-weight:900;line-height:1.2;margin:0 0 42px;letter-spacing:-.05em}
-    .letter-text{white-space:pre-wrap;font-size:clamp(18px,4.8vw,25px);line-height:2.05;font-weight:550;letter-spacing:-.02em}
-    .from{margin-top:44px;font-size:clamp(16px,4vw,21px);font-weight:800;opacity:.92}
-    .heart{font-size:26px;margin-top:18px}
-    @keyframes floatLetter{from{top:100vh}to{top:var(--end-top,-1400px)}}
-    .controls{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;display:flex;gap:8px;opacity:0;transition:.4s}
+    .open-card{width:min(92vw,445px);text-align:center;padding:31px 24px 27px;border:1px solid rgba(255,255,255,.22);background:rgba(20,16,25,.30);backdrop-filter:blur(14px);border-radius:30px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+    .envelope{font-size:52px;display:block;margin-bottom:7px;filter:drop-shadow(0 7px 18px rgba(0,0,0,.2))}
+    .open-card h2{font-size:clamp(23px,6vw,29px);margin:6px 0 10px;letter-spacing:-.04em}
+    .open-card p{margin:0 0 21px;color:rgba(255,255,255,.80);font-size:14px;line-height:1.75}
+    .open-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.93);color:#34263b;border-radius:999px;padding:14px 25px;font-weight:900;min-width:185px;box-shadow:0 10px 30px rgba(0,0,0,.16)}
+
+    .letter-viewport{position:absolute;inset:0;overflow:hidden;z-index:3;padding:0 22px;background:rgba(255,255,255,.02)}
+    .scroll-wrap{position:absolute;left:50%;width:min(88vw,700px);text-align:center;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.45);will-change:transform;transform:translate3d(-50%,100vh,0)}
+    .receiver{font-size:clamp(17px,4.3vw,23px);font-weight:800;margin-bottom:21px;letter-spacing:-.03em}
+    .letter-title{font-size:clamp(31px,8vw,57px);font-weight:900;line-height:1.2;margin:0 0 42px;letter-spacing:-.055em}
+    .letter-line{font-size:clamp(18px,4.8vw,25px);line-height:2.06;font-weight:550;letter-spacing:-.02em;min-height:1.1em;opacity:0;transform:translateY(14px);transition:opacity .18s linear,transform .18s linear}
+    .fade-item{opacity:0;transform:translateY(14px);transition:opacity .18s linear,transform .18s linear}
+    .letter-line.spacer{height:1.05em}
+    .from{margin-top:45px;font-size:clamp(16px,4vw,21px);font-weight:850}
+    .heart{font-size:27px;margin-top:18px}
+
+    .controls{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:8;display:flex;gap:8px;opacity:0;transition:.35s}
     .viewer.playing .controls,.viewer.paused .controls{opacity:1}
-    .control-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.24);background:rgba(15,12,20,.34);backdrop-filter:blur(12px);color:white;font-size:17px}
-    .close-preview{display:none;position:absolute;right:16px;top:max(16px,env(safe-area-inset-top));z-index:8;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.25);color:white;border-radius:999px;padding:9px 13px;font-size:12px}
+    .control-btn{width:45px;height:45px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(15,12,20,.34);backdrop-filter:blur(12px);color:#fff;font-size:17px}
+    .close-preview{display:none;position:absolute;right:16px;top:max(16px,env(safe-area-inset-top));z-index:9;border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.26);color:#fff;border-radius:999px;padding:9px 13px;font-size:12px}
     .viewer.preview .close-preview{display:block}
-    .end-card{position:absolute;inset:0;z-index:4;display:grid;place-items:center;padding:28px;opacity:0;visibility:hidden;transition:1.2s ease;background:rgba(12,10,17,.20);backdrop-filter:blur(2px)}
+    .end-card{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:28px;opacity:0;visibility:hidden;transition:1.1s ease;background:rgba(12,10,17,.22);backdrop-filter:blur(2px)}
     .end-card.show{opacity:1;visibility:visible}
     .end-inner{text-align:center;text-shadow:0 2px 20px rgba(0,0,0,.42)}
-    .end-inner .small{font-size:14px;opacity:.8;margin-bottom:10px}
-    .end-inner .big{font-size:clamp(26px,7vw,46px);font-weight:900;line-height:1.35;letter-spacing:-.05em}
+    .end-inner .small{font-size:14px;opacity:.82;margin-bottom:11px}
+    .end-inner .big{font-size:clamp(27px,7vw,47px);font-weight:900;line-height:1.35;letter-spacing:-.05em}
 
     @media (max-width:760px){
       .app-shell{padding:14px}
       .grid{grid-template-columns:1fr}
       .card{padding:19px;border-radius:22px}
       .themes{grid-template-columns:repeat(2,1fr)}
-      textarea{min-height:220px}
+      textarea{min-height:230px}
+      .hero{padding-top:18px}
     }
   </style>
 </head>
@@ -108,9 +139,9 @@
   <main class="app-shell" id="editorScreen">
     <section class="editor">
       <div class="hero">
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.0</div>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.1</div>
         <h1>마음을, 천천히 전하세요.</h1>
-        <p>편지를 쓰고 배경과 음악을 고른 뒤 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
+        <p>편지를 쓰고 분위기를 고른 뒤 짧은 링크를 만들어 카카오톡으로 보내세요.<br>받는 사람은 ‘편지 열어보기’를 누르면 음악과 함께 글이 아래에서 위로 흐릅니다.</p>
       </div>
 
       <div class="grid">
@@ -118,15 +149,15 @@
           <h2>✍️ 편지 쓰기</h2>
           <div class="field">
             <label for="to">받는 사람</label>
-            <input id="to" value="소중한 당신에게" maxlength="40" placeholder="예: 경숙에게" />
+            <input id="to" value="소중한 당신에게" maxlength="40" placeholder="예: 경숙에게">
           </div>
           <div class="field">
             <label for="title">편지 제목</label>
-            <input id="title" value="당신과 함께한 시간" maxlength="60" placeholder="예: 고마운 마음을 전합니다" />
+            <input id="title" value="당신과 함께한 시간" maxlength="60" placeholder="예: 고마운 마음을 전합니다">
           </div>
           <div class="field">
             <label for="message">편지 내용</label>
-            <textarea id="message" maxlength="4000" placeholder="마음을 적어보세요.">가끔은 평범했던 날들이
+            <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요.">가끔은 평범했던 날들이
 가장 소중한 기억이었다는 것을
 시간이 지나고 나서야 알게 됩니다.
 
@@ -139,18 +170,18 @@
 
 오늘도 당신의 하루가
 따뜻하기를 바랍니다.</textarea>
-            <div class="tiny">줄바꿈도 그대로 표현됩니다. 너무 긴 편지는 자동으로 조금 더 천천히 올라갑니다.</div>
+            <div class="tiny">줄바꿈을 살려 보여줍니다. 편지가 길어지면 재생 시간도 자동으로 길어집니다.</div>
           </div>
           <div class="field">
             <label for="from">보내는 사람</label>
-            <input id="from" value="마음을 담아" maxlength="40" placeholder="예: 종민 드림" />
+            <input id="from" value="마음을 담아" maxlength="40" placeholder="예: 종민 드림">
           </div>
         </section>
 
         <aside class="card">
           <h2>🎨 분위기 고르기</h2>
           <div class="field">
-            <label>배경</label>
+            <label>배경화면</label>
             <div class="themes" id="themeList">
               <button class="theme-btn theme-night active" data-theme="night"><span>별이 빛나는 밤</span></button>
               <button class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
@@ -158,18 +189,21 @@
               <button class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
               <button class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
               <button class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
+              <button class="theme-btn theme-photo" data-theme="photo"><span>내 사진 · bg.jpg</span></button>
             </div>
+            <div class="tiny">직접 사진을 쓰려면 GitHub의 같은 폴더에 <b>bg.jpg</b>를 올리고 ‘내 사진’을 선택하세요.</div>
           </div>
 
           <div class="field">
             <label for="music">배경음악</label>
             <select id="music">
-              <option value="piano">잔잔한 피아노 느낌</option>
+              <option value="bgm">bgm.mp3 사용 (있으면 가장 좋음)</option>
+              <option value="piano" selected>잔잔한 피아노 느낌</option>
               <option value="musicbox">오르골 느낌</option>
               <option value="strings">따뜻한 스트링 느낌</option>
               <option value="none">음악 없음</option>
             </select>
-            <div class="tiny">별도 MP3 없이 브라우저가 직접 간단한 음악을 연주하므로 GitHub Pages만으로 공유됩니다.</div>
+            <div class="tiny"><b>bgm.mp3</b>를 같은 폴더에 올리면 실제 음악이 재생됩니다. 파일이 없으면 자동으로 피아노 느낌으로 대체됩니다.</div>
           </div>
 
           <div class="field">
@@ -182,46 +216,53 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-soft" id="previewBtn">▶ 미리보기</button>
-            <button class="btn btn-primary" id="makeLinkBtn">🔗 공유 링크 만들기</button>
+            <button class="btn btn-soft btn-wide" id="previewBtn">▶ 미리보기</button>
+            <button class="btn btn-primary btn-wide" id="makeLinkBtn">🔗 짧은 링크 만들기</button>
           </div>
 
           <div class="sharebox" id="shareBox">
-            <strong>편지 링크가 만들어졌습니다.</strong>
-            <div class="share-url" id="shareUrl"></div>
-            <div class="actions" style="margin-top:0">
-              <button class="btn btn-primary" id="shareBtn">💬 카카오톡으로 공유</button>
-              <button class="btn btn-soft" id="copyBtn">📋 링크 복사</button>
+            <div class="share-label">카카오톡에 보낼 주소</div>
+            <div class="short-url" id="shortUrl">-</div>
+            <div class="actions" style="margin-top:4px">
+              <button class="btn btn-primary btn-wide" id="shareBtn">💬 편지 공유하기</button>
+              <button class="btn btn-soft btn-wide" id="copyMessageBtn">📋 카톡 문구 복사</button>
             </div>
-            <div class="tiny">스마트폰의 ‘공유’ 메뉴에서 카카오톡을 선택하면 됩니다.</div>
+            <div class="status" id="shareStatus"></div>
+            <details>
+              <summary>원본 긴 주소 보기</summary>
+              <div class="long-url" id="longUrl"></div>
+            </details>
+          </div>
+
+          <div class="notice">
+            짧은 주소는 TinyURL 서비스를 이용합니다. 편지 내용은 여전히 원본 URL 안에 들어가므로 Base64는 암호화가 아닙니다. 아주 민감한 내용은 다음 단계의 저장형(ID 방식)이 더 적합합니다.
           </div>
         </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.0 · 편지 내용은 URL에 담기며 별도 서버에 저장되지 않습니다.</div>
+    <div class="footer">감성편지 1.1 · GitHub Pages + TinyURL · 별도 서버 없이 바로 테스트할 수 있는 버전</div>
   </main>
 
   <section class="viewer" id="viewer" aria-hidden="true">
     <div class="bg bg-night" id="viewerBg"></div>
-
     <button class="close-preview" id="closePreview">편집으로 돌아가기 ✕</button>
 
     <div class="open-screen" id="openScreen">
       <div class="open-card">
         <span class="envelope">💌</span>
         <h2 id="openTitle">당신에게 편지가 도착했습니다</h2>
-        <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 편지가 시작됩니다.</p>
+        <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 음악과 함께 편지가 시작됩니다.</p>
         <button class="open-btn" id="openBtn">편지 열어보기</button>
       </div>
     </div>
 
-    <div class="letter-viewport">
+    <div class="letter-viewport" id="letterViewport">
       <article class="scroll-wrap" id="scrollWrap">
-        <div class="receiver" id="vTo"></div>
-        <h1 class="letter-title" id="vTitle"></h1>
-        <div class="letter-text" id="vMessage"></div>
-        <div class="from" id="vFrom"></div>
-        <div class="heart">♡</div>
+        <div class="receiver fade-item" id="vTo"></div>
+        <h1 class="letter-title fade-item" id="vTitle"></h1>
+        <div id="vMessage"></div>
+        <div class="from fade-item" id="vFrom"></div>
+        <div class="heart fade-item">♡</div>
       </article>
     </div>
 
@@ -240,24 +281,47 @@
     </div>
   </section>
 
+  <!-- 실제 bgm.mp3가 같은 폴더에 있으면 이것을 사용하고, 없으면 Web Audio 피아노로 자동 대체 -->
+  <audio id="fileBgm" loop preload="auto" src="bgm.mp3"></audio>
+
   <script>
   (() => {
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
+
     const editorScreen = $('#editorScreen');
     const viewer = $('#viewer');
+    const viewerBg = $('#viewerBg');
     const scrollWrap = $('#scrollWrap');
     const openScreen = $('#openScreen');
     const endCard = $('#endCard');
+    const fileBgm = $('#fileBgm');
+
+    const themes = ['night','sunset','sea','forest','flower','winter','photo'];
     let theme = 'night';
+    let currentData = null;
+    let currentPreview = false;
+
+    // 스크롤 상태
+    let rafId = null;
+    let startTime = 0;
+    let elapsedBeforePause = 0;
+    let paused = false;
+    let durationMs = 45000;
+    let startY = 0;
+    let endY = 0;
+
+    // 음악 상태
     let audioCtx = null;
     let masterGain = null;
     let musicTimer = null;
     let muted = false;
-    let currentData = null;
-    let endTimer = null;
+    let usingFileBgm = false;
+    let currentSynthKind = null;
 
-    const themes = ['night','sunset','sea','forest','flower','winter'];
+    // 링크 상태
+    let latestLongUrl = '';
+    let latestShortUrl = '';
 
     $$('#themeList .theme-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -269,14 +333,14 @@
 
     function collectData(){
       return {
-        v:1,
-        to:$('#to').value.trim() || '소중한 당신에게',
-        title:$('#title').value.trim() || '마음을 전합니다',
-        message:$('#message').value.trim() || '당신의 오늘을 응원합니다.',
-        from:$('#from').value.trim() || '마음을 담아',
+        v: 2,
+        to: $('#to').value.trim() || '소중한 당신에게',
+        title: $('#title').value.trim() || '마음을 전합니다',
+        message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
+        from: $('#from').value.trim() || '마음을 담아',
         theme,
-        music:$('#music').value,
-        speed:$('#speed').value
+        music: $('#music').value,
+        speed: $('#speed').value
       };
     }
 
@@ -294,120 +358,225 @@
         const binary = atob(str);
         const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
         return JSON.parse(new TextDecoder().decode(bytes));
-      }catch(e){ return null; }
+      }catch(e){
+        return null;
+      }
     }
 
-    function makeShareUrl(data){
-      const base = location.href.split('#')[0];
-      return `${base}#letter=${encodeData(data)}`;
+    function makeLongUrl(data){
+      const url = new URL(location.href);
+      url.search = '';
+      url.hash = `letter=${encodeData(data)}`;
+      return url.toString();
     }
 
     function durationFor(data){
       const chars = data.message.length;
-      let sec = Math.max(30, Math.min(105, 30 + chars * 0.075));
-      if(data.speed === 'slow') sec *= 1.22;
+      let sec = Math.max(34, Math.min(135, 34 + chars * 0.085));
+      if(data.speed === 'slow') sec *= 1.23;
       if(data.speed === 'fast') sec *= .82;
-      return Math.round(sec);
+      return Math.round(sec * 1000);
+    }
+
+    function renderMessage(text){
+      const target = $('#vMessage');
+      target.innerHTML = '';
+      text.split('\n').forEach(line => {
+        const div = document.createElement('div');
+        div.className = 'letter-line' + (line.trim() ? '' : ' spacer');
+        div.textContent = line.trim() ? line : ' ';
+        target.appendChild(div);
+      });
     }
 
     function applyViewer(data, preview=false){
       currentData = data;
+      currentPreview = preview;
       $('#vTo').textContent = data.to;
       $('#vTitle').textContent = data.title;
-      $('#vMessage').textContent = data.message;
       $('#vFrom').textContent = data.from;
       $('#openTitle').textContent = `${data.to} · 편지가 도착했습니다`;
       $('#endSmall').textContent = data.from;
-      themes.forEach(t => $('#viewerBg').classList.remove(`bg-${t}`));
-      $('#viewerBg').classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+      renderMessage(data.message);
+
+      themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
+      viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+
       viewer.classList.toggle('preview', preview);
       viewer.classList.add('active');
       viewer.classList.remove('playing','paused');
       viewer.setAttribute('aria-hidden','false');
       openScreen.classList.remove('hidden');
       endCard.classList.remove('show');
-      clearTimeout(endTimer);
-      stopMusic();
-      scrollWrap.style.animation = 'none';
-      scrollWrap.offsetHeight;
-      const duration = durationFor(data);
-      const travel = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
-      scrollWrap.style.setProperty('--duration', duration + 's');
-      scrollWrap.style.setProperty('--end-top', (-travel) + 'px');
       $('#pauseBtn').textContent = 'Ⅱ';
       muted = false;
       $('#muteBtn').textContent = '🔊';
+
+      stopScroll();
+      stopMusic();
+      resetScrollPosition();
+    }
+
+    function resetScrollPosition(){
       requestAnimationFrame(() => {
-        const tr = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
-        scrollWrap.style.setProperty('--end-top', (-tr) + 'px');
+        const vh = window.innerHeight;
+        startY = vh + 80;
+        endY = -(scrollWrap.offsetHeight + 120);
+        scrollWrap.style.transform = `translate3d(-50%, ${startY}px, 0)`;
+        $$('.letter-line, .fade-item').forEach(line => {
+          line.style.opacity = '0';
+          line.style.transform = 'translateY(14px)';
+        });
       });
+    }
+
+    function updateLineFades(){
+      const h = window.innerHeight;
+      const fadeInStart = h * .90;
+      const fadeInEnd = h * .68;
+      const fadeOutStart = h * .18;
+      const fadeOutEnd = h * .06;
+
+      $$('.letter-line, .fade-item').forEach(line => {
+        if(line.classList.contains('spacer')){
+          line.style.opacity = '1';
+          return;
+        }
+        const rect = line.getBoundingClientRect();
+        const y = rect.top + rect.height / 2;
+        let opacity = 1;
+        if(y > fadeInEnd){
+          opacity = (fadeInStart - y) / Math.max(1, fadeInStart - fadeInEnd);
+        }else if(y < fadeOutStart){
+          opacity = (y - fadeOutEnd) / Math.max(1, fadeOutStart - fadeOutEnd);
+        }
+        opacity = Math.max(0, Math.min(1, opacity));
+        line.style.opacity = opacity.toFixed(3);
+        line.style.transform = `translateY(${((1-opacity)*14).toFixed(1)}px)`;
+      });
+    }
+
+    function scrollFrame(now){
+      if(paused) return;
+      if(!startTime) startTime = now;
+      const elapsed = elapsedBeforePause + (now - startTime);
+      const p = Math.min(1, elapsed / durationMs);
+      const eased = p; // 일정한 속도로 읽기 편하게 이동
+      const y = startY + (endY - startY) * eased;
+      scrollWrap.style.transform = `translate3d(-50%, ${y}px, 0)`;
+      updateLineFades();
+
+      if(p >= 1){
+        finishLetter();
+        return;
+      }
+      rafId = requestAnimationFrame(scrollFrame);
+    }
+
+    function startScroll(){
+      stopScroll(false);
+      durationMs = durationFor(currentData);
+      const vh = window.innerHeight;
+      startY = vh + 80;
+      endY = -(scrollWrap.offsetHeight + 120);
+      elapsedBeforePause = 0;
+      startTime = 0;
+      paused = false;
+      viewer.classList.add('playing');
+      viewer.classList.remove('paused');
+      rafId = requestAnimationFrame(scrollFrame);
+    }
+
+    function stopScroll(reset=true){
+      if(rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      if(reset){
+        startTime = 0;
+        elapsedBeforePause = 0;
+        paused = false;
+      }
+    }
+
+    function pauseResume(){
+      if(!viewer.classList.contains('playing')) return;
+      if(!paused){
+        paused = true;
+        if(rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        elapsedBeforePause += performance.now() - startTime;
+        startTime = 0;
+        viewer.classList.add('paused');
+        $('#pauseBtn').textContent = '▶';
+        pauseMusic();
+      }else{
+        paused = false;
+        viewer.classList.remove('paused');
+        $('#pauseBtn').textContent = 'Ⅱ';
+        resumeMusic();
+        rafId = requestAnimationFrame(scrollFrame);
+      }
+    }
+
+    function finishLetter(){
+      stopScroll(false);
+      stopMusic();
+      viewer.classList.remove('paused');
+      endCard.classList.add('show');
+      $('#pauseBtn').textContent = 'Ⅱ';
     }
 
     function closeViewer(){
       viewer.classList.remove('active','playing','paused','preview');
       viewer.setAttribute('aria-hidden','true');
+      stopScroll();
       stopMusic();
-      clearTimeout(endTimer);
+      endCard.classList.remove('show');
     }
 
     function startLetter(){
       if(!currentData) return;
       openScreen.classList.add('hidden');
       endCard.classList.remove('show');
-      viewer.classList.remove('paused');
-      scrollWrap.style.animation = 'none';
-      scrollWrap.offsetHeight;
-      viewer.classList.add('playing');
-      scrollWrap.style.animationPlayState = 'running';
-      scrollWrap.style.animation = '';
       startMusic(currentData.music);
-
-    }
-
-    function pauseResume(){
-      if(!viewer.classList.contains('playing')) return;
-      const paused = viewer.classList.toggle('paused');
-      scrollWrap.style.animationPlayState = paused ? 'paused' : 'running';
-      $('#pauseBtn').textContent = paused ? '▶' : 'Ⅱ';
-      if(audioCtx){ paused ? audioCtx.suspend() : audioCtx.resume(); }
+      requestAnimationFrame(() => startScroll());
     }
 
     function replay(){
+      stopScroll();
       stopMusic();
-      clearTimeout(endTimer);
       viewer.classList.remove('playing','paused');
       openScreen.classList.remove('hidden');
       endCard.classList.remove('show');
-      scrollWrap.style.animation = 'none';
-      scrollWrap.offsetHeight;
       $('#pauseBtn').textContent = 'Ⅱ';
+      resetScrollPosition();
     }
 
+    /* ===== 음악 ===== */
     function ensureAudio(){
       if(audioCtx) return;
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       masterGain = audioCtx.createGain();
-      masterGain.gain.value = .12;
+      masterGain.gain.value = .11;
       masterGain.connect(audioCtx.destination);
     }
 
-    function note(freq, start, dur, type='sine', vol=.18){
+    function note(freq, start, dur, type='sine', vol=.16){
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = type;
       osc.frequency.setValueAtTime(freq, start);
-      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.setValueAtTime(.0001, start);
       gain.gain.exponentialRampToValueAtTime(vol, start + .06);
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + dur);
       osc.connect(gain).connect(masterGain);
       osc.start(start);
       osc.stop(start + dur + .05);
     }
 
     const F = {
-      C4:261.63,D4:293.66,E4:329.63,G4:392.00,A4:440.00,B4:493.88,
-      C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880.00,
-      G3:196.00,A3:220.00,C3:130.81,E3:164.81,D3:146.83,F3:174.61
+      C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196,A3:220,
+      C4:261.63,D4:293.66,E4:329.63,G4:392,A4:440,B4:493.88,
+      C5:523.25,D5:587.33,E5:659.25,G5:783.99
     };
 
     function schedulePhrase(kind){
@@ -415,38 +584,125 @@
       const t = audioCtx.currentTime + .08;
       if(kind === 'piano'){
         const seq = [[F.C4,0],[F.E4,.8],[F.G4,1.6],[F.E4,2.4],[F.A3,3.2],[F.C4,4],[F.E4,4.8],[F.C4,5.6],[F.F3,6.4],[F.A3,7.2],[F.C4,8],[F.A3,8.8],[F.G3,9.6],[F.B4,10.4],[F.D5,11.2],[F.B4,12]];
-        seq.forEach(([f,o]) => note(f,t+o,1.4,'sine',.20));
+        seq.forEach(([f,o]) => note(f,t+o,1.4,'sine',.18));
       }else if(kind === 'musicbox'){
         const seq = [F.C5,F.E5,F.G5,F.E5,F.D5,F.G5,F.E5,F.C5,F.A4,F.C5,F.E5,F.C5];
-        seq.forEach((f,i) => note(f,t+i*.72,.75,'triangle',.12));
+        seq.forEach((f,i) => note(f,t+i*.72,.75,'triangle',.11));
       }else if(kind === 'strings'){
-        [[F.C3,F.G3,F.E4],[F.A3,F.E4,F.C5],[F.F3,F.C4,F.A4],[F.G3,F.D4,F.B4]].forEach((ch,i)=>{
-          ch.forEach(f=>note(f,t+i*3.2,3.35,'sine',.095));
+        [[F.C3,F.G3,F.E4],[F.A3,F.E4,F.C5],[F.F3,F.C4,F.A4],[F.G3,F.D4,F.B4]].forEach((ch,i) => {
+          ch.forEach(f => note(f,t+i*3.2,3.35,'sine',.085));
         });
       }
     }
 
-    function startMusic(kind){
-      if(kind === 'none') return;
+    function startSynth(kind){
       ensureAudio();
+      currentSynthKind = kind;
       audioCtx.resume();
-      masterGain.gain.value = muted ? 0 : .12;
+      masterGain.gain.value = muted ? 0 : .11;
       schedulePhrase(kind);
       const gap = kind === 'musicbox' ? 9 : 13;
-      musicTimer = setInterval(() => schedulePhrase(kind), gap*1000);
+      musicTimer = setInterval(() => schedulePhrase(kind), gap * 1000);
+    }
+
+    async function startMusic(kind){
+      if(kind === 'none') return;
+      usingFileBgm = false;
+
+      if(kind === 'bgm'){
+        try{
+          fileBgm.currentTime = 0;
+          fileBgm.muted = muted;
+          await fileBgm.play();
+          usingFileBgm = true;
+          return;
+        }catch(e){
+          // bgm.mp3가 없거나 재생 실패하면 피아노로 대체
+          startSynth('piano');
+          return;
+        }
+      }
+      startSynth(kind);
+    }
+
+    function pauseMusic(){
+      if(usingFileBgm){
+        fileBgm.pause();
+      }else if(audioCtx && audioCtx.state === 'running'){
+        if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
+        audioCtx.suspend();
+      }
+    }
+
+    function resumeMusic(){
+      if(usingFileBgm){
+        fileBgm.play().catch(()=>{});
+      }else if(audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume();
+        if(currentSynthKind){
+          schedulePhrase(currentSynthKind);
+          const gap = currentSynthKind === 'musicbox' ? 9 : 13;
+          musicTimer = setInterval(() => schedulePhrase(currentSynthKind), gap * 1000);
+        }
+      }
     }
 
     function stopMusic(){
-      if(musicTimer){ clearInterval(musicTimer); musicTimer = null; }
+      if(musicTimer){
+        clearInterval(musicTimer);
+        musicTimer = null;
+      }
+      if(usingFileBgm){
+        fileBgm.pause();
+        fileBgm.currentTime = 0;
+      }
+      usingFileBgm = false;
+      currentSynthKind = null;
       if(audioCtx && audioCtx.state === 'running') audioCtx.suspend();
     }
 
     function toggleMute(){
       muted = !muted;
       $('#muteBtn').textContent = muted ? '🔇' : '🔊';
-      if(masterGain) masterGain.gain.setTargetAtTime(muted ? 0 : .12, audioCtx.currentTime, .05);
+      fileBgm.muted = muted;
+      if(masterGain && audioCtx){
+        masterGain.gain.setTargetAtTime(muted ? 0 : .11, audioCtx.currentTime, .05);
+      }
     }
 
+    /* ===== TinyURL ===== */
+    async function shortenWithTinyUrl(longUrl){
+      if(!/^https?:$/i.test(location.protocol)){
+        throw new Error('GitHub Pages에 올린 뒤 짧은 링크를 만들 수 있습니다.');
+      }
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 9000);
+      try{
+        const endpoint = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
+        const res = await fetch(endpoint, {signal:controller.signal, mode:'cors', cache:'no-store'});
+        if(!res.ok) throw new Error(`단축 서비스 응답 오류 (${res.status})`);
+        const text = (await res.text()).trim();
+        if(!/^https:\/\/tinyurl\.com\//i.test(text)) throw new Error('짧은 주소를 받지 못했습니다.');
+        return text;
+      }finally{
+        clearTimeout(timer);
+      }
+    }
+
+    function shareMessage(data, url){
+      return `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.\n\n조용한 곳에서 천천히 열어보세요. 🍂\n${url}`;
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        return false;
+      }
+    }
+
+    /* ===== 이벤트 ===== */
     $('#previewBtn').addEventListener('click', () => applyViewer(collectData(), true));
     $('#closePreview').addEventListener('click', closeViewer);
     $('#openBtn').addEventListener('click', startLetter);
@@ -454,59 +710,83 @@
     $('#muteBtn').addEventListener('click', toggleMute);
     $('#replayBtn').addEventListener('click', replay);
 
-    $('#makeLinkBtn').addEventListener('click', () => {
+    $('#makeLinkBtn').addEventListener('click', async () => {
       const data = collectData();
-      const url = makeShareUrl(data);
-      $('#shareUrl').textContent = url;
+      const btn = $('#makeLinkBtn');
+      const status = $('#shareStatus');
+      latestLongUrl = makeLongUrl(data);
+      latestShortUrl = '';
+      $('#longUrl').textContent = latestLongUrl;
+      $('#shortUrl').textContent = '짧은 링크 만드는 중…';
       $('#shareBox').classList.add('show');
+      status.textContent = 'TinyURL에 짧은 주소를 요청하고 있습니다.';
+      btn.disabled = true;
+      btn.textContent = '⏳ 링크 생성 중…';
+
+      try{
+        latestShortUrl = await shortenWithTinyUrl(latestLongUrl);
+        $('#shortUrl').textContent = latestShortUrl;
+        status.textContent = '✅ 짧은 링크가 만들어졌습니다. 이제 카카오톡으로 보내면 됩니다.';
+      }catch(e){
+        latestShortUrl = latestLongUrl;
+        $('#shortUrl').textContent = latestLongUrl;
+        status.textContent = `⚠️ ${e.message || '단축에 실패했습니다.'} 원본 주소를 대신 표시합니다.`;
+      }finally{
+        btn.disabled = false;
+        btn.textContent = '🔗 짧은 링크 다시 만들기';
+      }
     });
 
-    $('#copyBtn').addEventListener('click', async () => {
-      const url = $('#shareUrl').textContent || makeShareUrl(collectData());
-      try{
-        await navigator.clipboard.writeText(url);
-        $('#copyBtn').textContent = '✅ 복사됨';
-        setTimeout(()=>$('#copyBtn').textContent='📋 링크 복사',1600);
-      }catch(e){
-        prompt('아래 링크를 복사하세요.', url);
+    $('#copyMessageBtn').addEventListener('click', async () => {
+      const data = collectData();
+      const url = latestShortUrl || latestLongUrl || makeLongUrl(data);
+      const msg = shareMessage(data, url);
+      const ok = await copyText(msg);
+      if(ok){
+        const b = $('#copyMessageBtn');
+        b.textContent = '✅ 카톡 문구 복사됨';
+        setTimeout(() => b.textContent = '📋 카톡 문구 복사', 1700);
+      }else{
+        prompt('아래 내용을 복사해 카카오톡으로 보내세요.', msg);
       }
     });
 
     $('#shareBtn').addEventListener('click', async () => {
       const data = collectData();
-      const url = $('#shareUrl').textContent || makeShareUrl(data);
+      const url = latestShortUrl || latestLongUrl || makeLongUrl(data);
+      const msg = shareMessage(data, url);
+
       if(navigator.share){
         try{
-          await navigator.share({title:`${data.to} 감성편지`, text:'당신에게 마음을 담은 편지가 도착했습니다. 💌', url});
-        }catch(e){}
-      }else{
-        try{ await navigator.clipboard.writeText(url); alert('링크를 복사했습니다. 카카오톡 채팅방에 붙여넣어 보내세요.'); }
-        catch(e){ prompt('아래 링크를 복사해 카카오톡으로 보내세요.', url); }
+          await navigator.share({
+            title: '마음을 담은 감성편지',
+            text: `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.`,
+            url
+          });
+          return;
+        }catch(e){
+          if(e && e.name === 'AbortError') return;
+        }
       }
+
+      const ok = await copyText(msg);
+      if(ok) alert('카카오톡 전송 문구를 복사했습니다. 카카오톡 대화창에 붙여넣어 보내세요.');
+      else prompt('아래 내용을 복사해 카카오톡으로 보내세요.', msg);
     });
 
     function loadFromHash(){
-      const m = location.hash.match(/^#letter=(.+)$/);
-      if(!m) return false;
-      const data = decodeData(m[1]);
+      const match = location.hash.match(/^#letter=(.+)$/);
+      if(!match) return false;
+      const data = decodeData(match[1]);
       if(!data || !data.message) return false;
       editorScreen.style.display = 'none';
-      applyViewer(data,false);
+      applyViewer(data, false);
       return true;
     }
 
-    scrollWrap.addEventListener('animationend', (e) => {
-      if(e.animationName !== 'floatLetter') return;
-      endCard.classList.add('show');
-      viewer.classList.remove('paused');
-      $('#pauseBtn').textContent = 'Ⅱ';
-      stopMusic();
-    });
-
     window.addEventListener('resize', () => {
-      if(currentData && viewer.classList.contains('active')){
-        const travel = Math.max(window.innerHeight + scrollWrap.scrollHeight + 220, 1400);
-        scrollWrap.style.setProperty('--end-top', (-travel) + 'px');
+      if(currentData && viewer.classList.contains('active') && !viewer.classList.contains('playing')){
+        resetScrollPosition();
       }
     });
 
