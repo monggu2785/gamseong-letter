@@ -125,6 +125,28 @@
     .btn-reset:hover{background:rgba(158,73,82,.12)}
     .btn-wide{flex:1 1 180px}
 
+    .btn-kakao{
+      width:100%;
+      background:#FEE500;
+      color:#191919;
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow:0 10px 24px rgba(93,79,0,.13);
+      padding:15px 18px;
+      font-size:16px;
+    }
+    .btn-kakao:hover{filter:brightness(.985)}
+    .send-panel{
+      margin-top:18px;
+      padding:16px;
+      border:1px solid rgba(113,81,127,.12);
+      background:rgba(255,255,255,.60);
+      border-radius:18px;
+    }
+    .send-panel-title{font-size:13px;font-weight:900;color:#514758;margin-bottom:10px}
+    .send-subactions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+    .send-subactions .btn{padding:11px 9px;font-size:12px}
+    .send-status{margin-top:10px;min-height:20px;font-size:12px;color:#6a5c6d;line-height:1.55}
+
     .sharebox{display:none;margin-top:16px;padding:17px;border:1px solid rgba(113,81,127,.16);background:rgba(255,255,255,.72);border-radius:18px}
     .send-hint{margin-top:10px;padding:11px 13px;border-radius:14px;background:rgba(113,81,127,.055);font-size:12px;color:#675a6b;line-height:1.65}
     .send-hint strong{color:#514455}
@@ -185,6 +207,7 @@
       .grid{grid-template-columns:1fr}
       .card{padding:19px;border-radius:22px}
       .themes,.music-grid{grid-template-columns:repeat(2,1fr)}
+      .send-subactions{grid-template-columns:1fr}
       textarea{min-height:230px}
       .hero{padding-top:18px}
     }
@@ -216,7 +239,7 @@
     <section class="editor">
       <div class="hero">
         <button class="back-home" id="backHomeBtn">← 처음 화면</button>
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.6.1</div>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.7</div>
         <h1>마음을, 천천히 전하세요.</h1>
         <p>받는 사람, 제목, 내용을 직접 입력한 뒤 배경화면과 배경음악을 골라 바로 보내세요.<br>미리보기를 다녀와도 작성 내용은 이 탭 안에서 안전하게 유지됩니다.</p>
       </div>
@@ -310,31 +333,28 @@
 
           <div class="actions">
             <button class="btn btn-soft btn-wide" id="previewBtn">▶ 미리보기</button>
-            <button class="btn btn-primary btn-wide" id="sendNowBtn">💌 편지 바로 보내기</button>
             <button class="btn btn-reset btn-wide" id="resetBtn">🧹 편지 내용 초기화</button>
           </div>
-          <div class="send-hint">
-            <strong>휴대폰에서는</strong> ‘편지 바로 보내기’를 누르면 기기의 공유창이 열립니다. 갤럭시에서는 카카오톡을 선택해 전송하면 됩니다. 공유 연결이 실패하면 편지 문구와 링크를 자동 복사합니다.
-          </div>
-          <div class="tiny">초기화하면 현재 화면의 받는 사람·제목·편지·보내는 사람과 임시 작성 내용이 지워집니다.</div>
 
-          <div class="sharebox" id="shareBox">
-            <div class="share-label">공유창을 사용할 수 없는 경우</div>
-            <div class="actions" style="margin-top:4px">
-              <button class="btn btn-primary btn-wide" id="shareBtn">📤 공유창 다시 열기</button>
-              <button class="btn btn-soft btn-wide" id="emailBtn">✉ 이메일로 보내기</button>
-              <button class="btn btn-soft btn-wide" id="copyLinkBtn">🔗 편지 링크 복사</button>
+          <div class="send-panel">
+            <div class="send-panel-title">💌 편지 보내기</div>
+            <button class="btn btn-kakao" id="kakaoSendBtn">카카오톡으로 보내기</button>
+            <div class="send-subactions">
+              <button class="btn btn-soft" id="emailBtn">✉ 이메일</button>
+              <button class="btn btn-soft" id="otherShareBtn">📤 기타 공유</button>
+              <button class="btn btn-soft" id="copyLinkBtn">🔗 링크 복사</button>
             </div>
-            <div class="status" id="shareStatus"></div>
+            <div class="send-status" id="sendStatus">카카오톡 버튼을 누르면 친구·채팅방 선택 화면으로 바로 연결됩니다.</div>
             <details>
-              <summary>전송용 링크 보기</summary>
+              <summary>전송용 편지 링크 보기</summary>
               <div class="long-url" id="longUrl"></div>
             </details>
           </div>
+          <div class="tiny">초기화하면 현재 화면의 받는 사람·제목·편지·보내는 사람과 임시 작성 내용이 지워집니다.</div>
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.6.1 · 소개형 시작 화면 · 6종 수채화 배경 · Suno 음악 4종 · GitHub Pages · 바로 공유</div>
+    <div class="footer">감성편지 1.7 · 카카오 공식 공유 · 6종 수채화 배경 · Suno 음악 4종 · GitHub Pages</div>
   </main>
 
   <section class="viewer" id="viewer" aria-hidden="true">
@@ -377,10 +397,15 @@
 
   <audio id="musicPlayer" loop preload="none"></audio>
 
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js" crossorigin="anonymous"></script>
+
   <script>
   (() => {
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
+
+    const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
+    const KAKAO_PREVIEW_IMAGE = 'https://monggu2785.github.io/gamseong-letter/og-preview.png';
 
     const landingScreen = $('#landingScreen');
     const editorScreen = $('#editorScreen');
@@ -437,9 +462,21 @@
     let previewingMusic = false;
 
     let latestLongUrl = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v1.6';
+    const DRAFT_KEY = 'gamseong-letter-draft-v1.7';
     let previewDraft = null;
 
+    function initKakaoSdk(){
+      try{
+        if(typeof window.Kakao === 'undefined') return false;
+        if(!window.Kakao.isInitialized()){
+          window.Kakao.init(KAKAO_JS_KEY);
+        }
+        return window.Kakao.isInitialized();
+      }catch(e){
+        console.error('Kakao SDK init error:', e);
+        return false;
+      }
+    }
 
     function draftData(){
       return {
@@ -531,7 +568,7 @@
 
     function collectData(){
       return {
-        v: 4,
+        v: 5,
         to: $('#to').value.trim() || '소중한 당신에게',
         title: $('#title').value.trim() || '마음을 전합니다',
         message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
@@ -900,7 +937,13 @@
 
     function shareMessage(data, url){
       const musicName = musicMeta[data.music]?.name || '감성 배경음악';
-      return `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.\n\n배경: ${themeLabel(data.theme)} · 음악: ${musicName}\n조용한 곳에서 천천히 열어보세요. 🍂\n${url}`;
+      return `💌 ${data.to}
+마음을 담은 편지가 도착했습니다.
+
+${data.title}
+배경: ${themeLabel(data.theme)} · 음악: ${musicName}
+조용한 곳에서 천천히 열어보세요.
+${url}`;
     }
 
     function themeLabel(t){
@@ -923,45 +966,81 @@
       return {data, url: latestLongUrl};
     }
 
-    async function openNativeShare(){
+    function setSendStatus(message){
+      $('#sendStatus').textContent = message;
+    }
+
+    function sendKakao(){
+      saveDraft();
+      stopMusic();
+      const {data, url} = buildShareUrl();
+
+      if(!/^https?:$/i.test(location.protocol)){
+        setSendStatus('⚠️ 카카오톡 공유는 GitHub Pages에 올린 뒤 테스트해 주세요.');
+        return;
+      }
+
+      if(!initKakaoSdk()){
+        setSendStatus('⚠️ 카카오 SDK를 불러오지 못했습니다. 인터넷 연결과 JavaScript SDK 도메인 설정을 확인해 주세요.');
+        return;
+      }
+
+      try{
+        window.Kakao.Share.sendDefault({
+          objectType: 'feed',
+          content: {
+            title: '💌 마음을 담은 편지가 도착했습니다',
+            description: `${data.to}\n${data.title}\n조용한 곳에서 천천히 열어보세요.`,
+            imageUrl: KAKAO_PREVIEW_IMAGE,
+            link: {
+              mobileWebUrl: url,
+              webUrl: url
+            }
+          },
+          buttons: [
+            {
+              title: '편지 열어보기',
+              link: {
+                mobileWebUrl: url,
+                webUrl: url
+              }
+            }
+          ]
+        });
+        setSendStatus('✅ 카카오톡 친구·채팅방 선택 화면을 열었습니다. 받는 사람을 선택해 전송하세요.');
+      }catch(e){
+        console.error('Kakao Share error:', e);
+        setSendStatus('⚠️ 카카오톡 공유를 열지 못했습니다. JavaScript SDK 도메인과 제품 링크 웹 도메인을 확인하거나, 이메일·기타 공유를 사용해 주세요.');
+      }
+    }
+
+    async function otherShare(){
       saveDraft();
       const {data, url} = buildShareUrl();
-      $('#shareBox').classList.add('show');
-
-      // 갤럭시/안드로이드에서 카카오톡으로 넘길 때 호환성을 높이기 위해
-      // URL을 별도 url 항목으로 보내지 않고 '문구 + 링크' 전체를 text 하나로 전달합니다.
       const fullText = shareMessage(data, url);
-      const shareData = {
-        title: '마음을 담은 감성편지',
-        text: fullText
-      };
-
-      $('#shareStatus').textContent = '휴대폰 공유창을 여는 중입니다. 카카오톡을 선택해 주세요.';
 
       if(navigator.share){
         try{
-          if(navigator.canShare && !navigator.canShare(shareData)){
-            throw new Error('이 브라우저에서 현재 공유 형식을 지원하지 않습니다.');
-          }
-          await navigator.share(shareData);
-          $('#shareStatus').textContent = '✅ 공유창으로 전달했습니다. 선택한 앱에서 보내기를 완료해 주세요.';
-          return true;
+          await navigator.share({
+            title: '마음을 담은 감성편지',
+            text: fullText
+          });
+          setSendStatus('✅ 기기의 공유창으로 전달했습니다.');
+          return;
         }catch(e){
           if(e && e.name === 'AbortError'){
-            $('#shareStatus').textContent = '공유를 취소했습니다. 편지 내용은 그대로 유지됩니다.';
-            return false;
+            setSendStatus('공유를 취소했습니다. 편지 내용은 그대로 유지됩니다.');
+            return;
           }
-          console.log('Native share failed:', e);
         }
       }
 
       const copied = await copyText(fullText);
       if(copied){
-        $('#shareStatus').textContent = '⚠️ 공유창 연결이 원활하지 않아 편지 문구와 링크를 복사했습니다. 카카오톡을 열어 붙여넣어 주세요.';
+        setSendStatus('📋 공유 문구와 링크를 복사했습니다. 원하는 앱에 붙여넣어 보내세요.');
       }else{
-        $('#shareStatus').textContent = '이 브라우저에서는 공유창을 열 수 없습니다. 아래 이메일 또는 링크 복사를 사용하세요.';
+        setSendStatus('⚠️ 이 브라우저에서는 공유창을 열 수 없습니다. 이메일 또는 링크 복사를 이용해 주세요.');
       }
-      return false;
     }
 
     $('#previewBtn').addEventListener('click', () => { saveDraft(); applyViewer(collectData(), true); });
@@ -984,8 +1063,7 @@
 
       latestLongUrl = '';
       $('#longUrl').textContent = '';
-      $('#shareStatus').textContent = '';
-      $('#shareBox').classList.remove('show');
+      $('#sendStatus').textContent = '카카오톡 버튼을 누르면 친구·채팅방 선택 화면으로 바로 연결됩니다.';
       clearDraft();
 
       closeViewer();
@@ -999,25 +1077,26 @@
     $('#muteBtn').addEventListener('click', toggleMute);
     $('#replayBtn').addEventListener('click', replay);
 
-    $('#sendNowBtn').addEventListener('click', openNativeShare);
-    $('#shareBtn').addEventListener('click', openNativeShare);
+    $('#kakaoSendBtn').addEventListener('click', sendKakao);
+    $('#otherShareBtn').addEventListener('click', otherShare);
 
     $('#emailBtn').addEventListener('click', () => {
       saveDraft();
       const {data, url} = buildShareUrl();
       const subject = `💌 ${data.to} 감성편지가 도착했습니다`;
       const body = shareMessage(data, url);
+      setSendStatus('✉️ 기본 이메일 앱을 여는 중입니다.');
       location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
 
     $('#copyLinkBtn').addEventListener('click', async () => {
       saveDraft();
-      const {data, url} = buildShareUrl();
-      const ok = await copyText(shareMessage(data, url));
+      const {url} = buildShareUrl();
+      const ok = await copyText(url);
       if(ok){
-        $('#shareStatus').textContent = '✅ 편지 전송 문구와 링크를 복사했습니다. 카카오톡이나 메시지에 붙여넣으세요.';
+        setSendStatus('✅ 편지 링크를 복사했습니다.');
       }else{
-        prompt('아래 내용을 복사해 보내세요.', shareMessage(data, url));
+        prompt('아래 편지 링크를 복사하세요.', url);
       }
     });
 
@@ -1051,6 +1130,7 @@
 
     setTheme('night');
     setMusic('night');
+    initKakaoSdk();
     if(!loadFromHash()){
       landingScreen.style.display = 'grid';
       editorScreen.style.display = 'none';
