@@ -494,6 +494,7 @@
     let previewingMusic = false;
 
     let latestLongUrl = '';
+    let latestShareSignature = '';
     const DRAFT_KEY = 'gamseong-letter-draft-v1.8';
     let previewDraft = null;
 
@@ -1360,6 +1361,7 @@ ${url}`;
       $('#speed').value = 'normal';
 
       latestLongUrl = '';
+      latestShareSignature = '';
       $('#longUrl').textContent = '';
       $('#sendStatus').textContent = '카카오톡 버튼을 누르면 편지를 기기에서 암호화한 뒤 짧은 링크로 만들어 친구·채팅방 선택 화면으로 연결합니다.';
       clearDraft();
