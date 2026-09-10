@@ -11,6 +11,17 @@
   <meta property="og:description" content="조용한 곳에서 천천히 열어보세요.">
   <meta property="og:image" content="https://monggu2785.github.io/gamseong-letter/og-preview.png">
 
+  <script>
+    // 받은 편지 링크는 첫 화면을 그리기 전에 감지해 작성 화면 깜빡임을 막습니다.
+    (() => {
+      try{
+        const hasStoredLetter = new URLSearchParams(location.search).has('id') && location.hash.startsWith('#k=');
+        const hasLegacyLetter = location.hash.startsWith('#letter=');
+        if(hasStoredLetter || hasLegacyLetter) document.documentElement.classList.add('letter-loading');
+      }catch(e){}
+    })();
+  </script>
+
   <style>
     :root{
       --ink:#2d2530;
@@ -28,6 +39,26 @@
     button{cursor:pointer}
     button:disabled{cursor:wait;opacity:.65}
 
+
+    /* ===== 받은 편지 불러오기 ===== */
+    .letter-loading-screen{
+      display:none;position:fixed;inset:0;z-index:2000;place-items:center;padding:24px;
+      background:linear-gradient(145deg,#f8f2f7 0%,#eee5ee 52%,#e4dce6 100%);
+    }
+    html.letter-loading .letter-loading-screen{display:grid}
+    html.letter-loading #landingScreen,
+    html.letter-loading #editorScreen,
+    html.letter-loading #expiredScreen,
+    html.letter-loading #viewer{display:none!important}
+    .letter-loading-card{
+      width:min(88vw,380px);text-align:center;padding:34px 24px;border-radius:28px;
+      background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.95);
+      box-shadow:0 24px 70px rgba(44,29,47,.15);
+    }
+    .letter-loading-icon{font-size:52px;display:block;animation:letterPulse 1.15s ease-in-out infinite}
+    .letter-loading-title{margin:12px 0 7px;font-size:21px;font-weight:900;letter-spacing:-.04em}
+    .letter-loading-copy{font-size:13px;line-height:1.7;color:#776e79}
+    @keyframes letterPulse{0%,100%{transform:scale(1);opacity:.78}50%{transform:scale(1.08);opacity:1}}
 
     /* ===== 시작 화면 ===== */
     .landing{
@@ -225,6 +256,14 @@
   </style>
 </head>
 <body>
+  <section class="letter-loading-screen" id="letterLoadingScreen" aria-live="polite">
+    <div class="letter-loading-card">
+      <span class="letter-loading-icon">💌</span>
+      <div class="letter-loading-title">편지를 불러오고 있습니다</div>
+      <div class="letter-loading-copy">잠시 후 받은 편지가 바로 열립니다.<br>작성 화면으로 이동하지 않습니다.</div>
+    </div>
+  </section>
+
   <section class="landing" id="landingScreen">
     <div class="landing-card">
       <span class="landing-icon">💌</span>
@@ -255,7 +294,7 @@
     <section class="editor">
       <div class="hero">
         <button class="back-home" id="backHomeBtn">← 처음 화면</button>
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.9</div>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.9.1</div>
         <h1>마음을, 천천히 전하세요.</h1>
         <p>받는 사람, 제목, 내용을 직접 입력한 뒤 배경화면과 배경음악을 골라 바로 보내세요.<br>미리보기를 다녀와도 작성 내용은 이 탭 안에서 안전하게 유지됩니다.</p>
       </div>
@@ -373,7 +412,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.9 · 암호화 임시보관 · 미열람 30일 · 최초 열람 후 7일 자동삭제 · 카카오 짧은 링크</div>
+    <div class="footer">감성편지 1.9.1 · 암호화 임시보관 · 미열람 30일 · 최초 열람 후 7일 자동삭제 · 카카오 짧은 링크</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -438,6 +477,7 @@
     // Google Apps Script 웹앱 배포 후 /exec 주소를 아래에 붙여넣으세요.
     const LETTER_API_URL = 'https://script.google.com/macros/s/AKfycbyO-ephIAYLzwjm80khq2SRF691LZfLrECNwMw6E__TuuBBBPicUiwh9E_xpuJVHkEe3A/exec';
 
+    const letterLoadingScreen = $('#letterLoadingScreen');
     const landingScreen = $('#landingScreen');
     const expiredScreen = $('#expiredScreen');
     const editorScreen = $('#editorScreen');
@@ -605,7 +645,13 @@
       try{ sessionStorage.removeItem(DRAFT_KEY); }catch(e){}
     }
 
+    function finishLetterLoading(){
+      document.documentElement.classList.remove('letter-loading');
+      if(letterLoadingScreen) letterLoadingScreen.style.display = 'none';
+    }
+
     function showLanding(){
+      finishLetterLoading();
       stopMusic();
       expiredScreen.style.display = 'none';
       landingScreen.style.display = 'grid';
@@ -616,6 +662,7 @@
     }
 
     function showEditor(){
+      finishLetterLoading();
       expiredScreen.style.display = 'none';
       landingScreen.style.display = 'none';
       editorScreen.style.display = 'block';
@@ -1425,6 +1472,7 @@ ${url}`;
 
 
     function showLetterError(message){
+      finishLetterLoading();
       landingScreen.style.display = 'none';
       editorScreen.style.display = 'none';
       viewer.classList.remove('active');
@@ -1454,6 +1502,7 @@ ${url}`;
         editorScreen.style.display = 'none';
         if(!themes.includes(data.theme)) data.theme = 'night';
         if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
+        finishLetterLoading();
         applyViewer(data, false);
         return true;
       }catch(e){
@@ -1489,6 +1538,7 @@ ${url}`;
     (async () => {
       if(await loadStoredLetter()) return;
       if(await loadLegacyHash()) return;
+      finishLetterLoading();
       expiredScreen.style.display = 'none';
       landingScreen.style.display = 'grid';
       editorScreen.style.display = 'none';
