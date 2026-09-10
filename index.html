@@ -126,6 +126,8 @@
     .btn-wide{flex:1 1 180px}
 
     .sharebox{display:none;margin-top:16px;padding:17px;border:1px solid rgba(113,81,127,.16);background:rgba(255,255,255,.72);border-radius:18px}
+    .send-hint{margin-top:10px;padding:11px 13px;border-radius:14px;background:rgba(113,81,127,.055);font-size:12px;color:#675a6b;line-height:1.65}
+    .send-hint strong{color:#514455}
     .sharebox.show{display:block}
     .share-label{font-size:12px;color:var(--muted);margin-bottom:6px}
     .short-url{font-size:17px;font-weight:900;word-break:break-all;color:#5d4169;padding:10px 0}
@@ -214,9 +216,9 @@
     <section class="editor">
       <div class="hero">
         <button class="back-home" id="backHomeBtn">← 처음 화면</button>
-        <div class="badge">💌 GitHub Pages용 · 감성편지 1.5</div>
+        <div class="badge">💌 GitHub Pages용 · 감성편지 1.6</div>
         <h1>마음을, 천천히 전하세요.</h1>
-        <p>받는 사람, 제목, 내용을 직접 입력한 뒤 배경화면과 배경음악을 골라 카카오톡으로 보내세요.<br>작성 전에는 예시 문구를 표시하지 않아 실제 편지로 오해하지 않도록 했습니다.</p>
+        <p>받는 사람, 제목, 내용을 직접 입력한 뒤 배경화면과 배경음악을 골라 바로 보내세요.<br>미리보기를 다녀와도 작성 내용은 이 탭 안에서 안전하게 유지됩니다.</p>
       </div>
 
       <div class="grid">
@@ -308,32 +310,35 @@
 
           <div class="actions">
             <button class="btn btn-soft btn-wide" id="previewBtn">▶ 미리보기</button>
-            <button class="btn btn-primary btn-wide" id="makeLinkBtn">🔗 짧은 링크 만들기</button>
+            <button class="btn btn-primary btn-wide" id="sendNowBtn">💌 편지 바로 보내기</button>
             <button class="btn btn-reset btn-wide" id="resetBtn">🧹 편지 내용 초기화</button>
           </div>
-          <div class="tiny">초기화하면 현재 화면의 받는 사람·제목·편지·보내는 사람과 생성된 링크 표시가 지워집니다.</div>
+          <div class="send-hint">
+            <strong>휴대폰에서는</strong> ‘편지 바로 보내기’를 누르면 기기의 공유창이 열립니다. 카카오톡·이메일·메시지 등 설치된 앱과, 기기에 따라 자주 연락하는 사람이 함께 보일 수 있습니다.
+          </div>
+          <div class="tiny">초기화하면 현재 화면의 받는 사람·제목·편지·보내는 사람과 임시 작성 내용이 지워집니다.</div>
 
           <div class="sharebox" id="shareBox">
-            <div class="share-label">카카오톡에 보낼 주소</div>
-            <div class="short-url" id="shortUrl">-</div>
+            <div class="share-label">공유창을 사용할 수 없는 경우</div>
             <div class="actions" style="margin-top:4px">
-              <button class="btn btn-primary btn-wide" id="shareBtn">💬 편지 공유하기</button>
-              <button class="btn btn-soft btn-wide" id="copyMessageBtn">📋 카톡 문구 복사</button>
+              <button class="btn btn-primary btn-wide" id="shareBtn">📤 공유창 다시 열기</button>
+              <button class="btn btn-soft btn-wide" id="emailBtn">✉ 이메일로 보내기</button>
+              <button class="btn btn-soft btn-wide" id="copyLinkBtn">🔗 편지 링크 복사</button>
             </div>
             <div class="status" id="shareStatus"></div>
             <details>
-              <summary>원본 긴 주소 보기</summary>
+              <summary>전송용 링크 보기</summary>
               <div class="long-url" id="longUrl"></div>
             </details>
           </div>
 
           <div class="notice">
-            이 버전은 <b>배경 6종 + 실제 Suno MP3 4종</b>을 지원합니다. 편지 내용은 URL의 <b>#letter</b> 뒤에 담겨 전달되므로 서버에 저장되지 않지만, Base64는 암호화가 아닙니다. 민감한 내용은 주의해 주세요.
+            <b>1.6에서는 TinyURL을 사용하지 않습니다.</b> 그래서 상대방이 단축 사이트를 거치지 않고 바로 감성편지를 엽니다. 편지 내용은 URL의 <b>#letter</b> 뒤에 담기며 서버나 데이터베이스에 저장하지 않습니다. 미리보기용 임시 보관은 현재 브라우저 탭의 <b>sessionStorage</b>에만 저장되고 초기화하거나 탭을 닫으면 사라집니다. Base64는 암호화가 아닙니다.
           </div>
         </aside>
       </div>
     </section>
-    <div class="footer">감성편지 1.5 · 소개형 시작 화면 · 6종 수채화 배경 · Suno 음악 4종 · GitHub Pages + TinyURL</div>
+    <div class="footer">감성편지 1.6 · 소개형 시작 화면 · 6종 수채화 배경 · Suno 음악 4종 · GitHub Pages · 바로 공유</div>
   </main>
 
   <section class="viewer" id="viewer" aria-hidden="true">
@@ -436,8 +441,48 @@
     let previewingMusic = false;
 
     let latestLongUrl = '';
-    let latestShortUrl = '';
+    const DRAFT_KEY = 'gamseong-letter-draft-v1.6';
+    let previewDraft = null;
 
+
+    function draftData(){
+      return {
+        to: $('#to').value,
+        title: $('#title').value,
+        message: $('#message').value,
+        from: $('#from').value,
+        theme,
+        music: selectedMusic,
+        speed: $('#speed').value
+      };
+    }
+
+    function saveDraft(){
+      const draft = draftData();
+      previewDraft = draft;
+      try{ sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); }catch(e){}
+      return draft;
+    }
+
+    function restoreDraft(){
+      let draft = previewDraft;
+      if(!draft){
+        try{ draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null'); }catch(e){}
+      }
+      if(!draft) return;
+      $('#to').value = draft.to ?? '';
+      $('#title').value = draft.title ?? '';
+      $('#message').value = draft.message ?? '';
+      $('#from').value = draft.from ?? '';
+      setTheme(draft.theme || 'night');
+      setMusic(draft.music || 'night');
+      $('#speed').value = draft.speed || 'normal';
+    }
+
+    function clearDraft(){
+      previewDraft = null;
+      try{ sessionStorage.removeItem(DRAFT_KEY); }catch(e){}
+    }
 
     function showLanding(){
       stopMusic();
@@ -451,6 +496,7 @@
     function showEditor(){
       landingScreen.style.display = 'none';
       editorScreen.style.display = 'block';
+      restoreDraft();
       window.scrollTo({top:0, behavior:'smooth'});
       setTimeout(() => $('#to').focus(), 120);
     }
@@ -681,11 +727,18 @@
     }
 
     function closeViewer(){
+      const wasPreview = currentPreview || viewer.classList.contains('preview');
       viewer.classList.remove('active','playing','paused','preview');
       viewer.setAttribute('aria-hidden','true');
       stopScroll();
       stopMusic();
       endCard.classList.remove('show');
+      if(wasPreview){
+        landingScreen.style.display = 'none';
+        editorScreen.style.display = 'block';
+        restoreDraft();
+        currentPreview = false;
+      }
     }
 
     function startLetter(){
@@ -849,24 +902,6 @@
     $('#previewMusicBtn').addEventListener('click', previewMusicSelection);
     $('#stopMusicPreviewBtn').addEventListener('click', stopMusic);
 
-    async function shortenWithTinyUrl(longUrl){
-      if(!/^https?:$/i.test(location.protocol)){
-        throw new Error('GitHub Pages에 올린 뒤 짧은 링크를 만들 수 있습니다.');
-      }
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 9000);
-      try{
-        const endpoint = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
-        const res = await fetch(endpoint, {signal:controller.signal, mode:'cors', cache:'no-store'});
-        if(!res.ok) throw new Error(`단축 서비스 응답 오류 (${res.status})`);
-        const text = (await res.text()).trim();
-        if(!/^https:\/\/tinyurl\.com\//i.test(text)) throw new Error('짧은 주소를 받지 못했습니다.');
-        return text;
-      }finally{
-        clearTimeout(timer);
-      }
-    }
-
     function shareMessage(data, url){
       const musicName = musicMeta[data.music]?.name || '감성 배경음악';
       return `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.\n\n배경: ${themeLabel(data.theme)} · 음악: ${musicName}\n조용한 곳에서 천천히 열어보세요. 🍂\n${url}`;
@@ -885,7 +920,41 @@
       }
     }
 
-    $('#previewBtn').addEventListener('click', () => applyViewer(collectData(), true));
+    function buildShareUrl(){
+      const data = collectData();
+      latestLongUrl = makeLongUrl(data);
+      $('#longUrl').textContent = latestLongUrl;
+      return {data, url: latestLongUrl};
+    }
+
+    async function openNativeShare(){
+      saveDraft();
+      const {data, url} = buildShareUrl();
+      $('#shareBox').classList.add('show');
+      $('#shareStatus').textContent = '공유할 앱이나 사람을 선택하세요.';
+
+      if(navigator.share){
+        try{
+          await navigator.share({
+            title: '마음을 담은 감성편지',
+            text: `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.`,
+            url
+          });
+          $('#shareStatus').textContent = '✅ 공유창으로 편지를 전달했습니다.';
+          return true;
+        }catch(e){
+          if(e && e.name === 'AbortError'){
+            $('#shareStatus').textContent = '공유를 취소했습니다. 편지 내용은 그대로 유지됩니다.';
+            return false;
+          }
+        }
+      }
+
+      $('#shareStatus').textContent = '이 브라우저에서는 바로 공유창을 열 수 없습니다. 아래 이메일 또는 링크 복사를 사용하세요.';
+      return false;
+    }
+
+    $('#previewBtn').addEventListener('click', () => { saveDraft(); applyViewer(collectData(), true); });
 
     $('#resetBtn').addEventListener('click', () => {
       const ok = confirm(
@@ -904,12 +973,10 @@
       $('#speed').value = 'normal';
 
       latestLongUrl = '';
-      latestShortUrl = '';
-      $('#shortUrl').textContent = '-';
       $('#longUrl').textContent = '';
       $('#shareStatus').textContent = '';
       $('#shareBox').classList.remove('show');
-      $('#makeLinkBtn').textContent = '🔗 짧은 링크 만들기';
+      clearDraft();
 
       closeViewer();
       try{ history.replaceState(null, '', location.pathname); }catch(e){}
@@ -922,68 +989,35 @@
     $('#muteBtn').addEventListener('click', toggleMute);
     $('#replayBtn').addEventListener('click', replay);
 
-    $('#makeLinkBtn').addEventListener('click', async () => {
-      const data = collectData();
-      const btn = $('#makeLinkBtn');
-      const status = $('#shareStatus');
-      latestLongUrl = makeLongUrl(data);
-      latestShortUrl = '';
-      $('#longUrl').textContent = latestLongUrl;
-      $('#shortUrl').textContent = '짧은 링크 만드는 중…';
-      $('#shareBox').classList.add('show');
-      status.textContent = 'TinyURL에 짧은 주소를 요청하고 있습니다.';
-      btn.disabled = true;
-      btn.textContent = '⏳ 링크 생성 중…';
+    $('#sendNowBtn').addEventListener('click', openNativeShare);
+    $('#shareBtn').addEventListener('click', openNativeShare);
 
-      try{
-        latestShortUrl = await shortenWithTinyUrl(latestLongUrl);
-        $('#shortUrl').textContent = latestShortUrl;
-        status.textContent = '✅ 짧은 링크가 만들어졌습니다. 이제 카카오톡으로 보내면 됩니다.';
-      }catch(e){
-        latestShortUrl = latestLongUrl;
-        $('#shortUrl').textContent = latestLongUrl;
-        status.textContent = `⚠️ ${e.message || '단축에 실패했습니다.'} 원본 주소를 대신 표시합니다.`;
-      }finally{
-        btn.disabled = false;
-        btn.textContent = '🔗 짧은 링크 다시 만들기';
-      }
+    $('#emailBtn').addEventListener('click', () => {
+      saveDraft();
+      const {data, url} = buildShareUrl();
+      const subject = `💌 ${data.to} 감성편지가 도착했습니다`;
+      const body = shareMessage(data, url);
+      location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
 
-    $('#copyMessageBtn').addEventListener('click', async () => {
-      const data = collectData();
-      const url = latestShortUrl || latestLongUrl || makeLongUrl(data);
-      const msg = shareMessage(data, url);
-      const ok = await copyText(msg);
+    $('#copyLinkBtn').addEventListener('click', async () => {
+      saveDraft();
+      const {data, url} = buildShareUrl();
+      const ok = await copyText(shareMessage(data, url));
       if(ok){
-        const b = $('#copyMessageBtn');
-        b.textContent = '✅ 카톡 문구 복사됨';
-        setTimeout(() => b.textContent = '📋 카톡 문구 복사', 1700);
+        $('#shareStatus').textContent = '✅ 편지 전송 문구와 링크를 복사했습니다. 카카오톡이나 메시지에 붙여넣으세요.';
       }else{
-        prompt('아래 내용을 복사해 카카오톡으로 보내세요.', msg);
+        prompt('아래 내용을 복사해 보내세요.', shareMessage(data, url));
       }
     });
 
-    $('#shareBtn').addEventListener('click', async () => {
-      const data = collectData();
-      const url = latestShortUrl || latestLongUrl || makeLongUrl(data);
-      const msg = shareMessage(data, url);
-
-      if(navigator.share){
-        try{
-          await navigator.share({
-            title: '마음을 담은 감성편지',
-            text: `💌 ${data.to}\n마음을 담은 편지가 도착했습니다.`,
-            url
-          });
-          return;
-        }catch(e){
-          if(e && e.name === 'AbortError') return;
-        }
-      }
-
-      const ok = await copyText(msg);
-      if(ok) alert('카카오톡 전송 문구를 복사했습니다. 카카오톡 대화창에 붙여넣어 보내세요.');
-      else prompt('아래 내용을 복사해 카카오톡으로 보내세요.', msg);
+    ['#to','#title','#message','#from','#speed'].forEach(sel => {
+      $(sel).addEventListener('input', saveDraft);
+      $(sel).addEventListener('change', saveDraft);
+    });
+    $$('#themeList .theme-btn, #musicList .music-btn').forEach(btn => btn.addEventListener('click', saveDraft));
+    window.addEventListener('beforeunload', () => {
+      if(editorScreen.style.display !== 'none') saveDraft();
     });
 
     function loadFromHash(){
