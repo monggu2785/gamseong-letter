@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.0.3 · 카카오 수신자 홈 화면 추가 흐름 개선 -->
+  <!-- 감성편지 2.0.4 · 카카오 공유 안정성 검사 + 긴 편지 임시보관소 연동 준비 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -412,7 +412,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.0.3 · 카카오 수신자 홈 화면 바로가기 안내 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 2.0.4 · 홈 화면 바로가기 안내 · 카카오 공유 안정성 검사 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -503,6 +503,9 @@
     const KAKAO_APP_SHARE_IMAGE = 'https://monggu2785.github.io/gamseong-letter/app-share-preview.png';
     // Google Apps Script 웹앱 배포 후 /exec 주소를 아래에 붙여넣으세요.
     const LETTER_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+    // 임시보관소 연결 전, 카카오에 직접 넣는 압축 URL의 보수적 안전 상한입니다.
+    // 이 값은 카카오의 공식 보장치가 아니라 실제 오류를 줄이기 위한 앱 내부 안전장치입니다.
+    const KAKAO_FALLBACK_URL_LIMIT = 1400;
 
     const landingScreen = $('#landingScreen');
     const expiredScreen = $('#expiredScreen');
@@ -800,7 +803,7 @@
 
     function collectData(){
       return {
-        v: 20,
+        v: 204,
         to: $('#to').value.trim() || '소중한 당신에게',
         title: $('#title').value.trim() || '마음을 전합니다',
         message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
@@ -1409,10 +1412,10 @@ ${url}`;
       latestShareSignature = signature;
       $('#longUrl').textContent = latestLongUrl;
 
-      if(latestLongUrl.length > 3500){
-        throw new Error('이 편지는 공유 주소가 너무 깁니다. 긴 편지를 보내려면 Google Apps Script 임시 보관소를 먼저 연결해 주세요.');
+      if(latestLongUrl.length > KAKAO_FALLBACK_URL_LIMIT){
+        throw new Error(`이 편지는 압축 후 공유 주소가 ${latestLongUrl.length}자로 길어 카카오톡에서 요청 실패가 날 가능성이 큽니다. Google Apps Script 임시 보관소를 연결하면 글자 수와 관계없이 짧은 암호화 링크로 보낼 수 있습니다.`);
       }
-      return {data, url:latestLongUrl, reused:false, mode:'compressed-link'};
+      return {data, url:latestLongUrl, reused:false, mode:'compressed-link', urlLength:latestLongUrl.length};
     }
 
     function setSendStatus(message){
@@ -1423,7 +1426,7 @@ ${url}`;
     async function sendKakao(){
       saveDraft();
       stopMusic();
-      setSendStatus('⏳ 편지를 이 기기에서 암호화해 짧은 링크를 만드는 중입니다.');
+      setSendStatus(apiConfigured() ? '⏳ 편지를 이 기기에서 암호화해 짧은 링크를 만드는 중입니다.' : '⏳ 압축 후 카카오 공유 주소 길이를 확인하는 중입니다.');
       let built;
       try{
         built = await buildShareUrl();
@@ -1460,7 +1463,7 @@ ${url}`;
           },
           buttonTitle: '💌 편지 열어보기'
         });
-        setSendStatus(built.mode === 'encrypted-store' ? `✅ ${data.message.length}자 편지를 암호화해 짧은 링크로 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.` : `✅ 편지 링크를 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.`);
+        setSendStatus(built.mode === 'encrypted-store' ? `✅ ${data.message.length}자 편지를 암호화해 짧은 링크로 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.` : `✅ 압축 공유 주소 ${url.length}자입니다. 카카오톡에서 받는 사람을 선택해 주세요.`);
       }catch(e){
         console.error('Kakao Share error:', e);
         setSendStatus('⚠️ 카카오톡 공유를 열지 못했습니다. 이메일·기타 공유를 사용해 주세요.');
@@ -1578,20 +1581,63 @@ ${url}`;
       }
     });
 
+    let shareReadinessTimer = null;
+    let shareReadinessSeq = 0;
+
     function updateCharCount(){
       const count = $('#message').value.length;
       $('#charCount').textContent = count;
-      $('#compressionNote').textContent = count >= 600 ? '긴 편지 · 전송 시 자동 압축·암호화' : '전송 시 자동 암호화';
     }
 
-    $('#message').addEventListener('input', updateCharCount);
+    function scheduleShareReadinessCheck(){
+      clearTimeout(shareReadinessTimer);
+      shareReadinessTimer = setTimeout(updateShareReadiness, 280);
+    }
+
+    async function updateShareReadiness(){
+      const note = $('#compressionNote');
+      if(!note) return;
+
+      if(apiConfigured()){
+        note.textContent = '🔒 암호화 임시보관 · 최대 5000자';
+        return;
+      }
+
+      const seq = ++shareReadinessSeq;
+      note.textContent = '공유 주소 계산 중…';
+      try{
+        const data = collectData();
+        const encoded = await encodeData(data);
+        const url = new URL(location.href);
+        url.search = '';
+        url.hash = `letter=${encoded.payload}`;
+        const len = url.toString().length;
+        if(seq !== shareReadinessSeq) return;
+
+        if(len <= 900){
+          note.textContent = `✅ 직접 공유 여유 · 링크 ${len}자`;
+        }else if(len <= KAKAO_FALLBACK_URL_LIMIT){
+          note.textContent = `△ 직접 공유 범위 · 링크 ${len}자`;
+        }else{
+          note.textContent = `⚠️ 링크 ${len}자 · 임시보관소 연결 필요`;
+        }
+      }catch(e){
+        if(seq === shareReadinessSeq) note.textContent = '공유 주소 확인 불가';
+      }
+    }
+
+    $('#message').addEventListener('input', () => {
+      updateCharCount();
+      scheduleShareReadinessCheck();
+    });
     updateCharCount();
+    scheduleShareReadinessCheck();
 
     ['#to','#title','#message','#from','#speed'].forEach(sel => {
-      $(sel).addEventListener('input', saveDraft);
-      $(sel).addEventListener('change', saveDraft);
+      $(sel).addEventListener('input', () => { saveDraft(); scheduleShareReadinessCheck(); });
+      $(sel).addEventListener('change', () => { saveDraft(); scheduleShareReadinessCheck(); });
     });
-    $$('#themeList .theme-btn, #musicList .music-btn').forEach(btn => btn.addEventListener('click', saveDraft));
+    $$('#themeList .theme-btn, #musicList .music-btn').forEach(btn => btn.addEventListener('click', () => { saveDraft(); scheduleShareReadinessCheck(); }));
     window.addEventListener('beforeunload', () => {
       if(editorScreen.style.display !== 'none') saveDraft();
     });
