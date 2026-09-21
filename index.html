@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.1.3 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.1.4 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -474,7 +474,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.1.3 · 업로드 사진 유지 보강 · 중간화면 레이아웃 개선 · 가독성 강화</div>
+    <div class="footer">감성편지 2.1.4 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -638,7 +638,7 @@
 
     let latestLongUrl = '';
     let latestShareSignature = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.3';
+    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.4';
     let previewDraft = null;
 
 
@@ -834,7 +834,14 @@
       $('#from').value = draft.from ?? '';
       setTheme(draft.theme || 'night', {keepBgMode:true});
       setMusic(draft.music || 'night');
-      setBgMode('preset');
+      // 미리보기에서 돌아왔을 때 사용자가 선택한 내 사진 배경을 유지합니다.
+      // 사진 Blob은 현재 탭의 메모리에 남아 있으므로, 같은 세션에서는 그대로 복원할 수 있습니다.
+      if(draft.bgMode === 'photo' && customBgBlob){
+        setBgMode('photo');
+        showPhotoPreview();
+      }else{
+        setBgMode('preset');
+      }
       $('#speed').value = draft.speed || 'normal';
     }
 
