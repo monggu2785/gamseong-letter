@@ -233,8 +233,20 @@
     .photo-desc{margin-top:4px;font-size:10.5px;color:var(--muted);line-height:1.5}
     .photo-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
     .theme-btn.dimmed{opacity:.52;filter:saturate(.8)}
-    .viewer-bg.photo-fit{background-size:contain;background-position:center center;background-repeat:no-repeat}
-    .viewer-bg.photo-fit::before{content:"";position:absolute;inset:0;background:inherit;filter:blur(18px) brightness(.78);transform:scale(1.12);z-index:-1}
+    /* 사용자 사진: 실제 사진은 선명하게, 남는 여백에만 약한 확장 배경을 사용 */
+    .viewer-bg.photo-fit{
+      background-size:cover;background-position:center center;background-repeat:no-repeat;
+      filter:blur(10px) brightness(.64);transform:scale(1.07)
+    }
+    .viewer.playing .viewer-bg.photo-fit{transform:scale(1.10)}
+    .viewer-photo-image{
+      display:block;position:absolute;inset:0;z-index:1;width:100%;height:100%;
+      object-fit:contain;object-position:center center;opacity:0;visibility:hidden;
+      transition:opacity .28s ease;pointer-events:none
+    }
+    .viewer-photo-image.show{opacity:1;visibility:visible}
+    .viewer.photo-custom .viewport{background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.10))}
+    .viewer.photo-custom .scroll-wrap{text-shadow:0 2px 4px rgba(0,0,0,.78),0 5px 18px rgba(0,0,0,.46)}
 
     .photo-load-status{display:none;margin-top:12px;font-size:11px;line-height:1.55;color:rgba(255,255,255,.78)}
     .photo-load-status.show{display:block}
@@ -259,7 +271,7 @@
       <span class="mark">💌</span>
       <h1>감성편지</h1>
       <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 내 사진도 배경으로 올린 뒤 카카오톡으로 전할 수 있습니다.</p>
-      <span class="version">3.0 · 3단계 수정1</span>
+      <span class="version">3.0 · 3단계 수정2 수정1</span>
     </header>
 
     <div class="layout">
@@ -317,7 +329,7 @@
               <button type="button" class="upload-btn" id="usePresetBtn">🖼 기본 배경 사용</button>
               <input type="file" id="photoInput" accept="image/*" hidden>
             </div>
-            <div class="upload-help">내 사진을 올리면 자동으로 압축해 배경으로 사용합니다. 사진이 있는 편지는 안전하게 암호화한 뒤 임시보관소를 통해 전달합니다.</div>
+            <div class="upload-help">내 사진은 화면용으로 선명도를 유지하면서 약 1080px·저용량 JPEG로 자동 최적화합니다. 사진 편지는 임시보관소를 통해 전달합니다.</div>
             <div class="photo-card" id="photoCard">
               <div class="photo-thumb"><img id="photoThumb" alt="업로드한 배경 사진 미리보기"></div>
               <div class="photo-meta">
@@ -395,7 +407,7 @@
       </aside>
     </div>
 
-    <div class="footer">감성편지 3.0 · 3단계 수정1 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 3.0 · 3단계 수정2 수정1 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="letter-loading" id="letterLoading" aria-live="polite">
@@ -418,6 +430,7 @@
 
   <section class="viewer" id="viewer" aria-hidden="true">
     <div class="viewer-bg bg-night" id="viewerBg"></div>
+    <img class="viewer-photo-image" id="viewerPhotoImage" alt="편지 배경사진">
     <button class="close-preview" id="closePreview">편집으로 돌아가기 ✕</button>
 
     <div class="open-screen" id="openScreen">
@@ -538,6 +551,7 @@
     const errorScreen = $('#errorScreen');
     const viewer = $('#viewer');
     const viewerBg = $('#viewerBg');
+    const viewerPhotoImage = $('#viewerPhotoImage');
     const scrollWrap = $('#scrollWrap');
     const openScreen = $('#openScreen');
     const endScreen = $('#endScreen');
@@ -574,7 +588,7 @@
       const details = [];
       if(customPhoto.width && customPhoto.height) details.push(`${customPhoto.width}×${customPhoto.height}`);
       if(customPhoto.size) details.push(formatSize(customPhoto.size));
-      $('#photoDesc').textContent = `자동 압축 완료${details.length ? ' · ' + details.join(' · ') : ''}`;
+      $('#photoDesc').textContent = `빠른 전송용 최적화 완료${details.length ? ' · ' + details.join(' · ') : ''}`;
     }
 
     function updateBackgroundSummary(){
@@ -626,24 +640,45 @@
       const objectUrl = URL.createObjectURL(file);
       try{
         const img = await loadImageFromUrl(objectUrl);
-        const maxSide = 1280;
-        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
-        const width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
-        const height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d', {alpha:false});
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0,0,width,height);
-        ctx.drawImage(img, 0, 0, width, height);
+        const sourceW = img.naturalWidth || img.width;
+        const sourceH = img.naturalHeight || img.height;
 
-        let quality = 0.78;
-        let dataUrl = await canvasToDataUrl(canvas, quality);
-        while(dataUrl.length > 850000 && quality > 0.50){
-          quality -= 0.07;
-          dataUrl = await canvasToDataUrl(canvas, quality);
+        // 스마트폰 화면 배경용: 1080px이면 충분히 선명하면서 전송량을 크게 줄일 수 있습니다.
+        let maxSide = 1080;
+        let scale = Math.min(1, maxSide / Math.max(sourceW, sourceH));
+        let width = Math.max(1, Math.round(sourceW * scale));
+        let height = Math.max(1, Math.round(sourceH * scale));
+
+        const render = (w,h,q) => {
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d', {alpha:false});
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0,0,w,h);
+          ctx.drawImage(img,0,0,w,h);
+          return canvas.toDataURL('image/jpeg',q);
+        };
+
+        // Base64 약 320KB 이하(실제 JPEG 약 240KB 전후)를 목표로 합니다.
+        const targetChars = 320000;
+        let quality = 0.74;
+        let dataUrl = render(width,height,quality);
+        while(dataUrl.length > targetChars && quality > 0.50){
+          quality -= 0.06;
+          dataUrl = render(width,height,quality);
         }
+
+        // 복잡한 사진은 품질을 지나치게 낮추지 않고 해상도를 한 번 줄입니다.
+        if(dataUrl.length > targetChars){
+          const shrink = Math.min(0.88, 900 / Math.max(width,height));
+          width = Math.max(1, Math.round(width * shrink));
+          height = Math.max(1, Math.round(height * shrink));
+          quality = 0.62;
+          dataUrl = render(width,height,quality);
+        }
+
         return {
           dataUrl,
           width,
@@ -714,14 +749,27 @@
       themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
       viewerBg.classList.remove('photo-fit');
       viewerBg.style.backgroundImage = '';
+      viewer.classList.remove('photo-custom');
+      viewerPhotoImage.classList.remove('show');
+      viewerPhotoImage.removeAttribute('src');
 
       const status = $('#photoLoadStatus');
       if(data.bgMode === 'custom'){
+        viewer.classList.add('photo-custom');
         if(data.photoUrl){
+          // 뒤쪽은 여백 채움용으로만 약하게 흐리고, 실제 사진은 img 레이어로 선명하게 표시합니다.
           viewerBg.classList.add('photo-fit');
           viewerBg.style.backgroundImage = `url(${JSON.stringify(data.photoUrl)})`;
-          status.classList.remove('show');
-          status.textContent = '';
+          viewerPhotoImage.onload = () => {
+            viewerPhotoImage.classList.add('show');
+            status.classList.remove('show');
+            status.textContent = '';
+          };
+          viewerPhotoImage.onerror = () => {
+            status.textContent = '배경사진을 표시하지 못했습니다.';
+            status.classList.add('show');
+          };
+          viewerPhotoImage.src = data.photoUrl;
         }else{
           viewerBg.style.backgroundImage = 'radial-gradient(circle at 50% 35%, #493b50 0%, #261f2c 48%, #17121c 100%)';
           status.textContent = '📷 배경사진을 준비하고 있어요…';
@@ -1093,7 +1141,7 @@
     }
 
     async function fetchStoredPhoto(id){
-      return await jsonpRequest({action:'getImage',id},18000);
+      return await jsonpRequest({action:'getImage',id},12000);
     }
 
     function makeStoredUrl(id,keyToken){
@@ -1170,7 +1218,7 @@
         return;
       }
 
-      const imageUrl = built.data.bgMode === 'custom' ? (APP_URL + 'app-share-preview.png') : (APP_URL + themeFile(built.data.theme));
+      const imageUrl = built.data.bgMode === 'custom' ? (APP_URL + 'bg-night.jpg') : (APP_URL + themeFile(built.data.theme));
       try{
         Kakao.Share.sendDefault({
           objectType:'feed',
@@ -1186,7 +1234,7 @@
         });
         $('#sendStatus').textContent = (built.mode==='stored' || built.mode==='stored-photo')
           ? (built.mode==='stored-photo'
-              ? '✅ 내 사진 배경과 편지를 안전하게 암호화해 보냅니다. 카카오톡에서 받는 사람을 선택해 주세요.'
+              ? '✅ 편지는 암호화하고 배경사진은 임시보관소에 함께 저장했습니다. 카카오톡에서 받는 사람을 선택해 주세요.'
               : '✅ 긴 편지를 암호화해 짧은 링크로 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.')
           : '✅ 서버 저장 없이 바로 공유합니다. 카카오톡에서 받는 사람을 선택해 주세요.';
       }catch(e){
@@ -1226,6 +1274,8 @@
       }
 
       try{
+        // 사진 요청도 동시에 시작하여 편지 본문을 받은 뒤 기다리는 시간을 줄입니다.
+        const earlyPhotoPromise = fetchStoredPhoto(id).catch(() => null);
         const result=await fetchEncrypted(id);
         if(result?.status==='expired'){
           showError('이 편지는 보관 기간이 지나 자동 삭제되었습니다.');
@@ -1246,7 +1296,7 @@
         applyViewer(data,'received');
 
         if(data.bgMode === 'custom' && result.hasImage){
-          fetchStoredPhoto(id).then(photo => {
+          earlyPhotoPromise.then(photo => {
             if(photo?.status === 'ok' && photo.imageBase64 && photo.mime){
               data.photoUrl = `data:${photo.mime};base64,${photo.imageBase64}`;
               if(currentData === data) applyViewerBackground(data);
