@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.0.6 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.1 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -148,6 +148,19 @@
     .theme-flower{background:url('bg-flower.jpg') center/cover no-repeat}
     .theme-winter{background:url('bg-winter.jpg') center/cover no-repeat}
     .theme-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.32));pointer-events:none}
+    .section-block{padding:16px;border:1px solid rgba(113,81,127,.12);background:rgba(255,255,255,.58);border-radius:22px;margin-bottom:16px}
+    .section-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:12px}
+    .section-head h3{margin:0;font-size:18px;color:#3e3344}
+    .section-head p{margin:5px 0 0;font-size:12px;line-height:1.65;color:#6a5d70}
+    .selection-summary{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(113,81,127,.14);background:rgba(255,255,255,.85);font-size:12px;font-weight:800;color:#5a4d61;white-space:nowrap}
+    .photo-upload-box{margin-top:12px;padding:14px;border:1px dashed rgba(113,81,127,.24);border-radius:18px;background:rgba(255,255,255,.82)}
+    .photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .photo-preview{display:none;align-items:center;gap:12px;margin-top:12px;padding:10px 12px;border-radius:16px;background:rgba(113,81,127,.05);border:1px solid rgba(113,81,127,.10)}
+    .photo-thumb{width:72px;height:72px;border-radius:14px;background:#ece8ef center/cover no-repeat;border:1px solid rgba(113,81,127,.14);flex:0 0 auto}
+    .photo-meta{font-size:12px;color:#665a6b;line-height:1.65}
+    .photo-meta b{display:block;color:#473a4e;margin-bottom:2px}
+    .bg-custom{background-position:center;background-size:cover;background-repeat:no-repeat}
+
 
     .music-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
     .music-btn{padding:14px 12px 12px;text-align:left;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;color:#433949}
@@ -256,6 +269,8 @@
       .grid{grid-template-columns:1fr}
       .card{padding:19px;border-radius:22px}
       .themes,.music-grid{grid-template-columns:repeat(2,1fr)}
+      .section-head{flex-direction:column;align-items:flex-start}
+      .selection-summary{white-space:normal}
       .send-subactions{grid-template-columns:1fr}
       textarea{min-height:230px}
       .hero{padding-top:18px}
@@ -323,59 +338,90 @@
         </section>
 
         <aside class="card">
-          <h2>🎨 분위기 고르기</h2>
-          <div class="field">
-            <label>배경화면</label>
-            <div class="themes" id="themeList">
-              <button type="button" class="theme-btn theme-night active" data-theme="night" aria-label="별이 빛나는 밤 배경 선택"><span>별이 빛나는 밤</span></button>
-              <button type="button" class="theme-btn theme-sunset" data-theme="sunset" aria-label="노을 배경 선택"><span>노을</span></button>
-              <button type="button" class="theme-btn theme-sea" data-theme="sea" aria-label="바다 배경 선택"><span>바다</span></button>
-              <button type="button" class="theme-btn theme-forest" data-theme="forest" aria-label="숲 배경 선택"><span>숲</span></button>
-              <button type="button" class="theme-btn theme-flower" data-theme="flower" aria-label="꽃길 배경 선택"><span>꽃길</span></button>
-              <button type="button" class="theme-btn theme-winter" data-theme="winter" aria-label="겨울 배경 선택"><span>겨울</span></button>
+          <h2>🪄 배경과 음악 선택</h2>
+          <div class="section-block">
+            <div class="section-head">
+              <div>
+                <h3>🖼 배경화면 선택</h3>
+                <p>먼저 편지의 배경을 골라 주세요. 배경화면은 <b>눈으로 보고</b> 고릅니다.</p>
+              </div>
+              <div class="selection-summary" id="bgSummary">현재 배경: 별이 빛나는 밤</div>
             </div>
-            <div class="tiny">GitHub에 <b>index.html과 같은 폴더</b>에 아래 6개 배경 이미지를 함께 올리면 자동으로 표시됩니다.</div>
+            <div class="field">
+              <label>기본 배경 6종</label>
+              <div class="themes" id="themeList">
+                <button type="button" class="theme-btn theme-night active" data-theme="night" aria-label="별이 빛나는 밤 배경 선택"><span>별이 빛나는 밤</span></button>
+                <button type="button" class="theme-btn theme-sunset" data-theme="sunset" aria-label="노을 배경 선택"><span>노을</span></button>
+                <button type="button" class="theme-btn theme-sea" data-theme="sea" aria-label="바다 배경 선택"><span>바다</span></button>
+                <button type="button" class="theme-btn theme-forest" data-theme="forest" aria-label="숲 배경 선택"><span>숲</span></button>
+                <button type="button" class="theme-btn theme-flower" data-theme="flower" aria-label="꽃길 배경 선택"><span>꽃길</span></button>
+                <button type="button" class="theme-btn theme-winter" data-theme="winter" aria-label="겨울 배경 선택"><span>겨울</span></button>
+              </div>
+              <div class="tiny">GitHub에 <b>index.html과 같은 폴더</b>에 아래 6개 배경 이미지를 함께 올리면 자동으로 표시됩니다.</div>
+            </div>
+            <div class="photo-upload-box">
+              <label for="customBgInput">내 사진 사용</label>
+              <div class="tiny">원본 사진은 이 기기에서 먼저 축소·압축합니다. 받는 사람도 이 사진을 보려면 긴 편지용 임시보관소가 연결되어 있어야 합니다.</div>
+              <input id="customBgInput" type="file" accept="image/*" hidden>
+              <div class="photo-actions">
+                <button type="button" class="chip" id="choosePhotoBtn">📷 내 사진 업로드</button>
+                <button type="button" class="chip" id="usePresetBgBtn">🖼 기본 배경 사용</button>
+              </div>
+              <div class="photo-preview" id="photoPreviewBox">
+                <div class="photo-thumb" id="photoThumb"></div>
+                <div class="photo-meta" id="photoMeta"></div>
+              </div>
+            </div>
           </div>
 
-          <div class="field">
-            <label>배경음악</label>
-            <div class="music-grid" id="musicList">
-              <button type="button" class="music-btn active" data-music="night">
-                <div>
-                  <div class="music-icon">🌌</div>
-                  <div class="music-name">별빛 편지</div>
-                  <div class="music-desc">잔잔한 밤하늘 느낌의 피아노 · 파일명 <b>bgm-night.mp3</b></div>
-                </div>
-              </button>
-              <button type="button" class="music-btn" data-music="sunset">
-                <div>
-                  <div class="music-icon">🌅</div>
-                  <div class="music-name">따뜻한 오후의 편지</div>
-                  <div class="music-desc">노을·꽃길에 어울리는 기타+피아노 · 파일명 <b>bgm-sunset.mp3</b></div>
-                </div>
-              </button>
-              <button type="button" class="music-btn" data-music="sea">
-                <div>
-                  <div class="music-icon">🌊</div>
-                  <div class="music-name">파도처럼 머무는 마음</div>
-                  <div class="music-desc">바다에 어울리는 고요한 감성 · 파일명 <b>bgm-sea.mp3</b></div>
-                </div>
-              </button>
-              <button type="button" class="music-btn" data-music="calm">
-                <div>
-                  <div class="music-icon">🌲</div>
-                  <div class="music-name">고요한 마음</div>
-                  <div class="music-desc">숲·겨울에 어울리는 미니멀 피아노 · 파일명 <b>bgm-calm.mp3</b></div>
-                </div>
-              </button>
+          <div class="section-block">
+            <div class="section-head">
+              <div>
+                <h3>🎵 배경음악 선택</h3>
+                <p>이제 편지와 함께 흐를 음악을 골라 주세요. 배경음악은 <b>들어 보고</b> 고릅니다.</p>
+              </div>
+              <div class="selection-summary" id="musicSummary">현재 음악: 별빛 편지</div>
             </div>
-            <div class="music-actions">
-              <button type="button" class="chip" id="recommendMusicBtn">✨ 배경에 맞는 음악 추천 선택</button>
-              <button type="button" class="chip" id="previewMusicBtn">▶ 음악 미리듣기</button>
-              <button type="button" class="chip" id="stopMusicPreviewBtn">■ 미리듣기 멈춤</button>
-              <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이 보내기</button>
+            <div class="field">
+              <label>배경음악</label>
+              <div class="music-grid" id="musicList">
+                <button type="button" class="music-btn active" data-music="night">
+                  <div>
+                    <div class="music-icon">🌌</div>
+                    <div class="music-name">별빛 편지</div>
+                    <div class="music-desc">잔잔한 밤하늘 느낌의 피아노 · 파일명 <b>bgm-night.mp3</b></div>
+                  </div>
+                </button>
+                <button type="button" class="music-btn" data-music="sunset">
+                  <div>
+                    <div class="music-icon">🌅</div>
+                    <div class="music-name">따뜻한 오후의 편지</div>
+                    <div class="music-desc">노을·꽃길에 어울리는 기타+피아노 · 파일명 <b>bgm-sunset.mp3</b></div>
+                  </div>
+                </button>
+                <button type="button" class="music-btn" data-music="sea">
+                  <div>
+                    <div class="music-icon">🌊</div>
+                    <div class="music-name">파도처럼 머무는 마음</div>
+                    <div class="music-desc">바다에 어울리는 고요한 감성 · 파일명 <b>bgm-sea.mp3</b></div>
+                  </div>
+                </button>
+                <button type="button" class="music-btn" data-music="calm">
+                  <div>
+                    <div class="music-icon">🌲</div>
+                    <div class="music-name">고요한 마음</div>
+                    <div class="music-desc">숲·겨울에 어울리는 미니멀 피아노 · 파일명 <b>bgm-calm.mp3</b></div>
+                  </div>
+                </button>
+              </div>
+              <div class="music-actions">
+                <button type="button" class="chip" id="recommendMusicBtn">✨ 배경에 맞는 음악 추천 선택</button>
+                <button type="button" class="chip" id="previewMusicBtn">▶ 음악 미리듣기</button>
+                <button type="button" class="chip" id="stopMusicPreviewBtn">■ 미리듣기 멈춤</button>
+                <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이 보내기</button>
+              </div>
+              <div class="tiny">Suno에서 만든 MP3 파일을 아래 파일명으로 GitHub에 올리면 됩니다. 파일이 없으면 앱이 비슷한 분위기의 간단한 내장음으로 자동 대체합니다.</div>
             </div>
-            <div class="tiny">Suno에서 만든 MP3 파일을 아래 파일명으로 GitHub에 올리면 됩니다. 파일이 없으면 앱이 비슷한 분위기의 간단한 내장음으로 자동 대체합니다.</div>
           </div>
 
           <div class="field">
@@ -412,7 +458,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.0.6 · 모바일/PC 분리 공유 · 홈 화면 바로가기 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 2.1 · 모바일/PC 분리 공유 · 홈 화면 바로가기 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -545,6 +591,12 @@
     };
 
     let theme = 'night';
+    let bgMode = 'preset';
+    let customBgBlob = null;
+    let customBgPreviewUrl = '';
+    let customBgName = '';
+    let customBgMime = '';
+    let customBgSize = 0;
     let selectedMusic = 'night';
     let currentData = null;
     let currentPreview = false;
@@ -567,7 +619,7 @@
 
     let latestLongUrl = '';
     let latestShareSignature = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v1.8';
+    const DRAFT_KEY = 'gamseong-letter-draft-v2.1';
     let previewDraft = null;
 
 
@@ -721,6 +773,10 @@
       }
     }
 
+    function currentBgSignature(){
+      return bgMode === 'photo' && customBgBlob ? `photo:${customBgName}:${customBgSize}` : `preset:${theme}`;
+    }
+
     function draftData(){
       return {
         to: $('#to').value,
@@ -728,6 +784,8 @@
         message: $('#message').value,
         from: $('#from').value,
         theme,
+        bgMode,
+        bgSig: currentBgSignature(),
         music: selectedMusic,
         speed: $('#speed').value
       };
@@ -755,8 +813,9 @@
       $('#title').value = draft.title ?? '';
       $('#message').value = draft.message ?? '';
       $('#from').value = draft.from ?? '';
-      setTheme(draft.theme || 'night');
+      setTheme(draft.theme || 'night', {keepBgMode:true});
       setMusic(draft.music || 'night');
+      setBgMode('preset');
       $('#speed').value = draft.speed || 'normal';
     }
 
@@ -789,15 +848,123 @@
     $('#backHomeBtn').addEventListener('click', showLanding);
     $('#goHomeFromError').addEventListener('click', showLanding);
 
-    function setTheme(next){
+    function formatBytes(bytes){
+      if(!bytes) return '0KB';
+      if(bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
+      return Math.max(1, Math.round(bytes / 1024)) + 'KB';
+    }
+
+    function updateBgSummary(){
+      const label = (bgMode === 'photo' && customBgBlob) ? `내 사진 · ${customBgName || '사용자 배경'}` : themeLabel(theme);
+      $('#bgSummary').textContent = `현재 배경: ${label}`;
+      $('#usePresetBgBtn').classList.toggle('active', bgMode === 'preset');
+      $('#choosePhotoBtn').classList.toggle('active', bgMode === 'photo' && !!customBgBlob);
+    }
+
+    function updateMusicSummary(){
+      $('#musicSummary').textContent = `현재 음악: ${musicMeta[selectedMusic]?.name || '음악 없음'}`;
+    }
+
+    function setBgMode(next){
+      bgMode = (next === 'photo' && customBgBlob) ? 'photo' : 'preset';
+      updateBgSummary();
+    }
+
+    function showPhotoPreview(){
+      const box = $('#photoPreviewBox');
+      if(!customBgBlob || !customBgPreviewUrl){
+        box.style.display = 'none';
+        $('#photoThumb').style.backgroundImage = '';
+        $('#photoMeta').innerHTML = '';
+        $('#choosePhotoBtn').textContent = '📷 내 사진 업로드';
+        updateBgSummary();
+        return;
+      }
+      box.style.display = 'flex';
+      $('#photoThumb').style.backgroundImage = `url("${customBgPreviewUrl}")`;
+      $('#photoMeta').innerHTML = `<b>${customBgName || '내 사진 배경'}</b>전송용 최적화 ${formatBytes(customBgSize)} · 받는 사람도 이 사진을 배경으로 보게 됩니다.`;
+      $('#choosePhotoBtn').textContent = '📷 다른 사진으로 바꾸기';
+      updateBgSummary();
+    }
+
+    function clearCustomBg(keepFile=false){
+      if(!keepFile){
+        if(customBgPreviewUrl && customBgPreviewUrl.startsWith('blob:')){
+          try{ URL.revokeObjectURL(customBgPreviewUrl); }catch(e){}
+        }
+        customBgBlob = null;
+        customBgPreviewUrl = '';
+        customBgName = '';
+        customBgMime = '';
+        customBgSize = 0;
+        $('#customBgInput').value = '';
+      }
+      setBgMode('preset');
+      showPhotoPreview();
+      scheduleShareReadinessCheck();
+    }
+
+    async function optimizeImageFile(file){
+      const srcUrl = URL.createObjectURL(file);
+      try{
+        const img = await new Promise((resolve, reject) => {
+          const el = new Image();
+          el.onload = () => resolve(el);
+          el.onerror = () => reject(new Error('이미지를 불러오지 못했습니다.'));
+          el.src = srcUrl;
+        });
+        const maxSide = 1600;
+        const ratio = Math.min(1, maxSide / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+        const width = Math.max(1, Math.round((img.naturalWidth || img.width) * ratio));
+        const height = Math.max(1, Math.round((img.naturalHeight || img.height) * ratio));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        let quality = .82;
+        let blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+        if(blob && blob.size > 650 * 1024){
+          quality = .72;
+          blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+        }
+        if(!blob) throw new Error('이미지 최적화에 실패했습니다.');
+        return blob;
+      } finally {
+        URL.revokeObjectURL(srcUrl);
+      }
+    }
+
+    async function handleCustomBgFile(file){
+      if(!file) return;
+      if(!/^image\//i.test(file.type || '')) throw new Error('이미지 파일만 사용할 수 있습니다.');
+      const optimized = await optimizeImageFile(file);
+      if(customBgPreviewUrl && customBgPreviewUrl.startsWith('blob:')){
+        try{ URL.revokeObjectURL(customBgPreviewUrl); }catch(e){}
+      }
+      customBgBlob = optimized;
+      customBgPreviewUrl = URL.createObjectURL(optimized);
+      customBgName = file.name || 'my-photo.jpg';
+      customBgMime = optimized.type || 'image/jpeg';
+      customBgSize = optimized.size || 0;
+      setBgMode('photo');
+      showPhotoPreview();
+      saveDraft();
+      scheduleShareReadinessCheck();
+    }
+
+    function setTheme(next, options={}){
       theme = themes.includes(next) ? next : 'night';
       $$('#themeList .theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+      if(!options.keepBgMode) bgMode = 'preset';
+      updateBgSummary();
     }
 
     function setMusic(next){
       selectedMusic = musicKinds.includes(next) ? next : 'night';
       $$('#musicList .music-btn').forEach(b => b.classList.toggle('active', b.dataset.music === selectedMusic));
       $('#noMusicBtn').classList.toggle('active', selectedMusic === 'none');
+      updateMusicSummary();
     }
 
     $$('#themeList .theme-btn').forEach(btn => {
@@ -806,6 +973,19 @@
 
     $$('#musicList .music-btn').forEach(btn => {
       btn.addEventListener('click', () => setMusic(btn.dataset.music));
+    });
+
+    $('#choosePhotoBtn').addEventListener('click', () => $('#customBgInput').click());
+    $('#usePresetBgBtn').addEventListener('click', () => clearCustomBg(true));
+    $('#customBgInput').addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      try{
+        await handleCustomBgFile(file);
+      }catch(err){
+        console.error(err);
+        setSendStatus(`⚠️ ${err.message || '사진을 준비하지 못했습니다.'}`);
+      }
     });
 
     $('#recommendMusicBtn').addEventListener('click', () => {
@@ -818,17 +998,23 @@
       setMusic('none');
     });
 
-    function collectData(){
-      return {
-        v: 204,
+    function collectData(options={includePreviewAssets:true}){
+      const data = {
+        v: 210,
         to: $('#to').value.trim() || '소중한 당신에게',
         title: $('#title').value.trim() || '마음을 전합니다',
         message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
         from: $('#from').value.trim() || '마음을 담아',
         theme,
+        bgMode,
         music: selectedMusic,
         speed: $('#speed').value
       };
+      if(options.includePreviewAssets && bgMode === 'photo' && customBgPreviewUrl){
+        data.customBgUrl = customBgPreviewUrl;
+        data.customBgName = customBgName || '내 사진';
+      }
+      return data;
     }
 
     function bytesToBase64Url(bytes){
@@ -1009,12 +1195,30 @@
       });
     }
 
-    async function saveEncryptedLetter(id, cipherBlob){
+    function blobToBase64(blob){
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = String(reader.result || '');
+          const idx = result.indexOf(',');
+          resolve(idx >= 0 ? result.slice(idx + 1) : result);
+        };
+        reader.onerror = () => reject(new Error('사진을 읽지 못했습니다.'));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function saveEncryptedLetter(id, cipherBlob, imagePayload=null){
       if(!apiConfigured()) throw new Error('Apps Script 웹앱 주소를 index.html의 LETTER_API_URL에 설정해 주세요.');
       const form = new URLSearchParams();
       form.set('action', 'save');
       form.set('id', id);
       form.set('cipher', cipherBlob);
+      if(imagePayload){
+        form.set('imageData', imagePayload.base64);
+        form.set('imageMime', imagePayload.mime || 'image/jpeg');
+        form.set('imageName', imagePayload.name || 'letter-bg.jpg');
+      }
       await fetch(LETTER_API_URL, {
         method:'POST',
         mode:'no-cors',
@@ -1022,15 +1226,14 @@
         body:form.toString(),
         cache:'no-store'
       });
-      // no-cors POST 응답은 읽을 수 없으므로 JSONP로 저장 여부만 확인
-      for(let i=0;i<4;i++){
-        await new Promise(r => setTimeout(r, 350 + i*250));
+      for(let i=0;i<5;i++){
+        await new Promise(r => setTimeout(r, 450 + i*280));
         try{
-          const check = await jsonpRequest({action:'exists', id}, 5000);
-          if(check && check.status === 'ok') return true;
+          const check = await jsonpRequest({action:'exists', id}, 6000);
+          if(check && check.status === 'ok' && (!imagePayload || check.hasImage)) return true;
         }catch(e){}
       }
-      throw new Error('암호화 편지를 임시 보관소에 저장하지 못했습니다.');
+      throw new Error(imagePayload ? '편지 또는 배경사진을 임시 보관소에 저장하지 못했습니다.' : '암호화 편지를 임시 보관소에 저장하지 못했습니다.');
     }
 
     async function fetchEncryptedLetter(id){
@@ -1076,7 +1279,14 @@
       renderMessage(data.message);
 
       themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
-      viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+      viewerBg.classList.remove('bg-custom');
+      viewerBg.style.backgroundImage = '';
+      if(data.bgMode === 'photo' && data.customBgUrl){
+        viewerBg.classList.add('bg-custom');
+        viewerBg.style.backgroundImage = `url("${data.customBgUrl}")`;
+      }else{
+        viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+      }
 
       viewer.classList.toggle('preview', preview);
       viewer.classList.add('active');
@@ -1378,11 +1588,12 @@
 
     function shareMessage(data, url){
       const musicName = musicMeta[data.music]?.name || '감성 배경음악';
+      const bgName = data.bgMode === 'photo' ? '내 사진 배경' : themeLabel(data.theme);
       return `💌 ${data.to}
 마음을 담은 편지가 도착했습니다.
 
 ${data.title}
-배경: ${themeLabel(data.theme)} · 음악: ${musicName}
+배경: ${bgName} · 음악: ${musicName}
 조용한 곳에서 천천히 열어보세요.
 ${url}`;
     }
@@ -1402,11 +1613,20 @@ ${url}`;
 
 
     async function buildShareUrl(){
-      const data = collectData();
-      const signature = JSON.stringify(data);
+      const data = collectData({includePreviewAssets:false});
+      const signature = JSON.stringify({...data, bgSig: currentBgSignature()});
       if(signature === latestShareSignature && latestLongUrl){
         $('#longUrl').textContent = latestLongUrl;
         return {data, url:latestLongUrl, reused:true, mode:'cached'};
+      }
+
+      const usingPhotoBg = data.bgMode === 'photo';
+
+      if(usingPhotoBg && !customBgBlob){
+        throw new Error('배경으로 사용할 사진을 먼저 선택해 주세요.');
+      }
+      if(usingPhotoBg && !apiConfigured()){
+        throw new Error('내 사진 배경은 Google Apps Script 임시보관소가 연결된 상태에서만 보낼 수 있습니다.');
       }
 
       // 먼저 서버 저장 없이 쓸 수 있는 압축 URL의 실제 길이를 계산합니다.
@@ -1417,26 +1637,32 @@ ${url}`;
       const directUrl = directUrlObj.toString();
       const safeLimit = kakaoDirectSafeLimit();
 
-      // 짧고 안전한 편지는 기존처럼 URL 자체에 담아 보냅니다.
-      // 이 경우 Google Sheet에 아무 것도 저장하지 않습니다.
-      if(directUrl.length <= safeLimit){
+      if(!usingPhotoBg && directUrl.length <= safeLimit){
         latestLongUrl = directUrl;
         latestShareSignature = signature;
         $('#longUrl').textContent = latestLongUrl;
         return {data, url:latestLongUrl, reused:false, mode:'compressed-link', urlLength:latestLongUrl.length};
       }
 
-      // 안전선을 넘는 편지는 임시보관소가 연결되어 있으면 자동으로 암호화하여 짧은 링크로 바꿉니다.
       if(apiConfigured()){
         const id = randomId();
         const encrypted = await encryptLetter(data);
-        await saveEncryptedLetter(id, encrypted.cipherBlob);
+        let imagePayload = null;
+        if(usingPhotoBg && customBgBlob){
+          imagePayload = {
+            base64: await blobToBase64(customBgBlob),
+            mime: customBgMime || 'image/jpeg',
+            name: customBgName || 'letter-bg.jpg'
+          };
+        }
+        await saveEncryptedLetter(id, encrypted.cipherBlob, imagePayload);
         latestLongUrl = makeShortLetterUrl(id, encrypted.keyToken);
         latestShareSignature = signature;
         $('#longUrl').textContent = latestLongUrl;
         return {
-          data, url:latestLongUrl, reused:false, mode:'encrypted-store',
-          originalUrlLength:directUrl.length
+          data, url:latestLongUrl, reused:false, mode: usingPhotoBg ? 'encrypted-store-photo' : 'encrypted-store',
+          originalUrlLength:directUrl.length,
+          imageSize: customBgSize || 0
         };
       }
 
@@ -1500,8 +1726,9 @@ ${url}`;
           },
           buttonTitle: '💌 편지 열어보기'
         });
-        if(built.mode === 'encrypted-store'){
-          setSendStatus(`✅ ${data.message.length}자 편지를 이 기기에서 암호화해 짧은 링크로 바꿨습니다. 카카오톡에서 받는 사람을 선택해 주세요.`);
+        if(built.mode === 'encrypted-store' || built.mode === 'encrypted-store-photo'){
+          const photoMsg = built.mode === 'encrypted-store-photo' ? ` 배경사진(${formatBytes(built.imageSize || 0)})도 함께 최적화해 저장했습니다.` : '';
+          setSendStatus(`✅ ${data.message.length}자 편지를 이 기기에서 암호화해 짧은 링크로 바꿨습니다.${photoMsg} 카카오톡에서 받는 사람을 선택해 주세요.`);
         }else{
           setSendStatus(`✅ ${deviceLabel}용 직접 공유 주소 ${url.length}자입니다. 카카오톡에서 받는 사람을 선택해 주세요.`);
         }
@@ -1561,6 +1788,7 @@ ${url}`;
       $('#message').value = '';
       $('#from').value = '';
       setTheme('night');
+      clearCustomBg();
       setMusic('night');
       $('#speed').value = 'normal';
 
@@ -1644,7 +1872,17 @@ ${url}`;
       const deviceLabel = mobile ? '모바일' : 'PC';
       note.textContent = '공유 주소 계산 중…';
       try{
-        const data = collectData();
+        if(bgMode === 'photo'){
+          if(!customBgBlob){
+            note.textContent = '📷 사진을 고르면 전송용으로 자동 최적화합니다.';
+          }else if(apiConfigured()){
+            note.textContent = `📷 내 사진 배경 · ${formatBytes(customBgSize)} 최적화 · 전송 시 짧은 링크`;
+          }else{
+            note.textContent = '⚠️ 내 사진 배경은 임시보관소 연결 후 사용할 수 있습니다.';
+          }
+          return;
+        }
+        const data = collectData({includePreviewAssets:false});
         const encoded = await encodeData(data);
         const url = new URL(location.href);
         url.search = '';
@@ -1713,6 +1951,8 @@ ${url}`;
         editorScreen.style.display = 'none';
         if(!themes.includes(data.theme)) data.theme = 'night';
         if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
+        if(data.bgMode !== 'photo') data.bgMode = 'preset';
+        if(result.imageBase64 && result.imageMime && data.bgMode === 'photo') data.customBgUrl = `data:${result.imageMime};base64,${result.imageBase64}`;
         applyViewer(data, false);
         return true;
       }catch(e){
@@ -1732,6 +1972,7 @@ ${url}`;
       editorScreen.style.display = 'none';
       if(!themes.includes(data.theme)) data.theme = 'night';
       if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
+      if(data.bgMode !== 'photo') data.bgMode = 'preset';
       applyViewer(data, false);
       return true;
     }
@@ -1744,6 +1985,9 @@ ${url}`;
 
     setTheme('night');
     setMusic('night');
+    showPhotoPreview();
+    updateBgSummary();
+    updateMusicSummary();
     initKakaoSdk();
 
     /* ===== Service Worker / 자동 업데이트 ===== */
