@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.1.4 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.1.5 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -216,8 +216,8 @@
     .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:#fff;overflow:hidden}
     .viewer.active{display:block}
     .bg{position:absolute;inset:-3%;transform:scale(1.02);transition:transform 16s ease;z-index:0;background:#17121f}
-    .bg-photo-frame{position:absolute;inset:20px;z-index:1;display:none;align-items:center;justify-content:center;pointer-events:none}
-    .bg-photo-frame.show{display:flex}
+    .bg-photo-frame{position:absolute;inset:20px;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s ease}
+    .bg-photo-frame.show{opacity:1;visibility:visible}
     .bg-photo-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center;filter:drop-shadow(0 20px 50px rgba(0,0,0,.28));user-select:none;-webkit-user-drag:none}
     .viewer.photo-mode .letter-viewport{background:linear-gradient(180deg,rgba(7,6,12,.18),rgba(7,6,12,.30))}
     .viewer.photo-mode .open-screen{background:rgba(12,10,17,.34);backdrop-filter:blur(3px)}
@@ -225,6 +225,10 @@
     .viewer.photo-mode .scroll-wrap{padding:clamp(24px,3.8vw,40px) clamp(18px,4vw,34px) clamp(34px,4.6vw,52px);background:linear-gradient(180deg,rgba(21,16,28,.32),rgba(12,9,18,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);border-radius:32px;box-shadow:0 24px 70px rgba(0,0,0,.22)}
     .viewer.photo-mode .receiver,.viewer.photo-mode .letter-title,.viewer.photo-mode .letter-line,.viewer.photo-mode .from,.viewer.photo-mode .heart{text-shadow:0 4px 22px rgba(0,0,0,.55)}
     .viewer.photo-mode .letter-line{font-weight:600;line-height:2.0}
+    .viewer.photo-pending .bg{background:radial-gradient(circle at 50% 35%,#3e3446 0%,#231d29 48%,#151119 100%)!important;background-image:none!important}
+    .viewer.photo-pending .open-photo-status{display:block}
+    .open-photo-status{display:none;margin-top:10px;font-size:11px;color:rgba(255,255,255,.72)}
+
     .viewer.playing .bg{transform:scale(1.10)}
     .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.10) 35%,rgba(0,0,0,.38) 100%)}
     .bg-night{background:url('bg-night.jpg') center/cover no-repeat}
@@ -293,7 +297,29 @@
 
   </style>
 </head>
+<script>
+  (function(){
+    try{
+      var u = new URL(location.href);
+      var incomingStored = !!u.searchParams.get('id') && /^#k=/.test(location.hash);
+      var incomingLegacy = /^#letter=/.test(location.hash);
+      if(incomingStored || incomingLegacy){
+        document.documentElement.classList.add('incoming-letter');
+      }
+    }catch(e){}
+  })();
+</script>
+
 <body>
+  <section class="letter-loading" id="letterLoadingScreen" aria-live="polite">
+    <div class="loading-card">
+      <span class="loading-envelope">💌</span>
+      <h2>편지를 불러오는 중입니다</h2>
+      <p>소중한 편지를 준비하고 있어요.<br>잠시만 기다려 주세요.</p>
+      <div class="loading-dots"><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
   <section class="landing" id="landingScreen">
     <div class="landing-card">
       <span class="landing-icon">💌</span>
@@ -474,7 +500,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.1.4 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
+    <div class="footer">감성편지 2.1.5 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -497,6 +523,7 @@
         <h2 id="openTitle">당신에게 편지가 도착했습니다</h2>
         <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 음악과 함께 편지가 시작됩니다.</p>
         <button class="open-btn" id="openBtn">💌 편지 열어보기</button>
+        <div class="open-photo-status" id="openPhotoStatus">📷 배경사진을 준비하고 있어요…</div>
       </div>
     </div>
 
@@ -574,6 +601,7 @@
     const KAKAO_DESKTOP_FALLBACK_LIMIT = 1800;
 
     const landingScreen = $('#landingScreen');
+    const letterLoadingScreen = $('#letterLoadingScreen');
     const expiredScreen = $('#expiredScreen');
     const editorScreen = $('#editorScreen');
     const viewer = $('#viewer');
@@ -638,7 +666,7 @@
 
     let latestLongUrl = '';
     let latestShareSignature = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.4';
+    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.5';
     let previewDraft = null;
 
 
@@ -939,7 +967,7 @@
           el.onerror = () => reject(new Error('이미지를 불러오지 못했습니다.'));
           el.src = srcUrl;
         });
-        const maxSide = 1280;
+        const maxSide = 1120;
         let ratio = Math.min(1, maxSide / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
         let width = Math.max(1, Math.round((img.naturalWidth || img.width) * ratio));
         let height = Math.max(1, Math.round((img.naturalHeight || img.height) * ratio));
@@ -955,13 +983,13 @@
         }
 
         let blob = await renderAsBlob(width, height, .78);
-        if(blob && blob.size > 480 * 1024){
-          blob = await renderAsBlob(width, height, .66);
+        if(blob && blob.size > 280 * 1024){
+          blob = await renderAsBlob(width, height, .60);
         }
-        if(blob && blob.size > 360 * 1024){
-          width = Math.max(1, Math.round(width * 0.88));
-          height = Math.max(1, Math.round(height * 0.88));
-          blob = await renderAsBlob(width, height, .64);
+        if(blob && blob.size > 320 * 1024){
+          width = Math.max(1, Math.round(width * 0.86));
+          height = Math.max(1, Math.round(height * 0.86));
+          blob = await renderAsBlob(width, height, .58);
         }
         if(!blob) throw new Error('이미지 최적화에 실패했습니다.');
         return blob;
@@ -1275,6 +1303,10 @@
       return await jsonpRequest({action:'get', id}, 12000);
     }
 
+    async function fetchStoredImage(id){
+      return await jsonpRequest({action:'getImage', id}, 16000);
+    }
+
     function makeShortLetterUrl(id, keyToken){
       const url = new URL(location.href);
       url.search = '';
@@ -1311,23 +1343,29 @@
       viewerPhotoFrame.classList.remove('show');
       viewerPhotoImage.removeAttribute('src');
 
-      if(data && data.bgMode === 'photo' && data.customBgUrl){
-        viewer.classList.add('photo-mode');
-        viewerBg.classList.add('bg-custom');
-        viewerBg.style.backgroundImage =
-          `linear-gradient(180deg, rgba(10,8,16,.28), rgba(10,8,16,.42)), url("${data.customBgUrl}")`;
+      viewer.classList.remove('photo-pending');
 
-        viewerPhotoImage.onerror = () => {
-          console.warn('사용자 배경사진 표시 실패 - 기본 배경으로 전환');
-          viewer.classList.remove('photo-mode');
-          viewerPhotoFrame.classList.remove('show');
-          viewerBg.classList.remove('bg-custom');
-          viewerBg.style.backgroundImage = '';
-          viewerBg.classList.add('bg-night');
-        };
+      if(data && data.bgMode === 'photo'){
+        if(data.customBgUrl){
+          viewer.classList.add('photo-mode');
+          viewerBg.classList.add('bg-custom');
+          viewerBg.style.backgroundImage =
+            `linear-gradient(180deg, rgba(10,8,16,.28), rgba(10,8,16,.42)), url("${data.customBgUrl}")`;
 
-        viewerPhotoImage.src = data.customBgUrl;
-        viewerPhotoFrame.classList.add('show');
+          viewerPhotoImage.onerror = () => {
+            console.warn('사용자 배경사진 표시 실패 - 중립 배경으로 전환');
+            viewer.classList.remove('photo-mode');
+            viewerPhotoFrame.classList.remove('show');
+            viewerBg.classList.remove('bg-custom');
+            viewerBg.style.backgroundImage = '';
+            viewer.classList.add('photo-pending');
+          };
+
+          viewerPhotoImage.src = data.customBgUrl;
+          viewerPhotoFrame.classList.add('show');
+        }else{
+          viewer.classList.add('photo-pending');
+        }
         return;
       }
 
@@ -1980,7 +2018,24 @@ ${url}`;
     });
 
 
+    function showLetterLoading(message='편지를 불러오는 중입니다'){
+      if(letterLoadingScreen){
+        const h2 = letterLoadingScreen.querySelector('h2');
+        if(h2) h2.textContent = message;
+        letterLoadingScreen.classList.add('show');
+      }
+      landingScreen.style.display = 'none';
+      editorScreen.style.display = 'none';
+      expiredScreen.style.display = 'none';
+    }
+
+    function hideLetterLoading(){
+      if(letterLoadingScreen) letterLoadingScreen.classList.remove('show');
+      document.documentElement.classList.remove('incoming-letter');
+    }
+
     function showLetterError(message){
+      hideLetterLoading();
       landingScreen.style.display = 'none';
       editorScreen.style.display = 'none';
       viewer.classList.remove('active');
@@ -1992,27 +2047,52 @@ ${url}`;
       const id = new URL(location.href).searchParams.get('id');
       const keyMatch = location.hash.match(/^#k=(.+)$/);
       if(!id || !keyMatch) return false;
+
+      showLetterLoading();
+
       if(!apiConfigured()){
         showLetterError('편지 보관소 연결이 아직 설정되지 않았습니다.');
         return true;
       }
+
       try{
+        // 1단계: 편지 본문만 먼저 가져옵니다. 사진은 뒤에서 따로 받습니다.
         const result = await fetchEncryptedLetter(id);
         if(!result || result.status !== 'ok'){
           if(result && result.status === 'expired') showLetterError('이 편지는 보관 기간이 지나 자동 삭제되었습니다.');
           else showLetterError('이 편지를 찾을 수 없습니다. 링크가 올바른지 확인해 주세요.');
           return true;
         }
+
         const data = await decryptLetter(result.cipher, keyMatch[1]);
         if(!data || !data.message) throw new Error('편지 내용이 올바르지 않습니다.');
-        expiredScreen.style.display = 'none';
-        landingScreen.style.display = 'none';
-        editorScreen.style.display = 'none';
+
         if(!themes.includes(data.theme)) data.theme = 'night';
         if(!musicKinds.includes(data.music)) data.music = themeRecommendedMusic[data.theme] || 'night';
         if(data.bgMode !== 'photo') data.bgMode = 'preset';
-        if(result.imageBase64 && result.imageMime && data.bgMode === 'photo') data.customBgUrl = `data:${result.imageMime};base64,${result.imageBase64}`;
+
+        // 편지 열기 화면을 최대한 빨리 보여줍니다.
+        expiredScreen.style.display = 'none';
+        landingScreen.style.display = 'none';
+        editorScreen.style.display = 'none';
+        hideLetterLoading();
         applyViewer(data, false);
+
+        // 2단계: 사용자 사진은 편지 화면이 열린 뒤 뒤에서 받습니다.
+        if(data.bgMode === 'photo' && result.hasImage){
+          fetchStoredImage(id).then(imageResult => {
+            if(imageResult && imageResult.status === 'ok' && imageResult.imageBase64 && imageResult.imageMime){
+              data.customBgUrl = `data:${imageResult.imageMime};base64,${imageResult.imageBase64}`;
+              if(currentData === data || (currentData && currentData.message === data.message)){
+                currentData.customBgUrl = data.customBgUrl;
+                applyViewerBackground(currentData);
+              }
+            }else{
+              console.warn('배경사진을 불러오지 못했습니다.');
+            }
+          }).catch(err => console.warn('배경사진 지연 로딩 오류:', err));
+        }
+
         return true;
       }catch(e){
         console.error(e);
@@ -2026,6 +2106,7 @@ ${url}`;
       if(!match) return false;
       const data = await decodeData(match[1]);
       if(!data || !data.message) return false;
+      hideLetterLoading();
       expiredScreen.style.display = 'none';
       landingScreen.style.display = 'none';
       editorScreen.style.display = 'none';
