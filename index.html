@@ -435,7 +435,7 @@
 
         <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
       </div>
-      <div class="footer">감성편지 3.1.2 · 모바일 사진 최적화 · 4단계 편지 만들기</div>
+      <div class="footer">감성편지 3.1.3 · PC·모바일 링크 통합 · 4단계 편지 만들기</div>
     </section>
 
     <section class="composer-screen hidden" id="composerScreen">
@@ -635,7 +635,7 @@
             <div class="send-panel">
               <div class="send-title">💌 편지 보내기</div>
               <button class="btn-kakao" id="kakaoSendBtn">카카오톡으로 보내기</button>
-              <div class="send-status" id="sendStatus">카카오톡에서 받는 사람을 선택하면 됩니다.</div>
+              <div class="send-status" id="sendStatus">PC와 스마트폰 모두 같은 편지 링크로 열립니다. 카카오톡에서 받는 사람을 선택하세요.</div>
               <div class="privacy-note">
                 긴 편지는 이 기기에서 암호화합니다. Google Sheet에는 편지 원문이나 복호화 키를 저장하지 않습니다.
               </div>
@@ -649,7 +649,7 @@
         </section>
       </div>
 
-      <div class="footer">감성편지 3.1.2 · 모바일 사진 최적화 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+      <div class="footer">감성편지 3.1.3 · PC·모바일 링크 통합 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
     </section>
   </main>
 
@@ -762,7 +762,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3120;
+    const DRAFT_SIGNATURE_VERSION = 3130;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -1475,7 +1475,14 @@
     }
 
     function kakaoLink(url){
-      return isMobile()?{mobileWebUrl:url}:{webUrl:url};
+      // 카카오톡 메시지는 보낸 기기가 아니라 '받는 사람이 여는 환경'에 따라
+      // webUrl / mobileWebUrl 중 하나를 사용합니다.
+      // 따라서 PC에서 보낸 편지도 스마트폰에서 같은 편지 주소를 열 수 있도록
+      // 두 값을 항상 동일한 편지 URL로 함께 넣습니다.
+      return {
+        mobileWebUrl: url,
+        webUrl: url
+      };
     }
 
     async function sendKakao(){
