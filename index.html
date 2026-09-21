@@ -394,6 +394,24 @@
       .wizard-actions .next{margin-left:0}
     }
 
+
+    .home-share-btn{
+      width:100%;margin-top:13px;border:1px solid rgba(123,85,126,.13);
+      border-radius:20px;padding:15px;background:rgba(255,255,255,.84);
+      color:#57485b;font-size:13px;font-weight:900;
+      box-shadow:0 10px 26px rgba(74,52,80,.06)
+    }
+    .home-share-btn:active{transform:translateY(1px)}
+    .share-toast{
+      position:fixed;left:50%;bottom:28px;z-index:3000;
+      transform:translateX(-50%) translateY(18px);
+      opacity:0;visibility:hidden;transition:.25s;
+      background:rgba(42,33,46,.92);color:#fff;border-radius:999px;
+      padding:11px 16px;font-size:12px;font-weight:800;
+      box-shadow:0 12px 35px rgba(0,0,0,.22)
+    }
+    .share-toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+
   </style>
 
   <script>
@@ -433,9 +451,10 @@
           </button>
         </div>
 
+        <button class="home-share-btn" id="shareAppBtn">📤 감성편지 공유하기</button>
         <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
       </div>
-      <div class="footer">감성편지 3.1.4 · 빠른 보내기 · 4단계 편지 만들기</div>
+      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 4단계 편지 만들기</div>
     </section>
 
     <section class="composer-screen hidden" id="composerScreen">
@@ -649,7 +668,7 @@
         </section>
       </div>
 
-      <div class="footer">감성편지 3.1.4 · 빠른 보내기 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
     </section>
   </main>
 
@@ -665,6 +684,8 @@
       <button class="modal-close" id="homeGuideClose">확인</button>
     </div>
   </section>
+
+  <div class="share-toast" id="shareToast">링크를 복사했습니다.</div>
 
   <section class="letter-loading" id="letterLoading" aria-live="polite">
     <div class="loading-card">
@@ -762,7 +783,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3140;
+    const DRAFT_SIGNATURE_VERSION = 3150;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -1635,6 +1656,52 @@
       if($('#previewStage') && $('.wizard-step[data-step-panel="3"]')?.classList.contains('active')) updatePreviewCard();
     }
 
+
+    let shareToastTimer = 0;
+
+    function showShareToast(message){
+      const toast = $('#shareToast');
+      if(!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(shareToastTimer);
+      shareToastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    async function shareApp(){
+      const shareData = {
+        title:'💌 감성편지',
+        text:'배경과 음악을 골라 마음을 천천히 전해보세요.',
+        url:APP_URL
+      };
+
+      // 스마트폰에서는 카카오톡·문자 등 기본 공유창을 엽니다.
+      if(navigator.share){
+        try{
+          await navigator.share(shareData);
+          return;
+        }catch(err){
+          if(err && err.name === 'AbortError') return;
+        }
+      }
+
+      // PC 또는 공유 API 미지원 브라우저는 주소를 복사합니다.
+      try{
+        await navigator.clipboard.writeText(APP_URL);
+        showShareToast('감성편지 주소를 복사했습니다.');
+      }catch(err){
+        const ta = document.createElement('textarea');
+        ta.value = APP_URL;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showShareToast('감성편지 주소를 복사했습니다.');
+      }
+    }
+
     function showHome(){
       stopMusic();
       $('#homeScreen').classList.remove('hidden');
@@ -1786,6 +1853,7 @@
     $$('.step-chip').forEach(chip => chip.addEventListener('click', () => goStep(chip.dataset.step)));
     $$('[data-go-step]').forEach(btn => btn.addEventListener('click', () => goStep(btn.dataset.goStep)));
 
+    $('#shareAppBtn').addEventListener('click', shareApp);
     $('#homeGuideBtn').addEventListener('click', () => $('#homeGuideModal').classList.add('show'));
     $('#homeGuideClose').addEventListener('click', () => $('#homeGuideModal').classList.remove('show'));
     $('#homeGuideModal').addEventListener('click', e => {
