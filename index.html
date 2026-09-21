@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f1f6">
+  <title>감성편지</title>
+  <style>
+    :root{
+      --bg:#f7f2f6;
+      --paper:rgba(255,255,255,.9);
+      --ink:#302735;
+      --muted:#786d7b;
+      --line:#e8dfe9;
+      --accent:#7b557e;
+      --accent2:#b77c94;
+      --soft:#f3ebf3;
+      --shadow:0 20px 55px rgba(69,49,75,.10);
+      --radius:28px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:var(--ink);background:
+      radial-gradient(circle at 10% 0%,rgba(255,255,255,.95),transparent 30%),
+      linear-gradient(145deg,#faf7fa 0%,#f3edf4 48%,#eee6ef 100%)}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:1120px;margin:0 auto;padding:26px 18px 40px}
+    .hero{
+      text-align:center;
+      padding:26px 18px 24px;
+    }
+    .hero .mark{font-size:36px;display:block;margin-bottom:6px}
+    .hero h1{font-size:clamp(36px,7vw,58px);margin:0;letter-spacing:-.06em}
+    .hero p{margin:10px auto 0;color:var(--muted);line-height:1.75;font-size:15px;max-width:560px}
+    .version{display:inline-block;margin-top:12px;padding:7px 11px;border-radius:999px;background:rgba(123,85,126,.07);color:#745d77;font-size:11px;font-weight:800}
+
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+    .card{background:var(--paper);border:1px solid rgba(255,255,255,.85);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+    .card h2{margin:0 0 18px;font-size:21px;letter-spacing:-.04em}
+    .field{margin-bottom:16px}
+    .field label{display:block;margin:0 0 8px;font-size:13px;font-weight:850;color:#4f4254}
+    input,textarea,select{
+      width:100%;border:1px solid var(--line);background:rgba(255,255,255,.96);border-radius:16px;padding:14px 15px;outline:none;color:var(--ink);transition:.18s
+    }
+    input:focus,textarea:focus,select:focus{border-color:#b89dbc;box-shadow:0 0 0 4px rgba(123,85,126,.08)}
+    textarea{min-height:300px;resize:vertical;line-height:1.85}
+    .tiny{font-size:11px;color:var(--muted);line-height:1.6;margin-top:7px}
+    .message-meta{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:11px;color:#7b6e7f}
+
+    .section{
+      border:1px solid rgba(123,85,126,.12);
+      background:rgba(255,255,255,.56);
+      border-radius:22px;
+      padding:17px;
+      margin-bottom:16px;
+    }
+    .section-head{display:flex;flex-direction:column;gap:6px;margin-bottom:13px}
+    .section-head h3{margin:0;font-size:19px;letter-spacing:-.035em}
+    .section-head p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+    .selected{
+      align-self:flex-start;
+      margin-top:3px;
+      padding:7px 11px;
+      border-radius:999px;
+      border:1px solid rgba(123,85,126,.13);
+      background:#fff;
+      color:#624f66;
+      font-size:11px;
+      font-weight:850;
+    }
+
+    .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .theme-btn{
+      position:relative;height:100px;border:0;border-radius:18px;overflow:hidden;color:#fff;font-weight:900;
+      text-shadow:0 2px 10px rgba(0,0,0,.48);box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)
+    }
+    .theme-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.01),rgba(0,0,0,.34))}
+    .theme-btn span{position:absolute;z-index:1;left:11px;bottom:9px;font-size:12px}
+    .theme-btn.active{outline:3px solid rgba(123,85,126,.35);outline-offset:2px}
+    .theme-night{background:url("bg-night.jpg") center/cover no-repeat}
+    .theme-sunset{background:url("bg-sunset.jpg") center/cover no-repeat}
+    .theme-sea{background:url("bg-sea.jpg") center/cover no-repeat}
+    .theme-forest{background:url("bg-forest.jpg") center/cover no-repeat}
+    .theme-flower{background:url("bg-flower.jpg") center/cover no-repeat}
+    .theme-winter{background:url("bg-winter.jpg") center/cover no-repeat}
+
+    .music-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .music-btn{
+      text-align:left;border:1px solid var(--line);border-radius:18px;background:#fff;padding:14px;min-height:108px;color:var(--ink);transition:.18s
+    }
+    .music-btn:hover{transform:translateY(-1px)}
+    .music-btn.active{outline:3px solid rgba(123,85,126,.22);border-color:#c9b3cb}
+    .music-icon{font-size:22px;margin-bottom:7px}
+    .music-name{font-size:13px;font-weight:900}
+    .music-desc{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:5px}
+    .music-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+
+    .chip,.btn{
+      border:0;border-radius:999px;padding:10px 14px;font-weight:850
+    }
+    .chip{background:#fff;color:#5b4c5f;border:1px solid var(--line);font-size:11px}
+    .chip.active{background:rgba(123,85,126,.10);border-color:rgba(123,85,126,.22)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+    .btn{padding:14px 18px;font-size:14px}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 12px 30px rgba(123,85,126,.22)}
+    .btn-soft{background:#fff;color:#554659;border:1px solid var(--line)}
+    .status{margin-top:10px;font-size:11px;line-height:1.55;color:#736777;min-height:18px}
+    .footer{text-align:center;color:#8b7f8f;font-size:11px;margin:18px 0 0}
+
+    /* ===== Preview viewer ===== */
+    .viewer{display:none;position:fixed;inset:0;z-index:1000;background:#111;color:#fff;overflow:hidden}
+    .viewer.active{display:block}
+    .viewer-bg{position:absolute;inset:-3%;z-index:0;background:#17121f center/cover no-repeat;transform:scale(1.02);transition:transform 16s ease}
+    .viewer.playing .viewer-bg{transform:scale(1.08)}
+    .viewer-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.08) 40%,rgba(0,0,0,.34))}
+    .viewer-bg.bg-night{background-image:url("bg-night.jpg")}
+    .viewer-bg.bg-sunset{background-image:url("bg-sunset.jpg")}
+    .viewer-bg.bg-sea{background-image:url("bg-sea.jpg")}
+    .viewer-bg.bg-forest{background-image:url("bg-forest.jpg")}
+    .viewer-bg.bg-flower{background-image:url("bg-flower.jpg")}
+    .viewer-bg.bg-winter{background-image:url("bg-winter.jpg")}
+
+    .open-screen{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:28px;background:rgba(15,11,18,.20);backdrop-filter:blur(2px);transition:.7s}
+    .open-screen.hidden{opacity:0;visibility:hidden}
+    .open-card{width:min(92vw,440px);padding:30px 24px;text-align:center;border-radius:30px;background:rgba(18,14,23,.34);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(13px);box-shadow:0 25px 70px rgba(0,0,0,.25)}
+    .envelope{font-size:42px}
+    .open-card h2{font-size:clamp(23px,6vw,30px);margin:8px 0 10px;letter-spacing:-.045em}
+    .open-card p{margin:0 0 20px;font-size:13px;line-height:1.75;color:rgba(255,255,255,.82)}
+    .open-btn{border:0;border-radius:999px;padding:14px 24px;background:#fff;color:#3b2e40;font-weight:900}
+
+    .close-preview{position:absolute;right:15px;top:max(15px,env(safe-area-inset-top));z-index:8;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:9px 13px;background:rgba(0,0,0,.25);color:#fff;font-size:11px}
+    .viewport{position:absolute;inset:0;z-index:2;overflow:hidden;padding:0 22px}
+    .scroll-wrap{position:absolute;left:50%;width:min(88vw,700px);transform:translate3d(-50%,100vh,0);text-align:center;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.48);will-change:transform}
+    .receiver{font-size:clamp(17px,4.3vw,23px);font-weight:850;margin-bottom:20px}
+    .letter-title{font-size:clamp(31px,8vw,56px);line-height:1.2;margin:0 0 42px;font-weight:900;letter-spacing:-.055em}
+    .letter-line{font-size:clamp(18px,4.8vw,25px);line-height:2.04;font-weight:560;min-height:1.1em;opacity:0;transform:translateY(14px)}
+    .fade-item{opacity:0;transform:translateY(14px)}
+    .from{margin-top:44px;font-size:clamp(16px,4vw,21px);font-weight:850}
+    .heart{font-size:34px;margin-top:22px}
+    .controls{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:8;display:flex;gap:8px;opacity:0;transition:.3s}
+    .viewer.playing .controls,.viewer.paused .controls{opacity:1}
+    .control{width:45px;height:45px;border-radius:50%;border:1px solid rgba(255,255,255,.24);background:rgba(16,12,20,.34);color:#fff;backdrop-filter:blur(10px)}
+    .end-screen{position:absolute;inset:0;z-index:4;display:grid;place-items:center;padding:28px;background:rgba(13,10,17,.28);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.8s}
+    .end-screen.show{opacity:1;visibility:visible}
+    .end-inner{text-align:center}
+    .end-inner .big{font-size:clamp(25px,6vw,40px);font-weight:900;line-height:1.35}
+    .end-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+    .end-actions button{border:0;border-radius:999px;padding:12px 18px;font-weight:900}
+    .end-actions .primary{background:#fff;color:#3b2d40}
+    .end-actions .soft{background:rgba(19,14,23,.38);color:#fff;border:1px solid rgba(255,255,255,.23)}
+
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr}
+    }
+    @media(max-width:640px){
+      .app{padding:16px 12px 32px}
+      .card{padding:18px;border-radius:24px}
+      .themes{grid-template-columns:repeat(2,1fr)}
+      .music-grid{grid-template-columns:1fr}
+      .actions{grid-template-columns:1fr}
+      textarea{min-height:240px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <span class="mark">💌</span>
+      <h1>감성편지</h1>
+      <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 편지를 미리 확인할 수 있습니다.</p>
+      <span class="version">3.0 · 1단계</span>
+    </header>
+
+    <div class="layout">
+      <section class="card">
+        <h2>✍️ 편지 쓰기</h2>
+
+        <div class="field">
+          <label for="to">받는 사람</label>
+          <input id="to" maxlength="40" placeholder="받는 분의 이름을 입력하세요">
+        </div>
+
+        <div class="field">
+          <label for="title">편지 제목</label>
+          <input id="title" maxlength="60" placeholder="편지 제목을 입력하세요">
+        </div>
+
+        <div class="field">
+          <label for="message">편지 내용</label>
+          <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요."></textarea>
+          <div class="tiny">줄바꿈을 그대로 살려 보여줍니다.</div>
+          <div class="message-meta">
+            <span><strong id="charCount">0</strong> / 5000자</span>
+            <span id="playTime">예상 재생 약 34초</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="from">보내는 사람</label>
+          <input id="from" maxlength="40" placeholder="이름 또는 ‘마음을 담아’">
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>🪄 배경과 음악 선택</h2>
+
+        <div class="section">
+          <div class="section-head">
+            <h3>🖼 배경화면 선택</h3>
+            <p>편지에 어울리는 배경을 <b>눈으로 보고</b> 골라 주세요.</p>
+            <div class="selected" id="bgSummary">현재 배경: 별이 빛나는 밤</div>
+          </div>
+
+          <div class="themes" id="themeList">
+            <button type="button" class="theme-btn theme-night active" data-theme="night"><span>별이 빛나는 밤</span></button>
+            <button type="button" class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
+            <button type="button" class="theme-btn theme-sea" data-theme="sea"><span>바다</span></button>
+            <button type="button" class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
+            <button type="button" class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
+            <button type="button" class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h3>🎵 배경음악 선택</h3>
+            <p>편지와 함께 흐를 음악을 <b>들어 보고</b> 골라 주세요.</p>
+            <div class="selected" id="musicSummary">현재 음악: 별빛 편지</div>
+          </div>
+
+          <div class="music-grid" id="musicList">
+            <button type="button" class="music-btn active" data-music="night">
+              <div class="music-icon">🌌</div>
+              <div class="music-name">별빛 편지</div>
+              <div class="music-desc">잔잔한 밤 느낌의 피아노</div>
+            </button>
+            <button type="button" class="music-btn" data-music="sunset">
+              <div class="music-icon">🌅</div>
+              <div class="music-name">따뜻한 오후의 편지</div>
+              <div class="music-desc">기타와 피아노의 따뜻한 분위기</div>
+            </button>
+            <button type="button" class="music-btn" data-music="sea">
+              <div class="music-icon">🌊</div>
+              <div class="music-name">파도처럼 머무는 마음</div>
+              <div class="music-desc">고요하고 넓게 흐르는 감성</div>
+            </button>
+            <button type="button" class="music-btn" data-music="calm">
+              <div class="music-icon">🌲</div>
+              <div class="music-name">고요한 마음</div>
+              <div class="music-desc">차분한 미니멀 피아노</div>
+            </button>
+          </div>
+
+          <div class="music-actions">
+            <button type="button" class="chip" id="previewMusicBtn">▶ 선택한 음악 듣기</button>
+            <button type="button" class="chip" id="stopMusicBtn">■ 음악 멈춤</button>
+            <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="speed">글 흐르는 속도</label>
+          <select id="speed">
+            <option value="slow">천천히</option>
+            <option value="normal" selected>보통</option>
+            <option value="fast">조금 빠르게</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="previewBtn">▶ 미리보기</button>
+          <button class="btn btn-soft" id="resetBtn">↺ 처음부터</button>
+        </div>
+        <div class="status" id="status">1단계에서는 미리보기까지만 테스트합니다. 카카오 전송은 2단계에서 연결합니다.</div>
+      </aside>
+    </div>
+
+    <div class="footer">감성편지 3.0 · 1단계 · 기본 배경/음악/미리보기 안정화</div>
+  </main>
+
+  <section class="viewer" id="viewer" aria-hidden="true">
+    <div class="viewer-bg bg-night" id="viewerBg"></div>
+    <button class="close-preview" id="closePreview">편집으로 돌아가기 ✕</button>
+
+    <div class="open-screen" id="openScreen">
+      <div class="open-card">
+        <span class="envelope">💌</span>
+        <h2 id="openTitle">편지가 도착했습니다</h2>
+        <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 음악과 함께 편지가 시작됩니다.</p>
+        <button class="open-btn" id="openBtn">💌 편지 열어보기</button>
+      </div>
+    </div>
+
+    <div class="viewport">
+      <article class="scroll-wrap" id="scrollWrap">
+        <div class="receiver fade-item" id="vTo"></div>
+        <h1 class="letter-title fade-item" id="vTitle"></h1>
+        <div id="vMessage"></div>
+        <div class="from fade-item" id="vFrom"></div>
+        <div class="heart fade-item">♡</div>
+      </article>
+    </div>
+
+    <div class="controls">
+      <button class="control" id="pauseBtn" title="일시정지">Ⅱ</button>
+      <button class="control" id="muteBtn" title="음악 켜기/끄기">🔊</button>
+      <button class="control" id="replayBtn" title="처음부터">↻</button>
+    </div>
+
+    <div class="end-screen" id="endScreen">
+      <div class="end-inner">
+        <div class="big">마음이 잘 전해졌기를<br>바랍니다.</div>
+        <div class="heart">♡</div>
+        <div class="end-actions">
+          <button class="soft" id="endReplayBtn">↻ 다시 보기</button>
+          <button class="primary" id="endBackBtn">✍️ 편집으로 돌아가기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <audio id="musicPlayer" loop preload="none"></audio>
+
+  <script>
+  (() => {
+    'use strict';
+
+    /* 이전 2.x Service Worker / Cache가 남아 있으면 1회 정리합니다.
+       3.0에서는 Service Worker를 사용하지 않습니다. */
+    (async function cleanLegacyCaches(){
+      try{
+        if('serviceWorker' in navigator){
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+        if('caches' in window){
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+      }catch(e){
+        console.warn('이전 캐시 정리 생략:', e);
+      }
+    })();
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+
+    const themes = ['night','sunset','sea','forest','flower','winter'];
+    const themeNames = {
+      night:'별이 빛나는 밤', sunset:'노을', sea:'바다',
+      forest:'숲', flower:'꽃길', winter:'겨울'
+    };
+    const musicFiles = {
+      night:'bgm-night.mp3',
+      sunset:'bgm-sunset.mp3',
+      sea:'bgm-sea.mp3',
+      calm:'bgm-calm.mp3'
+    };
+    const musicNames = {
+      night:'별빛 편지',
+      sunset:'따뜻한 오후의 편지',
+      sea:'파도처럼 머무는 마음',
+      calm:'고요한 마음',
+      none:'음악 없음'
+    };
+
+    let theme = 'night';
+    let music = 'night';
+    let currentData = null;
+    let muted = false;
+    let previewing = false;
+
+    let rafId = 0;
+    let startAt = 0;
+    let elapsedBeforePause = 0;
+    let paused = false;
+    let durationMs = 34000;
+    let startY = 0;
+    let endY = 0;
+
+    const musicPlayer = $('#musicPlayer');
+    const viewer = $('#viewer');
+    const viewerBg = $('#viewerBg');
+    const scrollWrap = $('#scrollWrap');
+    const openScreen = $('#openScreen');
+    const endScreen = $('#endScreen');
+
+    function collect(){
+      return {
+        to: $('#to').value.trim() || '소중한 당신에게',
+        title: $('#title').value.trim() || '마음을 전합니다',
+        message: $('#message').value.trim() || '당신의 오늘을 응원합니다.',
+        from: $('#from').value.trim() || '마음을 담아',
+        theme,
+        music,
+        speed: $('#speed').value
+      };
+    }
+
+    function updateCounters(){
+      const n = $('#message').value.length;
+      $('#charCount').textContent = n;
+      const data = collect();
+      $('#playTime').textContent = `예상 재생 약 ${Math.round(durationFor(data)/1000)}초`;
+    }
+
+    function setTheme(next){
+      theme = themes.includes(next) ? next : 'night';
+      $$('#themeList .theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
+      $('#bgSummary').textContent = `현재 배경: ${themeNames[theme]}`;
+    }
+
+    function setMusic(next){
+      music = Object.prototype.hasOwnProperty.call(musicNames,next) ? next : 'night';
+      $$('#musicList .music-btn').forEach(b => b.classList.toggle('active', b.dataset.music === music));
+      $('#noMusicBtn').classList.toggle('active', music === 'none');
+      $('#musicSummary').textContent = `현재 음악: ${musicNames[music]}`;
+    }
+
+    function stopMusic(){
+      previewing = false;
+      musicPlayer.pause();
+      musicPlayer.currentTime = 0;
+      musicPlayer.removeAttribute('src');
+      musicPlayer.load();
+    }
+
+    async function playMusic(kind){
+      stopMusic();
+      if(kind === 'none') return;
+      const file = musicFiles[kind];
+      if(!file) return;
+      musicPlayer.src = file;
+      musicPlayer.muted = muted;
+      try{
+        await musicPlayer.play();
+      }catch(e){
+        $('#status').textContent = '음악 파일을 재생하지 못했습니다. GitHub에 MP3 파일명이 정확한지 확인해 주세요.';
+      }
+    }
+
+    function renderMessage(text){
+      const root = $('#vMessage');
+      root.innerHTML = '';
+      text.split('\n').forEach(line => {
+        const div = document.createElement('div');
+        div.className = 'letter-line' + (line.trim() ? '' : ' spacer');
+        div.textContent = line.trim() ? line : ' ';
+        root.appendChild(div);
+      });
+    }
+
+    function applyPreview(data){
+      currentData = data;
+      $('#vTo').textContent = data.to;
+      $('#vTitle').textContent = data.title;
+      $('#vFrom').textContent = data.from;
+      $('#openTitle').textContent = `${data.to} · 편지가 도착했습니다`;
+      renderMessage(data.message);
+
+      themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
+      viewerBg.classList.add(`bg-${data.theme}`);
+
+      viewer.classList.add('active');
+      viewer.classList.remove('playing','paused');
+      viewer.setAttribute('aria-hidden','false');
+      openScreen.classList.remove('hidden');
+      endScreen.classList.remove('show');
+      $('#pauseBtn').textContent = 'Ⅱ';
+      muted = false;
+      $('#muteBtn').textContent = '🔊';
+
+      stopScroll();
+      stopMusic();
+      resetScroll();
+    }
+
+    function durationFor(data){
+      let sec = Math.max(34, Math.min(130, 34 + data.message.length * .083));
+      if(data.speed === 'slow') sec *= 1.22;
+      if(data.speed === 'fast') sec *= .82;
+      return Math.round(sec * 1000);
+    }
+
+    function resetScroll(){
+      requestAnimationFrame(() => {
+        startY = innerHeight + 90;
+        endY = -(scrollWrap.offsetHeight + 130);
+        scrollWrap.style.transform = `translate3d(-50%,${startY}px,0)`;
+        $$('.letter-line,.fade-item').forEach(el => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(14px)';
+        });
+      });
+    }
+
+    function updateFades(){
+      const h = innerHeight;
+      const inStart = h*.90, inEnd = h*.68;
+      const outStart = h*.18, outEnd = h*.06;
+      $$('.letter-line,.fade-item').forEach(el => {
+        if(el.classList.contains('spacer')){
+          el.style.opacity = '1';
+          return;
+        }
+        const r = el.getBoundingClientRect();
+        const y = r.top + r.height/2;
+        let op = 1;
+        if(y > inEnd) op = (inStart-y)/(inStart-inEnd);
+        else if(y < outStart) op = (y-outEnd)/(outStart-outEnd);
+        op = Math.max(0,Math.min(1,op));
+        el.style.opacity = op.toFixed(3);
+        el.style.transform = `translateY(${((1-op)*14).toFixed(1)}px)`;
+      });
+    }
+
+    function frame(now){
+      if(paused) return;
+      if(!startAt) startAt = now;
+      const elapsed = elapsedBeforePause + (now-startAt);
+      const p = Math.min(1,elapsed/durationMs);
+      const y = startY + (endY-startY)*p;
+      scrollWrap.style.transform = `translate3d(-50%,${y}px,0)`;
+      updateFades();
+      if(p >= 1){
+        finish();
+        return;
+      }
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function startScroll(){
+      stopScroll();
+      durationMs = durationFor(currentData);
+      startY = innerHeight + 90;
+      endY = -(scrollWrap.offsetHeight + 130);
+      startAt = 0;
+      elapsedBeforePause = 0;
+      paused = false;
+      viewer.classList.add('playing');
+      rafId = requestAnimationFrame(frame);
+    }
+
+    function stopScroll(){
+      if(rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      startAt = 0;
+      elapsedBeforePause = 0;
+      paused = false;
+    }
+
+    function finish(){
+      if(rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      stopMusic();
+      endScreen.classList.add('show');
+    }
+
+    function replay(){
+      stopScroll();
+      stopMusic();
+      viewer.classList.remove('playing','paused');
+      openScreen.classList.remove('hidden');
+      endScreen.classList.remove('show');
+      $('#pauseBtn').textContent = 'Ⅱ';
+      resetScroll();
+    }
+
+    function closePreview(){
+      stopScroll();
+      stopMusic();
+      viewer.classList.remove('active','playing','paused');
+      viewer.setAttribute('aria-hidden','true');
+      endScreen.classList.remove('show');
+      currentData = null;
+    }
+
+    async function startLetter(){
+      if(!currentData) return;
+      openScreen.classList.add('hidden');
+      await playMusic(currentData.music);
+      startScroll();
+    }
+
+    function pauseResume(){
+      if(!viewer.classList.contains('playing')) return;
+      if(!paused){
+        paused = true;
+        if(rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+        elapsedBeforePause += performance.now()-startAt;
+        startAt = 0;
+        viewer.classList.add('paused');
+        $('#pauseBtn').textContent = '▶';
+        musicPlayer.pause();
+      }else{
+        paused = false;
+        viewer.classList.remove('paused');
+        $('#pauseBtn').textContent = 'Ⅱ';
+        if(currentData.music !== 'none') musicPlayer.play().catch(()=>{});
+        rafId = requestAnimationFrame(frame);
+      }
+    }
+
+    $$('#themeList .theme-btn').forEach(btn => btn.addEventListener('click', () => setTheme(btn.dataset.theme)));
+    $$('#musicList .music-btn').forEach(btn => btn.addEventListener('click', () => setMusic(btn.dataset.music)));
+
+    $('#previewMusicBtn').addEventListener('click', async () => {
+      previewing = true;
+      $('#status').textContent = `${musicNames[music]} 미리듣기 중입니다.`;
+      await playMusic(music);
+    });
+    $('#stopMusicBtn').addEventListener('click', () => {
+      stopMusic();
+      $('#status').textContent = '음악 미리듣기를 멈췄습니다.';
+    });
+    $('#noMusicBtn').addEventListener('click', () => {
+      stopMusic();
+      setMusic('none');
+      $('#status').textContent = '음악 없이 보내기를 선택했습니다.';
+    });
+
+    $('#previewBtn').addEventListener('click', () => {
+      stopMusic();
+      applyPreview(collect());
+      $('#status').textContent = '미리보기를 확인한 뒤 편집으로 돌아와도 작성 내용은 그대로 유지됩니다.';
+    });
+
+    $('#resetBtn').addEventListener('click', () => {
+      if(!confirm('작성 중인 편지를 처음부터 다시 시작할까요?')) return;
+      $('#to').value = '';
+      $('#title').value = '';
+      $('#message').value = '';
+      $('#from').value = '';
+      $('#speed').value = 'normal';
+      setTheme('night');
+      setMusic('night');
+      stopMusic();
+      updateCounters();
+      $('#status').textContent = '초기화했습니다.';
+      $('#to').focus();
+    });
+
+    $('#message').addEventListener('input', updateCounters);
+    $('#speed').addEventListener('change', updateCounters);
+    $('#closePreview').addEventListener('click', closePreview);
+    $('#openBtn').addEventListener('click', startLetter);
+    $('#pauseBtn').addEventListener('click', pauseResume);
+    $('#muteBtn').addEventListener('click', () => {
+      muted = !muted;
+      musicPlayer.muted = muted;
+      $('#muteBtn').textContent = muted ? '🔇' : '🔊';
+    });
+    $('#replayBtn').addEventListener('click', replay);
+    $('#endReplayBtn').addEventListener('click', replay);
+    $('#endBackBtn').addEventListener('click', closePreview);
+
+    window.addEventListener('resize', () => {
+      if(viewer.classList.contains('active') && !viewer.classList.contains('playing')) resetScroll();
+    });
+
+    setTheme('night');
+    setMusic('night');
+    updateCounters();
+  })();
+  </script>
+</body>
+</html>
