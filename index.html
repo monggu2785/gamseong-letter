@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.0.5 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.0.6 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -412,7 +412,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.0.5 · 모바일/PC 분리 공유 · 홈 화면 바로가기 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 2.0.6 · 모바일/PC 분리 공유 · 홈 화면 바로가기 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -502,7 +502,7 @@
     const KAKAO_PREVIEW_IMAGE = 'https://monggu2785.github.io/gamseong-letter/og-preview.png';
     const KAKAO_APP_SHARE_IMAGE = 'https://monggu2785.github.io/gamseong-letter/app-share-preview.png';
     // Google Apps Script 웹앱 배포 후 /exec 주소를 아래에 붙여넣으세요.
-    const LETTER_API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const LETTER_API_URL = 'https://script.google.com/macros/s/AKfycbxU_1FPBKu0fsQKEGloIeBcHfhML4L9G7yXHjzhVLFtZ6-gp2J6PfoizwW1pwtVSH-R4Q/exec';
     // 카카오 직접 공유는 모바일이 PC보다 긴 URL에 민감하므로 기준을 분리합니다.
     // 아래 값은 카카오의 공식 보장치가 아니라 실제 오류를 줄이기 위한 앱 내부 안전장치입니다.
     const KAKAO_MOBILE_DIRECT_SAFE = 700;
