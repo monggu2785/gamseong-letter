@@ -435,7 +435,7 @@
 
         <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
       </div>
-      <div class="footer">감성편지 3.1.1 · 사진 경량화 · 4단계 편지 만들기</div>
+      <div class="footer">감성편지 3.1.2 · 모바일 사진 최적화 · 4단계 편지 만들기</div>
     </section>
 
     <section class="composer-screen hidden" id="composerScreen">
@@ -523,7 +523,7 @@
                     <button type="button" class="upload-btn" id="usePresetBtn">기본 배경 사용</button>
                     <input type="file" id="photoInput" accept="image/*" hidden>
                   </div>
-                  <div class="upload-help">사진은 선명도를 유지하면서 약 100~150KB 수준을 목표로 자동 경량화합니다.</div>
+                  <div class="upload-help">휴대폰 배경용으로 해상도를 낮춰 약 50~80KB 수준을 목표로 빠르게 경량화합니다.</div>
                   <div class="photo-card" id="photoCard">
                     <div class="photo-thumb"><img id="photoThumb" alt="업로드한 배경 사진 미리보기"></div>
                     <div class="photo-meta">
@@ -649,7 +649,7 @@
         </section>
       </div>
 
-      <div class="footer">감성편지 3.1.1 · 사진 경량화 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+      <div class="footer">감성편지 3.1.2 · 모바일 사진 최적화 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
     </section>
   </main>
 
@@ -762,7 +762,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3110;
+    const DRAFT_SIGNATURE_VERSION = 3120;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -899,38 +899,19 @@
         const sourceW = img.naturalWidth || img.width;
         const sourceH = img.naturalHeight || img.height;
 
-        // 화면 선명도는 유지하면서 전송량을 대폭 줄입니다.
-        // 1차는 긴 변 1280px + WebP, 크면 단계적으로 1080/900px까지 낮춥니다.
-        const supportsWebP = (() => {
-          try{
-            const c = document.createElement('canvas');
-            c.width = c.height = 2;
-            return c.toDataURL('image/webp', .6).startsWith('data:image/webp');
-          }catch(e){
-            return false;
-          }
-        })();
+        // 감성편지는 업로드 사진을 '휴대폰 배경'으로 사용하므로
+        // 원본 해상도를 유지하지 않고 JPEG 720px 중심으로 크게 줄입니다.
+        // WebP 대신 JPEG를 사용해 카카오톡 내부 브라우저 호환성을 우선합니다.
+        const stages = [
+          {maxSide:720, quality:.56},
+          {maxSide:680, quality:.52},
+          {maxSide:640, quality:.48},
+          {maxSide:600, quality:.45},
+          {maxSide:560, quality:.42}
+        ];
 
-        const mime = supportsWebP ? 'image/webp' : 'image/jpeg';
-        const stages = supportsWebP
-          ? [
-              {maxSide:1280, quality:.58},
-              {maxSide:1180, quality:.52},
-              {maxSide:1080, quality:.48},
-              {maxSide:960,  quality:.45},
-              {maxSide:900,  quality:.42}
-            ]
-          : [
-              {maxSide:1280, quality:.62},
-              {maxSide:1180, quality:.56},
-              {maxSide:1080, quality:.52},
-              {maxSide:960,  quality:.48},
-              {maxSide:900,  quality:.45}
-            ];
-
-        // Data URL 약 185,000자 ≈ 실제 이미지 약 135KB 전후.
-        // 아주 복잡한 사진은 최종 단계에서 조금 더 클 수 있습니다.
-        const targetChars = 185000;
+        // Base64 약 92,000자 ≈ 실제 JPEG 약 65~70KB 전후.
+        const targetChars = 92000;
 
         function render(maxSide, quality){
           const scale = Math.min(1, maxSide / Math.max(sourceW, sourceH));
@@ -948,7 +929,7 @@
           ctx.drawImage(img,0,0,width,height);
 
           return {
-            dataUrl: canvas.toDataURL(mime, quality),
+            dataUrl: canvas.toDataURL('image/jpeg', quality),
             width,
             height
           };
@@ -961,7 +942,6 @@
         }
 
         const size = Math.round((result.dataUrl.length * 3) / 4);
-        const ext = mime === 'image/webp' ? '.webp' : '.jpg';
         const baseName = (file.name || 'my-photo').replace(/\.[^.]+$/, '');
 
         return {
@@ -970,7 +950,7 @@
           height: result.height,
           size,
           originalSize: file.size || 0,
-          name: baseName + ext,
+          name: baseName + '.jpg',
           signature: `${file.name || 'photo'}|${file.size}|${file.lastModified}|${result.dataUrl.length}`
         };
       } finally {
@@ -1058,7 +1038,7 @@
           viewerPhotoImage.src = data.photoUrl;
         }else{
           viewerBg.style.backgroundImage = 'radial-gradient(circle at 50% 35%, #493b50 0%, #261f2c 48%, #17121c 100%)';
-          status.textContent = '📷 배경사진을 준비하고 있어요…';
+          status.textContent = '📷 배경사진을 불러오는 중입니다…';
           status.classList.add('show');
         }
         return;
@@ -1427,7 +1407,17 @@
     }
 
     async function fetchStoredPhoto(id){
-      return await jsonpRequest({action:'getImage',id},12000);
+      const timeout = isMobile() ? 18000 : 12000;
+      let lastError = null;
+      for(let attempt=0; attempt<3; attempt++){
+        try{
+          return await jsonpRequest({action:'getImage',id},timeout);
+        }catch(err){
+          lastError = err;
+          if(attempt < 2) await new Promise(r => setTimeout(r, 450 + attempt*500));
+        }
+      }
+      throw lastError || new Error('배경사진을 불러오지 못했습니다.');
     }
 
     function makeStoredUrl(id,keyToken){
