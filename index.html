@@ -212,6 +212,30 @@
     .viewer.received .preview-actions{display:none}
     .viewer.received .recipient-actions{display:flex}
 
+
+    /* ===== 3단계: 내 사진 배경 ===== */
+    .upload-panel{
+      margin-top:12px;padding:14px;border-radius:18px;border:1px dashed rgba(123,85,126,.28);
+      background:rgba(255,255,255,.72)
+    }
+    .upload-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .upload-btn,.mini-btn{
+      border:1px solid var(--line);background:#fff;color:#554659;border-radius:999px;padding:10px 14px;font-size:12px;font-weight:850
+    }
+    .mini-btn.warn{color:#88515b}
+    .upload-help{margin-top:8px;color:var(--muted);font-size:11px;line-height:1.6}
+    .photo-card{display:none;align-items:center;gap:12px;margin-top:12px;padding:12px;border-radius:16px;background:#fff;border:1px solid rgba(123,85,126,.12)}
+    .photo-card.show{display:flex}
+    .photo-thumb{width:74px;height:74px;border-radius:14px;overflow:hidden;flex:0 0 auto;background:#eee}
+    .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .photo-meta{min-width:0;flex:1}
+    .photo-name{font-size:12px;font-weight:900;color:#4e4253;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .photo-desc{margin-top:4px;font-size:10.5px;color:var(--muted);line-height:1.5}
+    .photo-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+    .theme-btn.dimmed{opacity:.52;filter:saturate(.8)}
+    .viewer-bg.photo-fit{background-size:contain;background-position:center center;background-repeat:no-repeat}
+    .viewer-bg.photo-fit::before{content:"";position:absolute;inset:0;background:inherit;filter:blur(18px) brightness(.78);transform:scale(1.12);z-index:-1}
+
   </style>
 
   <script>
@@ -231,8 +255,8 @@
     <header class="hero">
       <span class="mark">💌</span>
       <h1>감성편지</h1>
-      <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 미리 확인한 뒤 카카오톡으로 전할 수 있습니다.</p>
-      <span class="version">3.0 · 2단계</span>
+      <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 내 사진도 배경으로 올린 뒤 카카오톡으로 전할 수 있습니다.</p>
+      <span class="version">3.0 · 3단계</span>
     </header>
 
     <div class="layout">
@@ -282,6 +306,26 @@
             <button type="button" class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
             <button type="button" class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
             <button type="button" class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
+          </div>
+
+          <div class="upload-panel">
+            <div class="upload-actions">
+              <button type="button" class="upload-btn" id="uploadPhotoBtn">📷 내 사진 올리기</button>
+              <button type="button" class="upload-btn" id="usePresetBtn">🖼 기본 배경 사용</button>
+              <input type="file" id="photoInput" accept="image/*" hidden>
+            </div>
+            <div class="upload-help">내 사진을 올리면 자동으로 압축해 배경으로 사용합니다. 사진이 있는 편지는 안전하게 암호화한 뒤 임시보관소를 통해 전달합니다.</div>
+            <div class="photo-card" id="photoCard">
+              <div class="photo-thumb"><img id="photoThumb" alt="업로드한 배경 사진 미리보기"></div>
+              <div class="photo-meta">
+                <div class="photo-name" id="photoName">내 사진 배경</div>
+                <div class="photo-desc" id="photoDesc">자동 압축을 마친 사진입니다.</div>
+                <div class="photo-actions">
+                  <button type="button" class="mini-btn" id="changePhotoBtn">사진 변경</button>
+                  <button type="button" class="mini-btn warn" id="removePhotoBtn">사진 삭제</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -340,15 +384,15 @@
         <div class="send-panel">
           <div class="send-title">💌 편지 보내기</div>
           <button class="btn-kakao" id="kakaoSendBtn">카카오톡으로 보내기</button>
-          <div class="send-status" id="sendStatus">짧은 편지는 서버 저장 없이 바로 공유하고, 긴 편지는 새 임시보관소 연결 후 암호화해 짧은 링크로 보냅니다.</div>
+          <div class="send-status" id="sendStatus">짧은 편지는 서버 저장 없이 바로 공유하고, 긴 편지나 내 사진이 있는 편지는 암호화해 안전한 링크로 보냅니다.</div>
           <div class="privacy-note">
-            🔐 긴 편지는 보내기 전에 이 기기에서 암호화합니다. Google Sheet에는 편지 원문이나 복호화 키가 아니라 암호문만 임시 저장하도록 설계했습니다.
+            🔐 긴 편지는 보내기 전에 이 기기에서 암호화합니다. Google Sheet에는 편지 원문이나 복호화 키를 저장하지 않고, 사진이 있을 때도 압축한 배경 이미지만 임시 저장하도록 설계했습니다.
           </div>
         </div>
       </aside>
     </div>
 
-    <div class="footer">감성편지 3.0 · 2단계 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 3.0 · 3단계 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="letter-loading" id="letterLoading" aria-live="polite">
@@ -445,12 +489,12 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3002;
+    const DRAFT_SIGNATURE_VERSION = 3003;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
       night:'별이 빛나는 밤', sunset:'노을', sea:'바다',
-      forest:'숲', flower:'꽃길', winter:'겨울'
+      forest:'숲', flower:'꽃길', winter:'겨울', custom:'내 사진'
     };
     const musicFiles = {
       night:'bgm-night.mp3',
@@ -468,6 +512,8 @@
 
     let theme = 'night';
     let music = 'night';
+    let backgroundMode = 'preset';
+    let customPhoto = null;
     let currentData = null;
     let currentMode = 'preview';
     let latestShareSignature = '';
@@ -500,8 +546,111 @@
         from: $('#from').value.trim() || '마음을 담아',
         theme,
         music,
-        speed: $('#speed').value
+        speed: $('#speed').value,
+        bgMode: backgroundMode,
+        photoUrl: backgroundMode === 'custom' && customPhoto ? customPhoto.dataUrl : ''
       };
+    }
+
+    function formatSize(bytes){
+      if(!bytes) return '';
+      const kb = bytes / 1024;
+      return kb >= 1024 ? `${(kb/1024).toFixed(1)}MB` : `${Math.round(kb)}KB`;
+    }
+
+    function updatePhotoCard(){
+      const card = $('#photoCard');
+      if(!customPhoto){
+        card.classList.remove('show');
+        return;
+      }
+      card.classList.add('show');
+      $('#photoThumb').src = customPhoto.dataUrl;
+      $('#photoName').textContent = customPhoto.name || '내 사진 배경';
+      const details = [];
+      if(customPhoto.width && customPhoto.height) details.push(`${customPhoto.width}×${customPhoto.height}`);
+      if(customPhoto.size) details.push(formatSize(customPhoto.size));
+      $('#photoDesc').textContent = `자동 압축 완료${details.length ? ' · ' + details.join(' · ') : ''}`;
+    }
+
+    function updateBackgroundSummary(){
+      const summary = backgroundMode === 'custom' && customPhoto
+        ? `현재 배경: 내 사진 (${customPhoto.name || '업로드 사진'})`
+        : `현재 배경: ${themeNames[theme]}`;
+      $('#bgSummary').textContent = summary;
+    }
+
+    function refreshBackgroundUI(){
+      const usingCustom = backgroundMode === 'custom' && !!customPhoto;
+      $$('#themeList .theme-btn').forEach(b => {
+        b.classList.toggle('active', !usingCustom && b.dataset.theme === theme);
+        b.classList.toggle('dimmed', usingCustom);
+      });
+      $('#usePresetBtn').classList.toggle('active', !usingCustom);
+      $('#uploadPhotoBtn').classList.toggle('active', usingCustom);
+      updatePhotoCard();
+      updateBackgroundSummary();
+    }
+
+    function activateCustomPhoto(){
+      if(!customPhoto) return;
+      backgroundMode = 'custom';
+      refreshBackgroundUI();
+    }
+
+    function clearCustomPhoto(){
+      customPhoto = null;
+      backgroundMode = 'preset';
+      $('#photoInput').value = '';
+      refreshBackgroundUI();
+    }
+
+    function loadImageFromUrl(url){
+      return new Promise((resolve,reject)=>{
+        const img = new Image();
+        img.onload = ()=>resolve(img);
+        img.onerror = ()=>reject(new Error('이미지를 불러오지 못했습니다.'));
+        img.src = url;
+      });
+    }
+
+    function canvasToDataUrl(canvas, quality){
+      return new Promise(resolve => resolve(canvas.toDataURL('image/jpeg', quality)));
+    }
+
+    async function compressPhotoFile(file){
+      const objectUrl = URL.createObjectURL(file);
+      try{
+        const img = await loadImageFromUrl(objectUrl);
+        const maxSide = 1600;
+        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+        const width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+        const height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d', {alpha:false});
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let quality = 0.82;
+        let dataUrl = await canvasToDataUrl(canvas, quality);
+        while(dataUrl.length > 1100000 && quality > 0.55){
+          quality -= 0.08;
+          dataUrl = await canvasToDataUrl(canvas, quality);
+        }
+        return {
+          dataUrl,
+          width,
+          height,
+          size: Math.round((dataUrl.length * 3) / 4),
+          name: file.name || 'my-photo.jpg',
+          signature: `${file.name || 'photo'}|${file.size}|${file.lastModified}|${dataUrl.length}`
+        };
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
     }
 
     function updateCounters(){
@@ -513,8 +662,8 @@
 
     function setTheme(next){
       theme = themes.includes(next) ? next : 'night';
-      $$('#themeList .theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme === theme));
-      $('#bgSummary').textContent = `현재 배경: ${themeNames[theme]}`;
+      backgroundMode = 'preset';
+      refreshBackgroundUI();
     }
 
     function setMusic(next){
@@ -567,7 +716,14 @@
       renderMessage(data.message);
 
       themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
-      viewerBg.classList.add(`bg-${data.theme}`);
+      viewerBg.classList.remove('photo-fit');
+      viewerBg.style.backgroundImage = '';
+      if(data.bgMode === 'custom' && data.photoUrl){
+        viewerBg.classList.add('photo-fit');
+        viewerBg.style.backgroundImage = `url(${data.photoUrl.replace(/`/g,'')})`;
+      }else{
+        viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+      }
 
       viewer.classList.add('active');
       viewer.classList.toggle('received', mode === 'received');
@@ -873,11 +1029,9 @@
       });
     }
 
-    async function saveEncrypted(id,cipher){
-      const form=new URLSearchParams();
-      form.set('action','save');
-      form.set('id',id);
-      form.set('cipher',cipher);
+    async function postNoCors(params){
+      const form = new URLSearchParams();
+      Object.entries(params).forEach(([k,v]) => form.set(k, v));
       await fetch(LETTER_API_URL,{
         method:'POST',
         mode:'no-cors',
@@ -885,7 +1039,10 @@
         body:form.toString(),
         cache:'no-store'
       });
+    }
 
+    async function saveEncrypted(id,cipher){
+      await postNoCors({action:'save', id, cipher});
       for(let i=0;i<5;i++){
         await new Promise(r=>setTimeout(r,400+i*250));
         try{
@@ -894,6 +1051,21 @@
         }catch(e){}
       }
       throw new Error('암호화 편지를 임시보관소에 저장하지 못했습니다.');
+    }
+
+    async function savePhoto(id, dataUrl){
+      const m = String(dataUrl || '').match(/^data:(image\/(?:jpeg|jpg|png|webp));base64,(.+)$/);
+      if(!m) throw new Error('사진 형식이 올바르지 않습니다.');
+      await postNoCors({action:'saveImage', id, mime:m[1], imageData:m[2]});
+
+      for(let i=0;i<6;i++){
+        await new Promise(r=>setTimeout(r,450+i*250));
+        try{
+          const check = await jsonpRequest({action:'exists', id}, 5000);
+          if(check?.status === 'ok' && check?.hasImage) return true;
+        }catch(e){}
+      }
+      throw new Error('배경 사진을 임시보관소에 저장하지 못했습니다.');
     }
 
     async function fetchEncrypted(id){
@@ -905,7 +1077,9 @@
     }
 
     function shareSignature(data){
-      return JSON.stringify({v:DRAFT_SIGNATURE_VERSION,...data});
+      const slim = {...data};
+      delete slim.photoUrl;
+      return JSON.stringify({v:DRAFT_SIGNATURE_VERSION,...slim, customPhotoSignature: customPhoto ? customPhoto.signature : ''});
     }
 
     async function buildShareUrl(){
@@ -915,26 +1089,34 @@
         return {data,url:latestShareUrl,mode:'cached'};
       }
 
-      const payload=await encodeDirect(data);
+      const hasCustomPhoto = data.bgMode === 'custom' && !!data.photoUrl;
+      const shareData = {...data};
+      delete shareData.photoUrl;
+      const payload=await encodeDirect(shareData);
       const directUrl=`${APP_URL}#letter=${payload}`;
 
-      if(directUrl.length<=directSafeLimit()){
+      if(!hasCustomPhoto && directUrl.length<=directSafeLimit()){
         latestShareSignature=signature;
         latestShareUrl=directUrl;
         return {data,url:directUrl,mode:'direct'};
       }
 
       if(!apiConfigured()){
-        throw new Error(`이 편지는 모바일 공유 주소가 길어 새 Google 임시보관소 연결이 필요합니다. 현재 주소 길이: ${directUrl.length}자`);
+        throw new Error(hasCustomPhoto
+          ? '내 사진 배경을 보내려면 새 Google 임시보관소 연결이 필요합니다.'
+          : `이 편지는 모바일 공유 주소가 길어 새 Google 임시보관소 연결이 필요합니다. 현재 주소 길이: ${directUrl.length}자`);
       }
 
       const id=randomId();
-      const encrypted=await encryptLetter(data);
+      const encrypted=await encryptLetter(shareData);
       await saveEncrypted(id,encrypted.cipherBlob);
+      if(hasCustomPhoto){
+        await savePhoto(id, data.photoUrl);
+      }
       const storedUrl=makeStoredUrl(id,encrypted.keyToken);
       latestShareSignature=signature;
       latestShareUrl=storedUrl;
-      return {data,url:storedUrl,mode:'stored'};
+      return {data,url:storedUrl,mode:hasCustomPhoto ? 'stored-photo' : 'stored'};
     }
 
     function themeFile(t){
@@ -964,7 +1146,7 @@
         return;
       }
 
-      const imageUrl=APP_URL+themeFile(built.data.theme);
+      const imageUrl = built.data.bgMode === 'custom' ? (APP_URL + 'app-share-preview.png') : (APP_URL + themeFile(built.data.theme));
       try{
         Kakao.Share.sendDefault({
           objectType:'feed',
@@ -978,8 +1160,10 @@
           },
           buttonTitle:'💌 편지 열어보기'
         });
-        $('#sendStatus').textContent = built.mode==='stored'
-          ? '✅ 긴 편지를 암호화해 짧은 링크로 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.'
+        $('#sendStatus').textContent = (built.mode==='stored' || built.mode==='stored-photo')
+          ? (built.mode==='stored-photo'
+              ? '✅ 내 사진 배경과 편지를 안전하게 암호화해 보냅니다. 카카오톡에서 받는 사람을 선택해 주세요.'
+              : '✅ 긴 편지를 암호화해 짧은 링크로 만들었습니다. 카카오톡에서 받는 사람을 선택해 주세요.')
           : '✅ 서버 저장 없이 바로 공유합니다. 카카오톡에서 받는 사람을 선택해 주세요.';
       }catch(e){
         console.error(e);
@@ -1031,6 +1215,10 @@
         if(!data?.message) throw new Error('invalid');
         if(!themes.includes(data.theme)) data.theme='night';
         if(!Object.prototype.hasOwnProperty.call(musicNames,data.music)) data.music='night';
+        data.bgMode = data.bgMode === 'custom' ? 'custom' : 'preset';
+        if(data.bgMode === 'custom' && result.imageUrl){
+          data.photoUrl = result.imageUrl;
+        }
         hideLoading();
         applyViewer(data,'received');
         return true;
@@ -1052,6 +1240,7 @@
       }
       if(!themes.includes(data.theme)) data.theme='night';
       if(!Object.prototype.hasOwnProperty.call(musicNames,data.music)) data.music='night';
+      data.bgMode = 'preset';
       hideLoading();
       applyViewer(data,'received');
       return true;
@@ -1064,6 +1253,37 @@
 
     $$('#themeList .theme-btn').forEach(btn => btn.addEventListener('click', () => { setTheme(btn.dataset.theme); invalidateShareCache(); }));
     $$('#musicList .music-btn').forEach(btn => btn.addEventListener('click', () => { setMusic(btn.dataset.music); invalidateShareCache(); }));
+    $('#uploadPhotoBtn').addEventListener('click', () => $('#photoInput').click());
+    $('#changePhotoBtn').addEventListener('click', () => $('#photoInput').click());
+    $('#usePresetBtn').addEventListener('click', () => {
+      backgroundMode = 'preset';
+      refreshBackgroundUI();
+      invalidateShareCache();
+      $('#status').textContent = '기본 배경을 사용합니다.';
+    });
+    $('#removePhotoBtn').addEventListener('click', () => {
+      clearCustomPhoto();
+      invalidateShareCache();
+      $('#status').textContent = '업로드한 사진을 삭제했습니다.';
+    });
+    $('#photoInput').addEventListener('change', async e => {
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      if(!/^image\//.test(file.type)){
+        $('#status').textContent = '⚠️ 이미지 파일만 올릴 수 있습니다.';
+        return;
+      }
+      $('#status').textContent = '⏳ 사진을 준비하는 중입니다.';
+      try{
+        customPhoto = await compressPhotoFile(file);
+        activateCustomPhoto();
+        invalidateShareCache();
+        $('#status').textContent = '✅ 내 사진 배경을 준비했습니다. 미리보기로 먼저 확인해 보세요.';
+      }catch(err){
+        console.error(err);
+        $('#status').textContent = '⚠️ 사진을 처리하지 못했습니다. 다른 사진으로 다시 시도해 주세요.';
+      }
+    });
 
     $('#previewMusicBtn').addEventListener('click', async () => {
       previewing = true;
@@ -1094,6 +1314,7 @@
       $('#from').value = '';
       $('#speed').value = 'normal';
       setTheme('night');
+      clearCustomPhoto();
       setMusic('night');
       stopMusic();
       invalidateShareCache();
@@ -1130,6 +1351,7 @@
     $('#errorHomeBtn').addEventListener('click', () => { location.href=APP_URL; });
 
     setTheme('night');
+    refreshBackgroundUI();
     setMusic('night');
     updateCounters();
     initKakao();
