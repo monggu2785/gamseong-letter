@@ -251,6 +251,149 @@
     .photo-load-status{display:none;margin-top:12px;font-size:11px;line-height:1.55;color:rgba(255,255,255,.78)}
     .photo-load-status.show{display:block}
 
+
+    /* ===== 3.1: 단순한 홈 + 4단계 편지 만들기 ===== */
+    .app{max-width:1040px}
+    .home-screen{display:block}
+    .home-screen.hidden,.composer-screen.hidden{display:none}
+    .composer-screen{display:block}
+
+    .home-shell{
+      position:relative;overflow:hidden;max-width:720px;min-height:690px;margin:10px auto 0;
+      border-radius:38px;padding:48px 30px 38px;
+      border:1px solid rgba(255,255,255,.88);
+      box-shadow:0 28px 80px rgba(73,51,79,.13);
+      background:rgba(255,255,255,.80);
+      isolation:isolate
+    }
+    .home-shell::before{
+      content:"";position:absolute;inset:0;z-index:-2;
+      background:url("bg-flower.jpg") center/cover no-repeat;
+      opacity:.18;transform:scale(1.03)
+    }
+    .home-shell::after{
+      content:"";position:absolute;inset:0;z-index:-1;
+      background:linear-gradient(180deg,rgba(255,255,255,.70),rgba(250,246,250,.88))
+    }
+    .home-brand{text-align:center;margin-bottom:34px}
+    .home-brand .home-mark{font-size:46px;display:block;margin-bottom:9px}
+    .home-brand h1{margin:0;font-size:clamp(40px,8vw,62px);letter-spacing:-.065em}
+    .home-brand p{margin:10px 0 0;color:#776b79;line-height:1.7;font-size:14px}
+    .home-main-btn{
+      width:100%;border:0;border-radius:24px;padding:20px 22px;
+      background:linear-gradient(135deg,#78527d,#b67e98);color:#fff;
+      font-weight:900;font-size:20px;box-shadow:0 15px 34px rgba(123,85,126,.24)
+    }
+    .home-menu{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:14px}
+    .home-tile{
+      min-height:112px;border:1px solid rgba(123,85,126,.12);border-radius:24px;
+      background:rgba(255,255,255,.86);color:#3d3342;padding:18px 14px;text-align:center;
+      box-shadow:0 12px 28px rgba(74,52,80,.07)
+    }
+    .home-tile .ico{font-size:27px;display:block;margin-bottom:8px}
+    .home-tile strong{font-size:14px}
+    .home-tile small{display:block;margin-top:5px;color:#86798a;font-size:10.5px;line-height:1.45}
+    .home-guide{
+      width:100%;margin-top:13px;border:1px solid rgba(123,85,126,.12);border-radius:20px;
+      padding:14px;background:rgba(255,255,255,.68);color:#67586b;font-size:12px;font-weight:800
+    }
+
+    .composer-top{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 auto 16px;
+      max-width:860px
+    }
+    .composer-top button{
+      border:1px solid var(--line);background:rgba(255,255,255,.88);border-radius:999px;
+      padding:10px 14px;color:#554759;font-size:12px;font-weight:850
+    }
+    .composer-title{text-align:center;flex:1}
+    .composer-title strong{display:block;font-size:21px;letter-spacing:-.04em}
+    .composer-title span{font-size:10.5px;color:#87798b}
+
+    .stepbar{
+      max-width:860px;margin:0 auto 17px;padding:9px;
+      display:grid;grid-template-columns:repeat(4,1fr);gap:7px;
+      background:rgba(255,255,255,.72);border:1px solid rgba(123,85,126,.10);border-radius:22px
+    }
+    .step-chip{
+      border:0;border-radius:16px;padding:11px 6px;background:transparent;color:#8a7b8d;
+      font-size:11px;font-weight:850;white-space:nowrap
+    }
+    .step-chip.active{background:#fff;color:#5e4763;box-shadow:0 8px 20px rgba(74,52,80,.08)}
+    .step-chip.done{color:#7b557e}
+
+    .wizard{max-width:860px;margin:0 auto}
+    .wizard-step{display:none}
+    .wizard-step.active{display:block}
+    .wizard-card{
+      background:rgba(255,255,255,.90);border:1px solid rgba(255,255,255,.88);
+      border-radius:30px;padding:26px;box-shadow:var(--shadow);backdrop-filter:blur(16px)
+    }
+    .wizard-head{margin-bottom:20px}
+    .wizard-head .eyebrow{font-size:11px;color:#987d9a;font-weight:900;letter-spacing:.08em}
+    .wizard-head h2{margin:5px 0 7px;font-size:27px;letter-spacing:-.045em}
+    .wizard-head p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.65}
+    .wizard-actions{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+    .wizard-actions .btn{min-width:120px}
+    .wizard-actions .next{margin-left:auto}
+    .decorate-stack{display:grid;gap:16px}
+    .decorate-stack .section{margin:0}
+    .preview-summary{
+      display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0
+    }
+    .summary-box{
+      border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff
+    }
+    .summary-box small{display:block;color:#8c7e90;font-size:10px;margin-bottom:5px}
+    .summary-box strong{font-size:13px;line-height:1.5}
+    .preview-stage{
+      border-radius:24px;overflow:hidden;min-height:270px;position:relative;
+      border:1px solid rgba(123,85,126,.12);background:#eee center/cover no-repeat
+    }
+    .preview-stage::after{
+      content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.22))
+    }
+    .preview-stage-text{
+      position:absolute;z-index:1;inset:0;display:grid;place-items:center;text-align:center;color:#fff;
+      padding:24px;text-shadow:0 2px 12px rgba(0,0,0,.5)
+    }
+    .preview-stage-text strong{display:block;font-size:24px;margin-bottom:8px}
+    .send-panel{margin-top:0}
+    .send-step-note{
+      margin-bottom:14px;padding:13px 15px;border-radius:17px;background:rgba(123,85,126,.06);
+      color:#6e5e72;font-size:11px;line-height:1.65
+    }
+
+    .simple-modal{
+      display:none;position:fixed;inset:0;z-index:2200;place-items:center;padding:24px;
+      background:rgba(25,18,29,.42);backdrop-filter:blur(5px)
+    }
+    .simple-modal.show{display:grid}
+    .modal-card{
+      width:min(92vw,470px);max-height:82vh;overflow:auto;background:#fff;border-radius:30px;
+      padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.2)
+    }
+    .modal-card h2{margin:0 0 10px;font-size:23px}
+    .modal-card p{color:#746777;font-size:12.5px;line-height:1.75}
+    .modal-steps{margin:15px 0;display:grid;gap:9px}
+    .modal-step{padding:12px 14px;border-radius:16px;background:#f7f2f7;font-size:12px;line-height:1.55}
+    .modal-close{width:100%;border:0;border-radius:999px;padding:13px;background:#6f4e75;color:#fff;font-weight:900}
+
+    @media(max-width:640px){
+      .home-shell{min-height:620px;padding:34px 17px 25px;border-radius:30px}
+      .home-menu{gap:10px}
+      .home-tile{min-height:104px;padding:15px 10px}
+      .composer-top{margin-top:3px}
+      .composer-title span{display:none}
+      .stepbar{gap:4px;padding:7px}
+      .step-chip{font-size:10px;padding:10px 3px}
+      .wizard-card{padding:19px;border-radius:25px}
+      .wizard-head h2{font-size:24px}
+      .preview-summary{grid-template-columns:1fr}
+      .wizard-actions{display:grid;grid-template-columns:1fr 1fr}
+      .wizard-actions .next{margin-left:0}
+    }
+
   </style>
 
   <script>
@@ -267,148 +410,261 @@
 </head>
 <body>
   <main class="app">
-    <header class="hero">
-      <span class="mark">💌</span>
-      <h1>감성편지</h1>
-      <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 내 사진도 배경으로 올린 뒤 카카오톡으로 전할 수 있습니다.</p>
-      <span class="version">3.0 · 3단계 수정2 수정1</span>
-    </header>
-
-    <div class="layout">
-      <section class="card">
-        <h2>✍️ 편지 쓰기</h2>
-
-        <div class="field">
-          <label for="to">받는 사람</label>
-          <input id="to" maxlength="40" placeholder="받는 분의 이름을 입력하세요">
+    <section class="home-screen" id="homeScreen">
+      <div class="home-shell">
+        <div class="home-brand">
+          <span class="home-mark">💌</span>
+          <h1>감성편지</h1>
+          <p>마음은 천천히, 편지는 더 따뜻하게.<br>배경과 음악을 골라 한 편의 편지로 전해보세요.</p>
         </div>
 
-        <div class="field">
-          <label for="title">편지 제목</label>
-          <input id="title" maxlength="60" placeholder="편지 제목을 입력하세요">
+        <button class="home-main-btn" id="newLetterBtn">✍️ 새 편지 만들기</button>
+
+        <div class="home-menu">
+          <button class="home-tile" id="bgBrowseBtn">
+            <span class="ico">🖼</span>
+            <strong>배경 둘러보기</strong>
+            <small>6가지 배경과<br>내 사진</small>
+          </button>
+          <button class="home-tile" id="musicBrowseBtn">
+            <span class="ico">🎵</span>
+            <strong>음악 들어보기</strong>
+            <small>편지에 어울리는<br>4가지 음악</small>
+          </button>
         </div>
 
-        <div class="field">
-          <label for="message">편지 내용</label>
-          <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요."></textarea>
-          <div class="tiny">줄바꿈을 그대로 살려 보여줍니다.</div>
-          <div class="message-meta">
-            <span><strong id="charCount">0</strong> / 5000자</span>
-            <span id="playTime">예상 재생 약 34초</span>
-          </div>
+        <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
+      </div>
+      <div class="footer">감성편지 3.1 · 간단한 4단계 편지 만들기</div>
+    </section>
+
+    <section class="composer-screen hidden" id="composerScreen">
+      <div class="composer-top">
+        <button type="button" id="backHomeBtn">← 홈</button>
+        <div class="composer-title">
+          <strong>감성편지 만들기</strong>
+          <span>쓰기 → 꾸미기 → 미리보기 → 보내기</span>
         </div>
+        <button type="button" id="resetBtn">↺ 초기화</button>
+      </div>
 
-        <div class="field">
-          <label for="from">보내는 사람</label>
-          <input id="from" maxlength="40" placeholder="이름 또는 ‘마음을 담아’">
-        </div>
-      </section>
+      <div class="stepbar">
+        <button class="step-chip active" data-step="1">1. 쓰기</button>
+        <button class="step-chip" data-step="2">2. 꾸미기</button>
+        <button class="step-chip" data-step="3">3. 미리보기</button>
+        <button class="step-chip" data-step="4">4. 보내기</button>
+      </div>
 
-      <aside class="card">
-        <h2>🪄 배경과 음악 선택</h2>
-
-        <div class="section">
-          <div class="section-head">
-            <h3>🖼 배경화면 선택</h3>
-            <p>편지에 어울리는 배경을 <b>눈으로 보고</b> 골라 주세요.</p>
-            <div class="selected" id="bgSummary">현재 배경: 별이 빛나는 밤</div>
-          </div>
-
-          <div class="themes" id="themeList">
-            <button type="button" class="theme-btn theme-night active" data-theme="night"><span>별이 빛나는 밤</span></button>
-            <button type="button" class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
-            <button type="button" class="theme-btn theme-sea" data-theme="sea"><span>바다</span></button>
-            <button type="button" class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
-            <button type="button" class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
-            <button type="button" class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
-          </div>
-
-          <div class="upload-panel">
-            <div class="upload-actions">
-              <button type="button" class="upload-btn" id="uploadPhotoBtn">📷 내 사진 올리기</button>
-              <button type="button" class="upload-btn" id="usePresetBtn">🖼 기본 배경 사용</button>
-              <input type="file" id="photoInput" accept="image/*" hidden>
+      <div class="wizard">
+        <section class="wizard-step active" data-step-panel="1">
+          <div class="wizard-card">
+            <div class="wizard-head">
+              <div class="eyebrow">STEP 1</div>
+              <h2>마음을 적어주세요</h2>
+              <p>받는 사람과 전하고 싶은 내용을 먼저 적습니다.</p>
             </div>
-            <div class="upload-help">내 사진은 화면용으로 선명도를 유지하면서 약 1080px·저용량 JPEG로 자동 최적화합니다. 사진 편지는 임시보관소를 통해 전달합니다.</div>
-            <div class="photo-card" id="photoCard">
-              <div class="photo-thumb"><img id="photoThumb" alt="업로드한 배경 사진 미리보기"></div>
-              <div class="photo-meta">
-                <div class="photo-name" id="photoName">내 사진 배경</div>
-                <div class="photo-desc" id="photoDesc">자동 압축을 마친 사진입니다.</div>
-                <div class="photo-actions">
-                  <button type="button" class="mini-btn" id="changePhotoBtn">사진 변경</button>
-                  <button type="button" class="mini-btn warn" id="removePhotoBtn">사진 삭제</button>
+
+            <div class="field">
+              <label for="to">받는 사람</label>
+              <input id="to" maxlength="40" placeholder="받는 분의 이름을 입력하세요">
+            </div>
+            <div class="field">
+              <label for="title">편지 제목</label>
+              <input id="title" maxlength="60" placeholder="편지 제목을 입력하세요">
+            </div>
+            <div class="field">
+              <label for="message">편지 내용</label>
+              <textarea id="message" maxlength="5000" placeholder="전하고 싶은 마음을 적어보세요."></textarea>
+              <div class="message-meta">
+                <span><strong id="charCount">0</strong> / 5000자</span>
+                <span id="playTime">예상 재생 약 34초</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="from">보내는 사람</label>
+              <input id="from" maxlength="40" placeholder="이름 또는 ‘마음을 담아’">
+            </div>
+
+            <div class="wizard-actions">
+              <span></span>
+              <button class="btn btn-primary next" type="button" data-go-step="2">꾸미기 →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="wizard-step" data-step-panel="2">
+          <div class="wizard-card">
+            <div class="wizard-head">
+              <div class="eyebrow">STEP 2</div>
+              <h2>편지 분위기를 골라주세요</h2>
+              <p>배경은 눈으로 보고, 음악은 직접 들어본 뒤 선택합니다.</p>
+            </div>
+
+            <div class="decorate-stack">
+              <div class="section" id="backgroundSection">
+                <div class="section-head">
+                  <h3>🖼 배경</h3>
+                  <p>기본 배경 또는 내 사진을 선택하세요.</p>
+                  <div class="selected" id="bgSummary">현재 배경: 별이 빛나는 밤</div>
+                </div>
+
+                <div class="themes" id="themeList">
+                  <button type="button" class="theme-btn theme-night active" data-theme="night"><span>별빛</span></button>
+                  <button type="button" class="theme-btn theme-sunset" data-theme="sunset"><span>노을</span></button>
+                  <button type="button" class="theme-btn theme-sea" data-theme="sea"><span>바다</span></button>
+                  <button type="button" class="theme-btn theme-forest" data-theme="forest"><span>숲</span></button>
+                  <button type="button" class="theme-btn theme-flower" data-theme="flower"><span>꽃길</span></button>
+                  <button type="button" class="theme-btn theme-winter" data-theme="winter"><span>겨울</span></button>
+                </div>
+
+                <div class="upload-panel">
+                  <div class="upload-actions">
+                    <button type="button" class="upload-btn" id="uploadPhotoBtn">📷 내 사진 올리기</button>
+                    <button type="button" class="upload-btn" id="usePresetBtn">기본 배경 사용</button>
+                    <input type="file" id="photoInput" accept="image/*" hidden>
+                  </div>
+                  <div class="upload-help">사진은 휴대폰 화면에 맞게 자동 최적화합니다.</div>
+                  <div class="photo-card" id="photoCard">
+                    <div class="photo-thumb"><img id="photoThumb" alt="업로드한 배경 사진 미리보기"></div>
+                    <div class="photo-meta">
+                      <div class="photo-name" id="photoName">내 사진 배경</div>
+                      <div class="photo-desc" id="photoDesc">자동 압축을 마친 사진입니다.</div>
+                      <div class="photo-actions">
+                        <button type="button" class="mini-btn" id="changePhotoBtn">사진 변경</button>
+                        <button type="button" class="mini-btn warn" id="removePhotoBtn">사진 삭제</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section" id="musicSection">
+                <div class="section-head">
+                  <h3>🎵 음악</h3>
+                  <p>마음에 맞는 음악을 들어보고 선택하세요.</p>
+                  <div class="selected" id="musicSummary">현재 음악: 별빛 편지</div>
+                </div>
+
+                <div class="music-grid" id="musicList">
+                  <button type="button" class="music-btn active" data-music="night">
+                    <div class="music-icon">🌌</div><div class="music-name">별빛 편지</div>
+                    <div class="music-desc">잔잔한 밤 느낌의 피아노</div>
+                  </button>
+                  <button type="button" class="music-btn" data-music="sunset">
+                    <div class="music-icon">🌅</div><div class="music-name">따뜻한 오후의 편지</div>
+                    <div class="music-desc">기타와 피아노의 따뜻한 분위기</div>
+                  </button>
+                  <button type="button" class="music-btn" data-music="sea">
+                    <div class="music-icon">🌊</div><div class="music-name">파도처럼 머무는 마음</div>
+                    <div class="music-desc">고요하고 넓게 흐르는 감성</div>
+                  </button>
+                  <button type="button" class="music-btn" data-music="calm">
+                    <div class="music-icon">🌲</div><div class="music-name">고요한 마음</div>
+                    <div class="music-desc">차분한 미니멀 피아노</div>
+                  </button>
+                </div>
+
+                <div class="music-actions">
+                  <button type="button" class="chip" id="previewMusicBtn">▶ 선택 음악 듣기</button>
+                  <button type="button" class="chip" id="stopMusicBtn">■ 멈춤</button>
+                  <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="speed">글 흐르는 속도</label>
+                <select id="speed">
+                  <option value="slow">천천히</option>
+                  <option value="normal" selected>보통</option>
+                  <option value="fast">조금 빠르게</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="wizard-actions">
+              <button class="btn btn-soft" type="button" data-go-step="1">← 쓰기</button>
+              <button class="btn btn-primary next" type="button" data-go-step="3">미리보기 →</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="wizard-step" data-step-panel="3">
+          <div class="wizard-card">
+            <div class="wizard-head">
+              <div class="eyebrow">STEP 3</div>
+              <h2>보내기 전에 확인하세요</h2>
+              <p>받는 사람이 보게 될 편지를 실제 화면으로 확인합니다.</p>
+            </div>
+
+            <div class="preview-stage" id="previewStage">
+              <div class="preview-stage-text">
+                <div>
+                  <strong id="previewStageTitle">마음을 전합니다</strong>
+                  <span id="previewStageTo">소중한 당신에게</span>
                 </div>
               </div>
             </div>
+
+            <div class="preview-summary">
+              <div class="summary-box"><small>배경</small><strong id="previewBgText">별이 빛나는 밤</strong></div>
+              <div class="summary-box"><small>음악</small><strong id="previewMusicText">별빛 편지</strong></div>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%" id="previewBtn">▶ 실제 편지 미리보기</button>
+            <div class="status" id="status">미리보기 후 편집으로 돌아와도 작성 내용은 그대로 유지됩니다.</div>
+
+            <div class="wizard-actions">
+              <button class="btn btn-soft" type="button" data-go-step="2">← 꾸미기</button>
+              <button class="btn btn-primary next" type="button" data-go-step="4">보내기 →</button>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div class="section">
-          <div class="section-head">
-            <h3>🎵 배경음악 선택</h3>
-            <p>편지와 함께 흐를 음악을 <b>들어 보고</b> 골라 주세요.</p>
-            <div class="selected" id="musicSummary">현재 음악: 별빛 편지</div>
+        <section class="wizard-step" data-step-panel="4">
+          <div class="wizard-card">
+            <div class="wizard-head">
+              <div class="eyebrow">STEP 4</div>
+              <h2>이제 마음을 전해보세요</h2>
+              <p>카카오톡으로 편지 링크를 보내면 상대방이 음악과 함께 편지를 열어봅니다.</p>
+            </div>
+
+            <div class="send-step-note">
+              🔐 짧은 편지는 서버에 저장하지 않습니다. 긴 편지나 내 사진 배경을 사용한 편지만 암호화하여 임시보관소를 이용합니다.
+            </div>
+
+            <div class="send-panel">
+              <div class="send-title">💌 편지 보내기</div>
+              <button class="btn-kakao" id="kakaoSendBtn">카카오톡으로 보내기</button>
+              <div class="send-status" id="sendStatus">카카오톡에서 받는 사람을 선택하면 됩니다.</div>
+              <div class="privacy-note">
+                긴 편지는 이 기기에서 암호화합니다. Google Sheet에는 편지 원문이나 복호화 키를 저장하지 않습니다.
+              </div>
+            </div>
+
+            <div class="wizard-actions">
+              <button class="btn btn-soft" type="button" data-go-step="3">← 미리보기</button>
+              <span></span>
+            </div>
           </div>
+        </section>
+      </div>
 
-          <div class="music-grid" id="musicList">
-            <button type="button" class="music-btn active" data-music="night">
-              <div class="music-icon">🌌</div>
-              <div class="music-name">별빛 편지</div>
-              <div class="music-desc">잔잔한 밤 느낌의 피아노</div>
-            </button>
-            <button type="button" class="music-btn" data-music="sunset">
-              <div class="music-icon">🌅</div>
-              <div class="music-name">따뜻한 오후의 편지</div>
-              <div class="music-desc">기타와 피아노의 따뜻한 분위기</div>
-            </button>
-            <button type="button" class="music-btn" data-music="sea">
-              <div class="music-icon">🌊</div>
-              <div class="music-name">파도처럼 머무는 마음</div>
-              <div class="music-desc">고요하고 넓게 흐르는 감성</div>
-            </button>
-            <button type="button" class="music-btn" data-music="calm">
-              <div class="music-icon">🌲</div>
-              <div class="music-name">고요한 마음</div>
-              <div class="music-desc">차분한 미니멀 피아노</div>
-            </button>
-          </div>
-
-          <div class="music-actions">
-            <button type="button" class="chip" id="previewMusicBtn">▶ 선택한 음악 듣기</button>
-            <button type="button" class="chip" id="stopMusicBtn">■ 음악 멈춤</button>
-            <button type="button" class="chip" id="noMusicBtn">🔇 음악 없이</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="speed">글 흐르는 속도</label>
-          <select id="speed">
-            <option value="slow">천천히</option>
-            <option value="normal" selected>보통</option>
-            <option value="fast">조금 빠르게</option>
-          </select>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="previewBtn">▶ 미리보기</button>
-          <button class="btn btn-soft" id="resetBtn">↺ 처음부터</button>
-        </div>
-        <div class="status" id="status">미리보기를 확인한 뒤 카카오톡으로 보낼 수 있습니다.</div>
-
-        <div class="send-panel">
-          <div class="send-title">💌 편지 보내기</div>
-          <button class="btn-kakao" id="kakaoSendBtn">카카오톡으로 보내기</button>
-          <div class="send-status" id="sendStatus">짧은 편지는 서버 저장 없이 바로 공유하고, 긴 편지나 내 사진이 있는 편지는 암호화해 안전한 링크로 보냅니다.</div>
-          <div class="privacy-note">
-            🔐 긴 편지는 보내기 전에 이 기기에서 암호화합니다. Google Sheet에는 편지 원문이나 복호화 키를 저장하지 않고, 사진이 있을 때도 압축한 배경 이미지만 임시 저장하도록 설계했습니다.
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <div class="footer">감성편지 3.0 · 3단계 수정2 수정1 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
+      <div class="footer">감성편지 3.1 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+    </section>
   </main>
+
+  <section class="simple-modal" id="homeGuideModal">
+    <div class="modal-card">
+      <h2>📱 홈 화면에 감성편지 두기</h2>
+      <p>카카오톡 안에서 열었다면 먼저 일반 브라우저로 열어주세요.</p>
+      <div class="modal-steps">
+        <div class="modal-step"><b>1.</b> 카카오톡 메뉴에서 <b>다른 브라우저로 열기</b></div>
+        <div class="modal-step"><b>2.</b> 삼성 인터넷 또는 Chrome 메뉴 열기</div>
+        <div class="modal-step"><b>3.</b> <b>홈 화면에 추가</b> 또는 <b>현재 페이지 추가 → 홈 화면</b></div>
+      </div>
+      <button class="modal-close" id="homeGuideClose">확인</button>
+    </div>
+  </section>
 
   <section class="letter-loading" id="letterLoading" aria-live="polite">
     <div class="loading-card">
@@ -506,7 +762,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 30031;
+    const DRAFT_SIGNATURE_VERSION = 3100;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -1340,6 +1596,54 @@
     function invalidateShareCache(){
       latestShareSignature='';
       latestShareUrl='';
+      if($('#previewStage') && $('.wizard-step[data-step-panel="3"]')?.classList.contains('active')) updatePreviewCard();
+    }
+
+    function showHome(){
+      stopMusic();
+      $('#homeScreen').classList.remove('hidden');
+      $('#composerScreen').classList.add('hidden');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function showComposer(step=1, focusTarget=''){
+      $('#homeScreen').classList.add('hidden');
+      $('#composerScreen').classList.remove('hidden');
+      goStep(step);
+      if(focusTarget){
+        setTimeout(() => {
+          const target = $(focusTarget);
+          if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+        }, 80);
+      }
+    }
+
+    function updatePreviewCard(){
+      const data = collect();
+      $('#previewStageTitle').textContent = data.title;
+      $('#previewStageTo').textContent = data.to;
+      $('#previewMusicText').textContent = musicNames[data.music] || '음악 없음';
+
+      const stage = $('#previewStage');
+      if(data.bgMode === 'custom' && data.photoUrl){
+        stage.style.backgroundImage = `url("${data.photoUrl}")`;
+        $('#previewBgText').textContent = '내 사진';
+      }else{
+        stage.style.backgroundImage = `url("${themeFile(data.theme)}")`;
+        $('#previewBgText').textContent = themeNames[data.theme] || '별이 빛나는 밤';
+      }
+    }
+
+    function goStep(step){
+      step = Math.max(1,Math.min(4,Number(step)||1));
+      $$('.wizard-step').forEach(panel => panel.classList.toggle('active', Number(panel.dataset.stepPanel)===step));
+      $$('.step-chip').forEach(chip => {
+        const n = Number(chip.dataset.step);
+        chip.classList.toggle('active', n===step);
+        chip.classList.toggle('done', n<step);
+      });
+      if(step===3) updatePreviewCard();
+      window.scrollTo({top:0,behavior:'smooth'});
     }
 
     $$('#themeList .theme-btn').forEach(btn => btn.addEventListener('click', () => { setTheme(btn.dataset.theme); invalidateShareCache(); }));
@@ -1392,6 +1696,7 @@
     });
 
     $('#previewBtn').addEventListener('click', () => {
+      updatePreviewCard();
       stopMusic();
       applyViewer(collect(), 'preview');
       $('#status').textContent = '미리보기를 확인한 뒤 편집으로 돌아와도 작성 내용은 그대로 유지됩니다.';
@@ -1411,6 +1716,7 @@
       invalidateShareCache();
       updateCounters();
       $('#status').textContent = '초기화했습니다.';
+      goStep(1);
       $('#to').focus();
     });
 
@@ -1436,6 +1742,20 @@
       $(sel).addEventListener('input', invalidateShareCache);
     });
 
+    $('#newLetterBtn').addEventListener('click', () => showComposer(1));
+    $('#bgBrowseBtn').addEventListener('click', () => showComposer(2,'#backgroundSection'));
+    $('#musicBrowseBtn').addEventListener('click', () => showComposer(2,'#musicSection'));
+    $('#backHomeBtn').addEventListener('click', showHome);
+
+    $$('.step-chip').forEach(chip => chip.addEventListener('click', () => goStep(chip.dataset.step)));
+    $$('[data-go-step]').forEach(btn => btn.addEventListener('click', () => goStep(btn.dataset.goStep)));
+
+    $('#homeGuideBtn').addEventListener('click', () => $('#homeGuideModal').classList.add('show'));
+    $('#homeGuideClose').addEventListener('click', () => $('#homeGuideModal').classList.remove('show'));
+    $('#homeGuideModal').addEventListener('click', e => {
+      if(e.target === $('#homeGuideModal')) $('#homeGuideModal').classList.remove('show');
+    });
+
     $('#kakaoSendBtn').addEventListener('click', sendKakao);
     $('#recipientReplayBtn').addEventListener('click', replay);
     $('#recipientCreateBtn').addEventListener('click', () => { location.href=APP_URL; });
@@ -1446,6 +1766,7 @@
     setMusic('night');
     updateCounters();
     initKakao();
+    showHome();
 
     (async()=>{
       if(await loadStoredIncoming()) return;
