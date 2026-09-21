@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gamseong-letter-2.1.5';
+const CACHE_NAME = 'gamseong-letter-2.1.6';
 const APP_SHELL = [
   './',
   './index.html',

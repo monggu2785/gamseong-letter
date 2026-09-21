@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.1.5 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.1.6 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -38,6 +38,57 @@
     button{cursor:pointer}
     button:disabled{cursor:wait;opacity:.65}
 
+
+
+    /* ===== 받은 편지 로딩 화면 ===== */
+    .letter-loading{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:2500;
+      place-items:center;
+      padding:28px;
+      background:
+        radial-gradient(circle at 20% 12%,rgba(255,255,255,.98),transparent 28%),
+        linear-gradient(145deg,#faf6fa 0%,#f2eaf2 52%,#e8dfe9 100%);
+      color:#342b38;
+      text-align:center;
+    }
+    .letter-loading.show{display:grid}
+    .loading-card{
+      width:min(88vw,390px);
+      padding:34px 28px;
+      border-radius:30px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(113,81,127,.12);
+      box-shadow:0 25px 70px rgba(77,55,86,.12);
+    }
+    .loading-envelope{
+      display:block;
+      font-size:42px;
+      margin-bottom:15px;
+      animation:loadingFloat 1.5s ease-in-out infinite;
+    }
+    .loading-card h2{margin:0 0 9px;font-size:24px;letter-spacing:-.04em}
+    .loading-card p{margin:0;color:#746878;font-size:13px;line-height:1.75}
+    .loading-dots{display:flex;justify-content:center;gap:7px;margin-top:18px}
+    .loading-dots i{
+      width:7px;height:7px;border-radius:50%;
+      background:#8a698f;opacity:.25;
+      animation:loadingDot 1.15s infinite;
+    }
+    .loading-dots i:nth-child(2){animation-delay:.16s}
+    .loading-dots i:nth-child(3){animation-delay:.32s}
+    @keyframes loadingFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-5px)}
+    }
+    @keyframes loadingDot{
+      0%,70%,100%{opacity:.22;transform:scale(.8)}
+      35%{opacity:1;transform:scale(1)}
+    }
+    html.incoming-letter #landingScreen{display:none!important}
+    html.incoming-letter #letterLoadingScreen{display:grid}
 
     /* ===== 시작 화면 ===== */
     .landing{
@@ -219,11 +270,11 @@
     .bg-photo-frame{position:absolute;inset:20px;z-index:1;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility .55s ease}
     .bg-photo-frame.show{opacity:1;visibility:visible}
     .bg-photo-image{display:block;width:100%;height:100%;object-fit:contain;object-position:center;filter:drop-shadow(0 20px 50px rgba(0,0,0,.28));user-select:none;-webkit-user-drag:none}
-    .viewer.photo-mode .letter-viewport{background:linear-gradient(180deg,rgba(7,6,12,.18),rgba(7,6,12,.30))}
-    .viewer.photo-mode .open-screen{background:rgba(12,10,17,.34);backdrop-filter:blur(3px)}
-    .viewer.photo-mode .open-card{background:rgba(14,10,20,.42);border-color:rgba(255,255,255,.24);box-shadow:0 28px 70px rgba(0,0,0,.34)}
-    .viewer.photo-mode .scroll-wrap{padding:clamp(24px,3.8vw,40px) clamp(18px,4vw,34px) clamp(34px,4.6vw,52px);background:linear-gradient(180deg,rgba(21,16,28,.32),rgba(12,9,18,.24));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16);border-radius:32px;box-shadow:0 24px 70px rgba(0,0,0,.22)}
-    .viewer.photo-mode .receiver,.viewer.photo-mode .letter-title,.viewer.photo-mode .letter-line,.viewer.photo-mode .from,.viewer.photo-mode .heart{text-shadow:0 4px 22px rgba(0,0,0,.55)}
+    .viewer.photo-mode .letter-viewport{background:linear-gradient(180deg,rgba(7,6,12,.06),rgba(7,6,12,.12))}
+    .viewer.photo-mode .open-screen{background:rgba(12,10,17,.16);backdrop-filter:blur(1.5px)}
+    .viewer.photo-mode .open-card{background:rgba(14,10,20,.24);border-color:rgba(255,255,255,.30);box-shadow:0 24px 60px rgba(0,0,0,.26)}
+    .viewer.photo-mode .scroll-wrap{padding:clamp(24px,3.8vw,40px) clamp(18px,4vw,34px) clamp(34px,4.6vw,52px);background:linear-gradient(180deg,rgba(21,16,28,.16),rgba(12,9,18,.10));backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,.20);border-radius:32px;box-shadow:0 18px 55px rgba(0,0,0,.16)}
+    .viewer.photo-mode .receiver,.viewer.photo-mode .letter-title,.viewer.photo-mode .letter-line,.viewer.photo-mode .from,.viewer.photo-mode .heart{text-shadow:0 2px 4px rgba(0,0,0,.78),0 5px 18px rgba(0,0,0,.52)}
     .viewer.photo-mode .letter-line{font-weight:600;line-height:2.0}
     .viewer.photo-pending .bg{background:radial-gradient(circle at 50% 35%,#3e3446 0%,#231d29 48%,#151119 100%)!important;background-image:none!important}
     .viewer.photo-pending .open-photo-status{display:block}
@@ -500,7 +551,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.1.5 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
+    <div class="footer">감성편지 2.1.6 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -666,7 +717,7 @@
 
     let latestLongUrl = '';
     let latestShareSignature = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.5';
+    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.6';
     let previewDraft = null;
 
 
@@ -1350,7 +1401,7 @@
           viewer.classList.add('photo-mode');
           viewerBg.classList.add('bg-custom');
           viewerBg.style.backgroundImage =
-            `linear-gradient(180deg, rgba(10,8,16,.28), rgba(10,8,16,.42)), url("${data.customBgUrl}")`;
+            `linear-gradient(180deg, rgba(10,8,16,.12), rgba(10,8,16,.20)), url("${data.customBgUrl}")`;
 
           viewerPhotoImage.onerror = () => {
             console.warn('사용자 배경사진 표시 실패 - 중립 배경으로 전환');
