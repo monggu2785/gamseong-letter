@@ -451,10 +451,10 @@
           </button>
         </div>
 
-        <button class="home-share-btn" id="shareAppBtn">📤 감성편지 공유하기</button>
+        <button class="home-share-btn" id="shareAppBtn">💬 카카오톡으로 감성편지 공유</button>
         <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
       </div>
-      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 4단계 편지 만들기</div>
+      <div class="footer">감성편지 3.1.6 · 카카오 바로 공유 · 4단계 편지 만들기</div>
     </section>
 
     <section class="composer-screen hidden" id="composerScreen">
@@ -668,7 +668,7 @@
         </section>
       </div>
 
-      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+      <div class="footer">감성편지 3.1.6 · 카카오 바로 공유 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
     </section>
   </main>
 
@@ -783,7 +783,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3150;
+    const DRAFT_SIGNATURE_VERSION = 3160;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -1669,23 +1669,50 @@
     }
 
     async function shareApp(){
-      const shareData = {
-        title:'💌 감성편지',
-        text:'배경과 음악을 골라 마음을 천천히 전해보세요.',
-        url:APP_URL
-      };
+      const title = '💌 감성편지';
+      const description = '배경과 음악을 골라 마음을 천천히 전해보세요.';
+      const imageUrl = APP_URL + 'bg-flower.jpg';
 
-      // 스마트폰에서는 카카오톡·문자 등 기본 공유창을 엽니다.
+      // 감성편지 자체를 공유할 때는 시스템 공유창이 아니라
+      // 카카오톡 공유창을 바로 엽니다.
+      if(initKakao()){
+        try{
+          Kakao.Share.sendDefault({
+            objectType:'feed',
+            content:{
+              title,
+              description,
+              imageUrl,
+              imageWidth:800,
+              imageHeight:520,
+              link:{
+                mobileWebUrl:APP_URL,
+                webUrl:APP_URL
+              }
+            },
+            buttonTitle:'💌 감성편지 열기'
+          });
+          return;
+        }catch(err){
+          console.error('카카오 공유 실패:', err);
+        }
+      }
+
+      // 카카오 공유를 사용할 수 없는 환경에서는 시스템 공유창으로 보완합니다.
       if(navigator.share){
         try{
-          await navigator.share(shareData);
+          await navigator.share({
+            title,
+            text:description,
+            url:APP_URL
+          });
           return;
         }catch(err){
           if(err && err.name === 'AbortError') return;
         }
       }
 
-      // PC 또는 공유 API 미지원 브라우저는 주소를 복사합니다.
+      // 마지막 보완: 주소 복사
       try{
         await navigator.clipboard.writeText(APP_URL);
         showShareToast('감성편지 주소를 복사했습니다.');
