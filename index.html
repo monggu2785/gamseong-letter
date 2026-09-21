@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#2d2331">
   <title>감성편지 · 마음을 천천히 전하세요</title>
 
-  <!-- 감성편지 2.1.6 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
+  <!-- 감성편지 2.1.7 · 모바일/PC 분리 공유 + 긴 편지 자동 암호화 보관 -->
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
@@ -551,7 +551,7 @@
 </aside>
       </div>
     </section>
-    <div class="footer">감성편지 2.1.6 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
+    <div class="footer">감성편지 2.1.7 · 미리보기 후 내 사진 배경 유지 · 사진 전체 보기 · 가독성 강화</div>
   </main>
 
   <section class="landing" id="expiredScreen" style="display:none;">
@@ -717,7 +717,7 @@
 
     let latestLongUrl = '';
     let latestShareSignature = '';
-    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.6';
+    const DRAFT_KEY = 'gamseong-letter-draft-v2.1.7';
     let previewDraft = null;
 
 
@@ -1322,17 +1322,11 @@
       });
     }
 
-    async function saveEncryptedLetter(id, cipherBlob, imagePayload=null){
-      if(!apiConfigured()) throw new Error('Apps Script 웹앱 주소를 index.html의 LETTER_API_URL에 설정해 주세요.');
+    async function postFormNoCors(fields){
       const form = new URLSearchParams();
-      form.set('action', 'save');
-      form.set('id', id);
-      form.set('cipher', cipherBlob);
-      if(imagePayload){
-        form.set('imageData', imagePayload.base64);
-        form.set('imageMime', imagePayload.mime || 'image/jpeg');
-        form.set('imageName', imagePayload.name || 'letter-bg.jpg');
-      }
+      Object.entries(fields).forEach(([k,v]) => {
+        if(v !== undefined && v !== null) form.set(k, String(v));
+      });
       await fetch(LETTER_API_URL, {
         method:'POST',
         mode:'no-cors',
@@ -1340,14 +1334,51 @@
         body:form.toString(),
         cache:'no-store'
       });
-      for(let i=0;i<5;i++){
-        await new Promise(r => setTimeout(r, 450 + i*280));
+    }
+
+    async function waitStoredState(id, requireImage=false){
+      for(let i=0;i<6;i++){
+        await new Promise(r => setTimeout(r, 420 + i*260));
         try{
-          const check = await jsonpRequest({action:'exists', id}, 6000);
-          if(check && check.status === 'ok' && (!imagePayload || check.hasImage)) return true;
+          const check = await jsonpRequest({action:'exists', id}, 6500);
+          if(check && check.status === 'ok' && (!requireImage || check.hasImage)) return true;
         }catch(e){}
       }
-      throw new Error(imagePayload ? '편지 또는 배경사진을 임시 보관소에 저장하지 못했습니다.' : '암호화 편지를 임시 보관소에 저장하지 못했습니다.');
+      return false;
+    }
+
+    async function saveEncryptedLetter(id, cipherBlob, imagePayload=null){
+      if(!apiConfigured()) throw new Error('Apps Script 웹앱 주소가 아직 설정되지 않았습니다.');
+
+      // 1단계: 편지 암호문을 먼저 작게 저장합니다.
+      await postFormNoCors({
+        action:'save',
+        id,
+        cipher:cipherBlob
+      });
+
+      if(!await waitStoredState(id, false)){
+        throw new Error('암호화 편지를 임시 보관소에 저장하지 못했습니다.');
+      }
+
+      // 2단계: 배경사진은 별도 요청으로 저장합니다.
+      // 편지와 사진을 한 번에 보내면 모바일 환경에서 요청 본문이 커져
+      // 편지 암호문이 손상될 가능성을 줄이기 위한 구조입니다.
+      if(imagePayload){
+        await postFormNoCors({
+          action:'saveImage',
+          id,
+          imageData:imagePayload.base64,
+          imageMime:imagePayload.mime || 'image/jpeg',
+          imageName:imagePayload.name || 'letter-bg.jpg'
+        });
+
+        if(!await waitStoredState(id, true)){
+          throw new Error('배경사진을 임시 보관소에 저장하지 못했습니다. 다시 시도해 주세요.');
+        }
+      }
+
+      return true;
     }
 
     async function fetchEncryptedLetter(id){
@@ -2108,14 +2139,24 @@ ${url}`;
 
       try{
         // 1단계: 편지 본문만 먼저 가져옵니다. 사진은 뒤에서 따로 받습니다.
-        const result = await fetchEncryptedLetter(id);
+        let result = await fetchEncryptedLetter(id);
         if(!result || result.status !== 'ok'){
           if(result && result.status === 'expired') showLetterError('이 편지는 보관 기간이 지나 자동 삭제되었습니다.');
           else showLetterError('이 편지를 찾을 수 없습니다. 링크가 올바른지 확인해 주세요.');
           return true;
         }
 
-        const data = await decryptLetter(result.cipher, keyMatch[1]);
+        let data;
+        try{
+          data = await decryptLetter(result.cipher, keyMatch[1]);
+        }catch(firstErr){
+          // 모바일 네트워크/Apps Script 응답이 일시적으로 불완전할 때 한 번 재시도
+          await new Promise(r => setTimeout(r, 500));
+          result = await fetchEncryptedLetter(id);
+          if(!result || result.status !== 'ok') throw firstErr;
+          data = await decryptLetter(result.cipher, keyMatch[1]);
+        }
+
         if(!data || !data.message) throw new Error('편지 내용이 올바르지 않습니다.');
 
         if(!themes.includes(data.theme)) data.theme = 'night';
@@ -2147,7 +2188,7 @@ ${url}`;
         return true;
       }catch(e){
         console.error(e);
-        showLetterError('편지를 여는 중 오류가 발생했습니다. 주소가 잘렸거나 보관 기간이 지났을 수 있습니다.');
+        showLetterError('편지를 불러오지 못했습니다. 잠시 후 다시 열어보거나, 보낸 분께 새 링크를 요청해 주세요.');
         return true;
       }
     }
