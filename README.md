@@ -1,1 +1,0 @@
-# gamseong-letter
