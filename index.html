@@ -236,6 +236,9 @@
     .viewer-bg.photo-fit{background-size:contain;background-position:center center;background-repeat:no-repeat}
     .viewer-bg.photo-fit::before{content:"";position:absolute;inset:0;background:inherit;filter:blur(18px) brightness(.78);transform:scale(1.12);z-index:-1}
 
+    .photo-load-status{display:none;margin-top:12px;font-size:11px;line-height:1.55;color:rgba(255,255,255,.78)}
+    .photo-load-status.show{display:block}
+
   </style>
 
   <script>
@@ -256,7 +259,7 @@
       <span class="mark">💌</span>
       <h1>감성편지</h1>
       <p>마음을 천천히 전해보세요.<br>배경과 음악을 따로 고르고, 내 사진도 배경으로 올린 뒤 카카오톡으로 전할 수 있습니다.</p>
-      <span class="version">3.0 · 3단계</span>
+      <span class="version">3.0 · 3단계 수정1</span>
     </header>
 
     <div class="layout">
@@ -392,7 +395,7 @@
       </aside>
     </div>
 
-    <div class="footer">감성편지 3.0 · 3단계 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
+    <div class="footer">감성편지 3.0 · 3단계 수정1 · 카카오 공유 · 긴 편지 암호화 임시보관</div>
   </main>
 
   <section class="letter-loading" id="letterLoading" aria-live="polite">
@@ -423,6 +426,7 @@
         <h2 id="openTitle">편지가 도착했습니다</h2>
         <p>조용한 곳에서 천천히 읽어보세요.<br>버튼을 누르면 음악과 함께 편지가 시작됩니다.</p>
         <button class="open-btn" id="openBtn">💌 편지 열어보기</button>
+        <div class="photo-load-status" id="photoLoadStatus"></div>
       </div>
     </div>
 
@@ -489,7 +493,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3003;
+    const DRAFT_SIGNATURE_VERSION = 30031;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -622,7 +626,7 @@
       const objectUrl = URL.createObjectURL(file);
       try{
         const img = await loadImageFromUrl(objectUrl);
-        const maxSide = 1600;
+        const maxSide = 1280;
         const scale = Math.min(1, maxSide / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
         const width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
         const height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
@@ -634,10 +638,10 @@
         ctx.fillRect(0,0,width,height);
         ctx.drawImage(img, 0, 0, width, height);
 
-        let quality = 0.82;
+        let quality = 0.78;
         let dataUrl = await canvasToDataUrl(canvas, quality);
-        while(dataUrl.length > 1100000 && quality > 0.55){
-          quality -= 0.08;
+        while(dataUrl.length > 850000 && quality > 0.50){
+          quality -= 0.07;
           dataUrl = await canvasToDataUrl(canvas, quality);
         }
         return {
@@ -706,6 +710,31 @@
       });
     }
 
+    function applyViewerBackground(data){
+      themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
+      viewerBg.classList.remove('photo-fit');
+      viewerBg.style.backgroundImage = '';
+
+      const status = $('#photoLoadStatus');
+      if(data.bgMode === 'custom'){
+        if(data.photoUrl){
+          viewerBg.classList.add('photo-fit');
+          viewerBg.style.backgroundImage = `url(${JSON.stringify(data.photoUrl)})`;
+          status.classList.remove('show');
+          status.textContent = '';
+        }else{
+          viewerBg.style.backgroundImage = 'radial-gradient(circle at 50% 35%, #493b50 0%, #261f2c 48%, #17121c 100%)';
+          status.textContent = '📷 배경사진을 준비하고 있어요…';
+          status.classList.add('show');
+        }
+        return;
+      }
+
+      status.classList.remove('show');
+      status.textContent = '';
+      viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
+    }
+
     function applyViewer(data, mode='preview'){
       currentData = data;
       currentMode = mode;
@@ -714,16 +743,7 @@
       $('#vFrom').textContent = data.from;
       $('#openTitle').textContent = `${data.to} · 편지가 도착했습니다`;
       renderMessage(data.message);
-
-      themes.forEach(t => viewerBg.classList.remove(`bg-${t}`));
-      viewerBg.classList.remove('photo-fit');
-      viewerBg.style.backgroundImage = '';
-      if(data.bgMode === 'custom' && data.photoUrl){
-        viewerBg.classList.add('photo-fit');
-        viewerBg.style.backgroundImage = `url(${data.photoUrl.replace(/`/g,'')})`;
-      }else{
-        viewerBg.classList.add(`bg-${themes.includes(data.theme) ? data.theme : 'night'}`);
-      }
+      applyViewerBackground(data);
 
       viewer.classList.add('active');
       viewer.classList.toggle('received', mode === 'received');
@@ -1072,6 +1092,10 @@
       return await jsonpRequest({action:'get',id},11000);
     }
 
+    async function fetchStoredPhoto(id){
+      return await jsonpRequest({action:'getImage',id},18000);
+    }
+
     function makeStoredUrl(id,keyToken){
       return `${APP_URL}?id=${encodeURIComponent(id)}#k=${keyToken}`;
     }
@@ -1216,11 +1240,28 @@
         if(!themes.includes(data.theme)) data.theme='night';
         if(!Object.prototype.hasOwnProperty.call(musicNames,data.music)) data.music='night';
         data.bgMode = data.bgMode === 'custom' ? 'custom' : 'preset';
-        if(data.bgMode === 'custom' && result.imageUrl){
-          data.photoUrl = result.imageUrl;
-        }
+        data.photoUrl = '';
+
         hideLoading();
         applyViewer(data,'received');
+
+        if(data.bgMode === 'custom' && result.hasImage){
+          fetchStoredPhoto(id).then(photo => {
+            if(photo?.status === 'ok' && photo.imageBase64 && photo.mime){
+              data.photoUrl = `data:${photo.mime};base64,${photo.imageBase64}`;
+              if(currentData === data) applyViewerBackground(data);
+            }else{
+              const s = $('#photoLoadStatus');
+              s.textContent = '배경사진을 불러오지 못했습니다.';
+              s.classList.add('show');
+            }
+          }).catch(err => {
+            console.error('배경사진 로딩 오류', err);
+            const s = $('#photoLoadStatus');
+            s.textContent = '배경사진을 불러오지 못했습니다.';
+            s.classList.add('show');
+          });
+        }
         return true;
       }catch(e){
         console.error(e);
