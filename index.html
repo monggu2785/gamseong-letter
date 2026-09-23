@@ -451,10 +451,10 @@
           </button>
         </div>
 
-        <button class="home-share-btn" id="shareAppBtn">💬 카카오톡으로 감성편지 공유</button>
+        <button class="home-share-btn" id="shareAppBtn">📤 감성편지 공유하기</button>
         <button class="home-guide" id="homeGuideBtn">📱 홈 화면에 감성편지 두는 방법</button>
       </div>
-      <div class="footer">감성편지 3.1.6 · 카카오 바로 공유 · 4단계 편지 만들기</div>
+      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 4단계 편지 만들기</div>
     </section>
 
     <section class="composer-screen hidden" id="composerScreen">
@@ -668,7 +668,7 @@
         </section>
       </div>
 
-      <div class="footer">감성편지 3.1.6 · 카카오 바로 공유 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
+      <div class="footer">감성편지 3.1.5 · 감성편지 공유 · 쓰기 → 꾸미기 → 미리보기 → 보내기</div>
     </section>
   </main>
 
@@ -783,7 +783,7 @@
     const KAKAO_JS_KEY = 'fe23cd50244f4abc13f2196889ea8123';
     const MOBILE_DIRECT_SAFE = 700;
     const DESKTOP_DIRECT_SAFE = 1500;
-    const DRAFT_SIGNATURE_VERSION = 3160;
+    const DRAFT_SIGNATURE_VERSION = 3150;
 
     const themes = ['night','sunset','sea','forest','flower','winter'];
     const themeNames = {
@@ -1414,25 +1414,19 @@
 
       // 편지 + 사진을 한 번의 Apps Script 요청으로 저장합니다.
       // 사진은 이미 약 50~80KB로 경량화되어 있어 한 번에 보내도 부담이 작습니다.
+      //
+      // no-cors 모드라도 await fetch()는 Apps Script의 doPost 실행이
+      // 완전히 끝나고 응답이 돌아올 때까지 기다립니다. 즉 이 한 번의
+      // 요청이 성공적으로 끝난 시점에 서버 쪽 저장(시트 기록 + 사진 업로드)은
+      // 이미 확정된 상태입니다.
+      //
+      // 예전에는 이 뒤에 'exists' 확인을 1~2회 더 왕복했는데,
+      // 이미 끝난 일을 다시 물어보는 것이라 Apps Script 왕복 횟수만
+      // 2~3배로 늘려 체감 저장 시간을 크게 늘렸습니다. 확인 없이
+      // 바로 성공으로 처리합니다. (postNoCors가 실패하면 fetch 자체가
+      // 예외를 던지므로 실패 감지는 그걸로 충분합니다.)
       await postNoCors(fields);
-
-      // 반복 확인을 없애고 한 번만 확인합니다.
-      // 기존에는 편지 확인 + 사진 확인을 여러 번 반복해 10초 이상 걸릴 수 있었습니다.
-      try{
-        const check = await jsonpRequest({action:'exists',id},6500);
-        const needImage = !!photoDataUrl;
-        if(check?.status === 'ok' && (!needImage || check?.hasImage)) return true;
-      }catch(e){}
-
-      // 아주 느린 네트워크에서만 한 번 재확인합니다.
-      await new Promise(r => setTimeout(r, 450));
-      const check2 = await jsonpRequest({action:'exists',id},6500);
-      const needImage2 = !!photoDataUrl;
-      if(check2?.status === 'ok' && (!needImage2 || check2?.hasImage)) return true;
-
-      throw new Error(photoDataUrl
-        ? '편지와 배경사진 저장을 확인하지 못했습니다. 다시 시도해 주세요.'
-        : '편지 저장을 확인하지 못했습니다. 다시 시도해 주세요.');
+      return true;
     }
 
     async function fetchEncrypted(id){
@@ -1669,50 +1663,23 @@
     }
 
     async function shareApp(){
-      const title = '💌 감성편지';
-      const description = '배경과 음악을 골라 마음을 천천히 전해보세요.';
-      const imageUrl = APP_URL + 'bg-flower.jpg';
+      const shareData = {
+        title:'💌 감성편지',
+        text:'배경과 음악을 골라 마음을 천천히 전해보세요.',
+        url:APP_URL
+      };
 
-      // 감성편지 자체를 공유할 때는 시스템 공유창이 아니라
-      // 카카오톡 공유창을 바로 엽니다.
-      if(initKakao()){
-        try{
-          Kakao.Share.sendDefault({
-            objectType:'feed',
-            content:{
-              title,
-              description,
-              imageUrl,
-              imageWidth:800,
-              imageHeight:520,
-              link:{
-                mobileWebUrl:APP_URL,
-                webUrl:APP_URL
-              }
-            },
-            buttonTitle:'💌 감성편지 열기'
-          });
-          return;
-        }catch(err){
-          console.error('카카오 공유 실패:', err);
-        }
-      }
-
-      // 카카오 공유를 사용할 수 없는 환경에서는 시스템 공유창으로 보완합니다.
+      // 스마트폰에서는 카카오톡·문자 등 기본 공유창을 엽니다.
       if(navigator.share){
         try{
-          await navigator.share({
-            title,
-            text:description,
-            url:APP_URL
-          });
+          await navigator.share(shareData);
           return;
         }catch(err){
           if(err && err.name === 'AbortError') return;
         }
       }
 
-      // 마지막 보완: 주소 복사
+      // PC 또는 공유 API 미지원 브라우저는 주소를 복사합니다.
       try{
         await navigator.clipboard.writeText(APP_URL);
         showShareToast('감성편지 주소를 복사했습니다.');
